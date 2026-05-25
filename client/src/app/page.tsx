@@ -32,6 +32,7 @@ export default function TableTalkLandingPage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userSlug, setUserSlug] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -41,6 +42,7 @@ export default function TableTalkLandingPage() {
       if (storedSlug && storedEmail) {
         setIsLoggedIn(true);
         setUserSlug(storedSlug);
+        setUserEmail(storedEmail);
         // Seamlessly auto-redirect GM to their active control center
         window.location.href = `/dashboard/${storedSlug}`;
       }
@@ -75,47 +77,15 @@ export default function TableTalkLandingPage() {
           />
         </div>
 
-        <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-[var(--text-muted)] transition-colors duration-300">
-          <a href="#features" className="hover:text-[var(--foreground)] transition-colors">Features</a>
-          <a href="#growth-suite" className="hover:text-[var(--foreground)] transition-colors">Growth Suite</a>
-          <a href="#insights-suite" className="hover:text-[var(--foreground)] transition-colors">Insights</a>
-          <a href="#testimonials" className="hover:text-[var(--foreground)] transition-colors">Customers</a>
-        </nav>
-
-        <div className="flex items-center gap-4 relative">
-          {isLoggedIn ? (
-            <a 
-              href={`/dashboard/${userSlug}`}
-              className="px-5 py-2.5 bg-[#c77dff] text-black hover:bg-[#b55fe6] rounded-full text-xs font-bold transition-all duration-300 transform active:scale-95 shadow-md flex items-center gap-1.5 cursor-pointer border border-white/5"
-            >
-              Go to Dashboard
-              <ArrowUpRight className="w-4 h-4 text-black" />
-            </a>
-          ) : (
-            <>
-              <a 
-                href="/signin"
-                className="text-xs font-bold text-[var(--text-muted)] hover:text-[var(--foreground)] pr-2 transition-colors duration-300 cursor-pointer"
-              >
-                Sign In
-              </a>
-              <a 
-                href="/onboard"
-                className="px-5 py-2.5 bg-[#0c0516] text-[#ffffff] hover:bg-[#1a0f2b] rounded-full text-xs font-bold transition-all duration-300 transform active:scale-95 shadow-md flex items-center gap-1.5 cursor-pointer border border-white/5"
-              >
-                Get started
-                <ArrowUpRight className="w-4 h-4 text-[#ffffff]" />
-              </a>
-            </>
-          )}
+        <div className="flex items-center relative">
           
-          {/* Explore Suites guest dropdown settings menu */}
+          {/* Unified Explorer & Access Dropdown */}
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="h-10 px-4 rounded-full border border-[var(--orb-border)] hover:bg-[var(--orb-bg)] flex items-center gap-2 text-xs font-bold text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none transition-colors"
+              className="h-10 px-5 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center gap-2.5 text-xs font-bold text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
             >
-              <span className="text-[var(--text-muted)] font-medium">Explore Suites</span>
+              <span className="text-[var(--text-muted)] font-medium">Explore & Sign In</span>
               <ChevronDown className={`w-3.5 h-3.5 text-[var(--text-dim)] transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`} />
             </button>
 
@@ -125,80 +95,160 @@ export default function TableTalkLandingPage() {
                   className="fixed inset-0 z-40 cursor-default" 
                   onClick={() => setDropdownOpen(false)} 
                 />
-                <div className="absolute right-0 mt-2.5 w-60 rounded-2xl bg-[var(--brand-card)] border border-[var(--brand-border)] p-2 shadow-2xl backdrop-blur-xl z-50 animate-fadeIn text-left space-y-1">
-                  <div className="px-3.5 py-2.5 border-b border-[var(--brand-border)]">
-                    <span className="text-[10px] uppercase tracking-wider text-[var(--text-dim)] font-semibold block">TableTalk for GMs</span>
-                    <span className="text-xs font-bold text-[var(--foreground)] block mt-0.5">Manager Control Center</span>
-                  </div>
+                <div className="absolute right-0 mt-2.5 w-68 rounded-2xl bg-[var(--brand-card)] border border-[var(--brand-border)] p-2 shadow-2xl backdrop-blur-xl z-50 animate-fadeIn text-left space-y-1.5">
                   
-                  <div className="py-1">
+                  {/* SECTION 1: Dynamic GM Authentication Portal */}
+                  <div className="p-3 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] rounded-xl space-y-2.5">
+                    {isLoggedIn ? (
+                      <>
+                        <div className="space-y-0.5">
+                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">General Manager</span>
+                          <span className="text-xs font-extrabold text-[var(--foreground)] block truncate">{userEmail}</span>
+                        </div>
+                        <a 
+                          href={`/dashboard/${userSlug}`}
+                          onClick={() => setDropdownOpen(false)}
+                          className="w-full py-2 bg-gradient-to-r from-[#c77dff] to-[#9d4edd] text-black hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-purple-300/10"
+                        >
+                          Go to Dashboard
+                          <ArrowUpRight className="w-3 h-3 text-black" />
+                        </a>
+                        <button
+                          onClick={() => {
+                            setDropdownOpen(false);
+                            if (typeof window !== "undefined") {
+                              localStorage.removeItem("tabletalk_restaurant_id");
+                              localStorage.removeItem("tabletalk_restaurant_slug");
+                              localStorage.removeItem("tabletalk_user_email");
+                              window.location.reload();
+                            }
+                          }}
+                          className="w-full text-center text-[9px] text-red-400 hover:underline pt-0.5 block cursor-pointer"
+                        >
+                          Sign Out of Session
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <div className="space-y-0.5">
+                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">GM Control Hub</span>
+                          <span className="text-[10px] text-[var(--text-muted)] font-light block leading-tight">Access review scraper audits & campaigns</span>
+                        </div>
+                        <div className="space-y-1.5 pt-1">
+                          <a 
+                            href="/onboard"
+                            onClick={() => setDropdownOpen(false)}
+                            className="w-full py-2 bg-gradient-to-r from-[var(--brand-purple-text)] to-[#9d4edd] text-white hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-white/5"
+                          >
+                            Get started
+                            <ArrowUpRight className="w-3 h-3 text-white" />
+                          </a>
+                          <a 
+                            href="/signin"
+                            onClick={() => setDropdownOpen(false)}
+                            className="w-full py-2 bg-transparent text-[var(--foreground)] hover:bg-[var(--orb-bg)] border border-[var(--brand-border)] rounded-lg text-[10px] font-bold transition-all duration-300 flex items-center justify-center cursor-pointer"
+                          >
+                            Sign In to Account
+                          </a>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* SECTION 2: Platform Core Suites */}
+                  <div className="py-1 border-b border-[var(--brand-border-subtle)]">
+                    <span className="px-2.5 text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block mb-1">Product Suites</span>
                     <a 
                       href="#insights-suite" 
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
                     >
-                      <LayoutDashboard className="w-3.5 h-3.5 text-[var(--color-brand-purple)] flex-shrink-0" />
+                      <LayoutDashboard className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
                       <div>
                         <span className="font-bold block leading-none">Multi-Unit Insights</span>
-                        <span className="text-[8.5px] text-[var(--text-dim)] font-light block mt-1 leading-tight">GM view across all physical outlets</span>
                       </div>
                     </a>
                     <a 
                       href="#triage-simulator" 
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
                     >
-                      <ShieldAlert className="w-3.5 h-3.5 text-[var(--color-brand-purple)] flex-shrink-0" />
+                      <ShieldAlert className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
                       <div>
                         <span className="font-bold block leading-none">Feedback Intercept</span>
-                        <span className="text-[8.5px] text-[var(--text-dim)] font-light block mt-1 leading-tight">Private triage routing & alerts</span>
                       </div>
                     </a>
                     <a 
                       href="#growth-suite" 
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[var(--color-brand-purple)] flex-shrink-0" />
+                      <Sparkles className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
                       <div>
                         <span className="font-bold block leading-none">Retention Vouchers</span>
-                        <span className="text-[8.5px] text-[var(--text-dim)] font-light block mt-1 leading-tight">SMS & WhatsApp recovery campaigns</span>
                       </div>
                     </a>
                     <a 
                       href="#agent-orchestration" 
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
                     >
-                      <TrendingUp className="w-3.5 h-3.5 text-[var(--color-brand-purple)] flex-shrink-0" />
+                      <TrendingUp className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
                       <div>
                         <span className="font-bold block leading-none">SEO Map Booster</span>
-                        <span className="text-[8.5px] text-[var(--text-dim)] font-light block mt-1 leading-tight">Auto Google review management</span>
                       </div>
                     </a>
                   </div>
 
-                  <div className="border-t border-[var(--brand-border)] pt-1 mt-1">
+                  {/* SECTION 3: Standard Page Anchor Links */}
+                  <div className="py-1 border-b border-[var(--brand-border-subtle)] flex flex-col">
+                    <span className="px-2.5 text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block mb-1">Company & Links</span>
+                    <a 
+                      href="#features" 
+                      onClick={() => setDropdownOpen(false)}
+                      className="px-2.5 py-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all"
+                    >
+                      Features
+                    </a>
+                    <a 
+                      href="#growth-suite" 
+                      onClick={() => setDropdownOpen(false)}
+                      className="px-2.5 py-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all"
+                    >
+                      Growth Suite
+                    </a>
+                    <a 
+                      href="#testimonials" 
+                      onClick={() => setDropdownOpen(false)}
+                      className="px-2.5 py-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all"
+                    >
+                      Customer Stories
+                    </a>
+                  </div>
+
+                  {/* SECTION 4: Theme Settings Toggle */}
+                  <div className="pt-1.5">
                     <button
                       onClick={() => {
                         toggleTheme();
                         setDropdownOpen(false);
                       }}
-                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200 cursor-pointer animate-fadeIn"
+                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200 cursor-pointer"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2">
                         {theme === "dark" ? (
                           <Sun className="w-3.5 h-3.5 text-amber-400" />
                         ) : (
-                          <Moon className="w-3.5 h-3.5 text-purple-600" />
+                          <Moon className="w-3.5 h-3.5 text-purple-400" />
                         )}
                         <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
                       </div>
-                      <span className="text-[9px] uppercase tracking-wider bg-[var(--brand-border-subtle)] px-2 py-0.5 rounded text-[var(--text-dim)] font-mono font-bold">
+                      <span className="text-[8px] uppercase tracking-wider bg-[var(--brand-border-subtle)] px-2 py-0.5 rounded text-[var(--text-dim)] font-mono font-bold">
                         Toggle
                       </span>
                     </button>
                   </div>
+
                 </div>
               </>
             )}
