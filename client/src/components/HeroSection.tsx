@@ -21,7 +21,7 @@ export default function HeroSection() {
         <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm pt-2">
           <a 
             href="/onboard"
-            className="px-8 py-4 bg-white text-[#070210] hover:bg-white/90 text-xs font-bold rounded-xl transition-all duration-300 shadow-xl shadow-white/5 flex items-center justify-center gap-1.5 transform active:scale-95 cursor-pointer"
+            className="px-8 py-4 bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 text-xs font-bold rounded-xl transition-all duration-300 shadow-xl flex items-center justify-center gap-1.5 transform active:scale-95 cursor-pointer border border-[var(--brand-border)]"
           >
             Get started
             <ArrowUpRight className="w-4 h-4" />
@@ -59,18 +59,18 @@ export default function HeroSection() {
         <div className="relative w-full max-w-[460px] h-[300px] animate-float">
           
           {/* Central Mockup: Web Dashboard (Landscape Laptop Style) */}
-          <div className="absolute inset-0 bg-[#0d0718]/90 border border-white/[0.08] rounded-2xl p-5 shadow-2xl overflow-hidden backdrop-blur-xl z-10 flex flex-col justify-between">
+          <div className="absolute inset-0 bg-[var(--brand-card)] border border-[var(--brand-border)] rounded-2xl p-5 shadow-2xl overflow-hidden backdrop-blur-xl z-10 flex flex-col justify-between transition-colors duration-300">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#c77dff]/40 to-transparent" />
             
             {/* Browser/Dashboard Header */}
-            <div className="flex justify-between items-center border-b border-white/[0.04] pb-3 text-[10px] text-white/40">
+            <div className="flex justify-between items-center border-b border-[var(--brand-border-subtle)] pb-3 text-[10px] text-white/40">
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-red-500/80" />
                 <div className="w-2 h-2 rounded-full bg-yellow-500/80" />
                 <div className="w-2 h-2 rounded-full bg-green-500/80" />
                 <span className="text-[9px] font-mono ml-1.5 opacity-60">dashboard.tabletalk.in/mm-bandra</span>
               </div>
-              <span className="px-2 py-0.5 rounded-full bg-[#c77dff]/10 border border-[#c77dff]/20 text-[8px] text-[#c77dff] font-bold">
+              <span className="px-2 py-0.5 rounded-full bg-brand-purple-text/10 border border-brand-purple-text/20 text-[8px] text-brand-purple-text font-bold">
                 ACTIVE
               </span>
             </div>
@@ -78,10 +78,10 @@ export default function HeroSection() {
             {/* Horizontal Layout Dashboard body */}
             <div className="flex-1 flex gap-4 pt-3 overflow-hidden">
               {/* Micro Sidebar */}
-              <div className="w-10 bg-white/[0.01] border-r border-white/[0.04] pr-3 flex flex-col items-center gap-3">
-                <div className="w-6 h-6 rounded bg-white/[0.04] flex items-center justify-center text-white/40 text-[9px] font-bold">M</div>
-                <div className="w-6 h-6 rounded bg-[#c77dff]/10 text-[#c77dff] flex items-center justify-center text-[9px] font-bold">A</div>
-                <div className="w-6 h-6 rounded bg-white/[0.04] flex items-center justify-center text-white/40 text-[9px] font-bold">C</div>
+              <div className="w-10 bg-[var(--brand-border-subtle)] border-r border-[var(--brand-border-subtle)] pr-3 flex flex-col items-center gap-3">
+                <div className="w-6 h-6 rounded bg-[var(--brand-border-subtle)] flex items-center justify-center text-white/40 text-[9px] font-bold">M</div>
+                <div className="w-6 h-6 rounded bg-brand-purple-text/10 text-brand-purple-text flex items-center justify-center text-[9px] font-bold">A</div>
+                <div className="w-6 h-6 rounded bg-[var(--brand-border-subtle)] flex items-center justify-center text-white/40 text-[9px] font-bold">C</div>
               </div>
 
               {/* Main Workspace */}
@@ -94,11 +94,11 @@ export default function HeroSection() {
                   
                   {/* Compact Stats */}
                   <div className="flex gap-2">
-                    <div className="bg-white/[0.02] border border-white/[0.04] px-2 py-1 rounded-lg text-center">
+                    <div className="bg-[var(--brand-border-subtle)] border border-[var(--brand-border-subtle)] px-2 py-1 rounded-lg text-center">
                       <span className="text-[7px] text-white/40 uppercase block">NPS</span>
                       <span className="text-xs font-bold text-white block">92%</span>
                     </div>
-                    <div className="bg-white/[0.02] border border-white/[0.04] px-2 py-1 rounded-lg text-center">
+                    <div className="bg-[var(--brand-border-subtle)] border border-[var(--brand-border-subtle)] px-2 py-1 rounded-lg text-center">
                       <span className="text-[7px] text-white/40 uppercase block">Scans</span>
                       <span className="text-xs font-bold text-white block">342</span>
                     </div>
@@ -119,7 +119,7 @@ export default function HeroSection() {
                     </span>
                   </div>
 
-                  <div className="bg-white/[0.02] border border-white/[0.04] px-2 py-1.5 rounded-xl flex justify-between items-center gap-2 text-[9px]">
+                  <div className="bg-[var(--brand-border-subtle)] border border-[var(--brand-border-subtle)] px-2 py-1.5 rounded-xl flex justify-between items-center gap-2 text-[9px]">
                     <div>
                       <span className="font-bold text-white">Rohan S. <span className="text-green-400">5★</span></span>
                       <span className="text-white/60 ml-2">Perfect Butter Chicken!</span>
@@ -140,7 +140,7 @@ export default function HeroSection() {
               <span className="text-[8px] uppercase tracking-wider text-white/40 font-semibold block">Audit Score</span>
               <div className="flex items-baseline gap-1.5">
                 <span className="text-xl font-bold text-white">B+</span>
-                <span className="text-[9px] text-[#c77dff] font-mono font-bold">78/100</span>
+                <span className="text-[9px] text-brand-purple-text font-mono font-bold">78/100</span>
               </div>
               <div className="w-full bg-white/[0.04] h-1 rounded-full overflow-hidden">
                 <div className="bg-gradient-to-r from-[#9d4edd] to-[#c77dff] h-full w-[78%]" />
@@ -152,7 +152,7 @@ export default function HeroSection() {
           <div className="absolute -top-4 -right-6 z-20 liquid-glass-card dot-grid p-3.5 w-[150px] animate-float">
             <div className="liquid-glass-glow" />
             <div className="relative z-10 text-left space-y-1.5 text-xs flex flex-col justify-between h-full">
-              <div className="flex items-center gap-1.5 text-[8px] text-[#c77dff] font-bold uppercase tracking-wider">
+              <div className="flex items-center gap-1.5 text-[8px] text-brand-purple-text font-bold uppercase tracking-wider">
                 <Sparkles className="w-3 h-3 animate-spin" />
                 Campaign Active
               </div>

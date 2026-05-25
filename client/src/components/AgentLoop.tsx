@@ -90,15 +90,15 @@ export default function InfiniteAgentLoop() {
   }, []);
 
   return (
-    <section id="agent-orchestration" className="py-24 max-w-7xl mx-auto px-6 md:px-12 relative z-10 border-t border-white/[0.04] text-left font-sans">
+    <section id="agent-orchestration" className="py-24 max-w-7xl mx-auto px-6 md:px-12 relative z-10 border-t border-[var(--brand-border)] text-left font-sans transition-colors duration-300">
       
       {/* Header Info */}
       <div className="max-w-3xl mb-16 space-y-3">
-        <span className="text-xs font-bold text-[#c77dff] uppercase tracking-widest block">Autonomous Execution Loop</span>
-        <h3 className="text-3xl sm:text-4xl text-white font-extrabold tracking-tight">
+        <span className="text-xs font-bold text-brand-purple-text uppercase tracking-widest block">Autonomous Execution Loop</span>
+        <h3 className="text-3xl sm:text-4xl text-[var(--foreground)] font-extrabold tracking-tight transition-colors duration-300">
           How our AI Agents talk to each other
         </h3>
-        <p className="text-xs text-white/50 font-sans max-w-md font-light leading-relaxed">
+        <p className="text-xs text-[var(--text-muted)] font-sans max-w-md font-light leading-relaxed transition-colors duration-300">
           Six cooperative agents running in an infinite background loop, orchestrating and passing telemetry data automatically.
         </p>
       </div>
@@ -111,34 +111,36 @@ export default function InfiniteAgentLoop() {
             <button
               key={agent.id}
               onClick={() => setActiveIndex(agent.id)}
-              className={`liquid-glass-card dot-grid p-6 text-left transition-all duration-300 relative border flex flex-col justify-between h-[150px] outline-none cursor-pointer select-none ${
+              className={`agent-card dot-grid p-6 text-left relative flex flex-col justify-between h-[160px] outline-none cursor-pointer select-none transition-all duration-500 overflow-hidden ${
                 isActive 
-                  ? "border-[#c77dff]/60 bg-[#160a28]/80 shadow-[0_0_30px_rgba(199,125,255,0.12)] scale-[1.02]" 
-                  : "border-white/[0.05] bg-white/[0.01] opacity-75 hover:opacity-90 hover:border-white/10"
+                  ? "border-[#9d4edd]/50 bg-[var(--brand-card-active)] shadow-[0_12px_40px_rgba(157,78,221,0.18)] scale-[1.03] z-20" 
+                  : "border-[var(--brand-border)] bg-[var(--brand-card)] opacity-75 hover:opacity-95 hover:border-[#9d4edd]/35 hover:scale-[1.01]"
               }`}
             >
-              <div className="liquid-glass-glow" />
+              {/* Dynamic Glowing Bottom Highlight inspired by chainApex mockup */}
+              <div className={`absolute bottom-0 left-0 right-0 h-[45%] bg-gradient-to-t from-[#9d4edd]/20 via-[#9d4edd]/5 to-transparent transition-opacity duration-500 pointer-events-none rounded-b-2xl ${isActive ? "opacity-100" : "opacity-0"}`} />
+              <div className={`absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#9d4edd] via-[#c77dff] to-[#9d4edd] transition-all duration-500 rounded-b-2xl shadow-[0_-2px_15px_rgba(157,78,221,0.6)] ${isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-75"}`} />
               
               <div className="relative z-10 w-full space-y-3 flex flex-col justify-between h-full">
                 {/* Card Top */}
                 <div className="flex justify-between items-center w-full">
-                  <span className={`text-[10px] font-bold ${isActive ? "text-[#c77dff]" : "text-white/40"}`}>
+                  <span className={`text-[10px] font-bold transition-colors duration-300 ${isActive ? "text-brand-purple-text" : "text-[var(--text-dim)]"}`}>
                     AGENT {agent.number}
                   </span>
                   
                   {/* Status Ring */}
-                  <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/[0.05] px-2 py-0.5 rounded text-[8px] text-white/50 uppercase font-mono font-bold">
-                    <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-400 animate-pulse" : "bg-white/20"}`} />
+                  <div className="flex items-center gap-1.5 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] px-2 py-0.5 rounded text-[8px] text-[var(--text-muted)] uppercase font-mono font-bold transition-colors duration-300">
+                    <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-400 animate-pulse" : "bg-[var(--text-dim)]"}`} />
                     {isActive ? "ACTIVE" : "STANDBY"}
                   </div>
                 </div>
 
                 {/* Card Title & Desc */}
                 <div className="space-y-1">
-                  <h4 className={`text-xs font-bold text-white transition-colors ${isActive ? "text-[#c77dff]" : ""}`}>
+                  <h4 className={`text-xs font-bold text-[var(--foreground)] transition-colors duration-300`}>
                     {agent.title}
                   </h4>
-                  <p className="text-[10px] text-white/50 leading-relaxed font-light font-sans">
+                  <p className="text-[10px] text-[var(--text-muted)] leading-relaxed font-light font-sans transition-colors duration-300">
                     {agent.desc}
                   </p>
                 </div>
@@ -149,10 +151,10 @@ export default function InfiniteAgentLoop() {
       </div>
 
       {/* CENTRALIZED LIVE CONSOLE TERMINAL */}
-      <div className="w-full max-w-3xl mx-auto bg-black/60 border border-white/[0.06] rounded-xl p-5 font-mono text-[10px] text-[#c77dff] shadow-2xl relative overflow-hidden mt-12 backdrop-blur-md">
+      <div className="w-full max-w-3xl mx-auto bg-black/60 border border-slate-800 rounded-xl p-5 font-mono text-[10px] text-[#c77dff] shadow-2xl relative overflow-hidden mt-12 backdrop-blur-md">
         
         {/* Terminal Header */}
-        <div className="flex justify-between items-center border-b border-white/[0.04] pb-3 mb-4 text-[9px] text-white/30">
+        <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4 text-[9px] text-slate-400">
           <div className="flex items-center gap-2">
             <Terminal className="w-3.5 h-3.5 text-[#c77dff]" />
             <span>TABLETALK BACKGROUND AGENT PIPELINE FEED</span>
@@ -167,10 +169,10 @@ export default function InfiniteAgentLoop() {
         <div className="space-y-2 min-h-[90px] flex flex-col justify-center text-left">
           {agents[activeIndex].logs.map((line, idx) => (
             <div key={idx} className="flex items-start gap-2.5 leading-snug animate-fadeIn">
-              <span className="text-white/20 select-none">{idx === 0 ? ">" : "•"}</span>
+              <span className="text-slate-600 select-none">{idx === 0 ? ">" : "•"}</span>
               <span className={`font-mono text-[9.5px] ${
                 idx === 0 
-                  ? "text-white/80" 
+                  ? "text-slate-100 font-medium" 
                   : line.includes("⚠") 
                     ? "text-yellow-400 font-bold" 
                     : line.includes("✔") 
