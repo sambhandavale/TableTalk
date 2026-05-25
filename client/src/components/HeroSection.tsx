@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, ArrowUpRight, Star } from "lucide-react";
+import { Sparkles, ArrowUpRight, Star, LayoutDashboard, ShieldAlert } from "lucide-react";
 
 export default function HeroSection() {
   return (
@@ -55,22 +55,22 @@ export default function HeroSection() {
       {/* Right Column: Layered, Floating Dashboard Mockups (like Revly) */}
       <div className="lg:col-span-6 flex items-center justify-center py-12 lg:py-0 relative z-10">
         
-        {/* Constrained Layering Wrapper - Always keeps cards perfectly overlapping the dashboard */}
-        <div className="relative w-full max-w-[460px] h-[300px] animate-float">
+        {/* Constrained Layering Wrapper - Keeps cards floating elegantly around the dashboard */}
+        <div className="relative w-full max-w-[480px] h-[310px] animate-float">
           
           {/* Central Mockup: Web Dashboard (Landscape Laptop Style) */}
           <div className="absolute inset-0 bg-[var(--brand-card)] border border-[var(--brand-border)] rounded-2xl p-5 shadow-2xl overflow-hidden backdrop-blur-xl z-10 flex flex-col justify-between transition-colors duration-300">
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#c77dff]/40 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--brand-purple-text)]/30 to-transparent" />
             
             {/* Browser/Dashboard Header */}
-            <div className="flex justify-between items-center border-b border-[var(--brand-border-subtle)] pb-3 text-[10px] text-white/40">
+            <div className="flex justify-between items-center border-b border-[var(--brand-border-subtle)] pb-3 text-[10px] text-[var(--text-dim)]">
               <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-red-500/80" />
-                <div className="w-2 h-2 rounded-full bg-yellow-500/80" />
-                <div className="w-2 h-2 rounded-full bg-green-500/80" />
-                <span className="text-[9px] font-mono ml-1.5 opacity-60">dashboard.tabletalk.in/mm-bandra</span>
+                <div className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                <div className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                <div className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                <span className="text-[9px] font-mono ml-1.5 text-[var(--text-muted)] font-medium">dashboard.tabletalk.in/mm-bandra</span>
               </div>
-              <span className="px-2 py-0.5 rounded-full bg-brand-purple-text/10 border border-brand-purple-text/20 text-[8px] text-brand-purple-text font-bold">
+              <span className="px-2.5 py-0.5 rounded-full bg-[var(--brand-purple-text)]/10 border border-[var(--brand-purple-text)]/20 text-[8px] text-[var(--brand-purple-text)] font-bold tracking-wider">
                 ACTIVE
               </span>
             </div>
@@ -78,53 +78,63 @@ export default function HeroSection() {
             {/* Horizontal Layout Dashboard body */}
             <div className="flex-1 flex gap-4 pt-3 overflow-hidden">
               {/* Micro Sidebar */}
-              <div className="w-10 bg-[var(--brand-border-subtle)] border-r border-[var(--brand-border-subtle)] pr-3 flex flex-col items-center gap-3">
-                <div className="w-6 h-6 rounded bg-[var(--brand-border-subtle)] flex items-center justify-center text-white/40 text-[9px] font-bold">M</div>
-                <div className="w-6 h-6 rounded bg-brand-purple-text/10 text-brand-purple-text flex items-center justify-center text-[9px] font-bold">A</div>
-                <div className="w-6 h-6 rounded bg-[var(--brand-border-subtle)] flex items-center justify-center text-white/40 text-[9px] font-bold">C</div>
+              <div className="w-10 flex flex-col items-center gap-3 border-r border-[var(--brand-border-subtle)] pr-2">
+                <div className="w-7 h-7 rounded-xl bg-[var(--brand-purple-text)]/10 text-[var(--brand-purple-text)] flex items-center justify-center transition-colors duration-300">
+                  <LayoutDashboard className="w-4 h-4" />
+                </div>
+                <div className="w-7 h-7 rounded-xl hover:bg-[var(--orb-bg)] text-[var(--text-dim)] hover:text-[var(--foreground)] flex items-center justify-center transition-colors duration-300">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div className="w-7 h-7 rounded-xl hover:bg-[var(--orb-bg)] text-[var(--text-dim)] hover:text-[var(--foreground)] flex items-center justify-center transition-colors duration-300">
+                  <ShieldAlert className="w-4 h-4" />
+                </div>
               </div>
 
               {/* Main Workspace */}
               <div className="flex-1 flex flex-col justify-between overflow-hidden text-left">
                 <div className="flex justify-between items-start gap-4">
-                  <div>
-                    <span className="text-[8px] text-white/40 uppercase tracking-wider font-semibold block">Restaurant</span>
-                    <h4 className="text-sm font-bold text-white leading-tight">Mumbai Masala Bistro</h4>
+                  <div className="min-w-0">
+                    <span className="text-[8.5px] text-[var(--text-dim)] uppercase tracking-wider font-semibold block">Restaurant</span>
+                    <h4 className="text-xs sm:text-sm font-bold text-[var(--foreground)] leading-tight truncate transition-colors duration-300">
+                      Mumbai Masala Bistro
+                    </h4>
                   </div>
                   
                   {/* Compact Stats */}
-                  <div className="flex gap-2">
-                    <div className="bg-[var(--brand-border-subtle)] border border-[var(--brand-border-subtle)] px-2 py-1 rounded-lg text-center">
-                      <span className="text-[7px] text-white/40 uppercase block">NPS</span>
-                      <span className="text-xs font-bold text-white block">92%</span>
+                  <div className="flex gap-2 flex-shrink-0">
+                    <div className="bg-[var(--brand-card)] border border-[var(--brand-border)] px-2.5 py-1 rounded-xl text-center shadow-sm">
+                      <span className="text-[7px] text-[var(--text-dim)] uppercase font-semibold block">NPS</span>
+                      <span className="text-xs font-bold text-[var(--foreground)] block">92%</span>
                     </div>
-                    <div className="bg-[var(--brand-border-subtle)] border border-[var(--brand-border-subtle)] px-2 py-1 rounded-lg text-center">
-                      <span className="text-[7px] text-white/40 uppercase block">Scans</span>
-                      <span className="text-xs font-bold text-white block">342</span>
+                    <div className="bg-[var(--brand-card)] border border-[var(--brand-border)] px-2.5 py-1 rounded-xl text-center shadow-sm">
+                      <span className="text-[7px] text-[var(--text-dim)] uppercase font-semibold block">Scans</span>
+                      <span className="text-xs font-bold text-[var(--foreground)] block">342</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Horizontal Feed rows */}
-                <div className="space-y-1.5 pt-2">
-                  <span className="text-[8px] text-white/40 block uppercase tracking-wider font-semibold">Triage Feed</span>
+                <div className="space-y-2 pt-2">
+                  <span className="text-[8.5px] text-[var(--text-dim)] block uppercase tracking-wider font-semibold">Triage Feed</span>
                   
-                  <div className="bg-red-500/5 border border-red-500/10 px-2 py-1.5 rounded-xl flex justify-between items-center gap-2 text-[9px]">
-                    <div>
-                      <span className="font-bold text-white">Karan M. <span className="text-red-400">2★</span></span>
-                      <span className="text-white/60 ml-2">Cold naan delay.</span>
+                  <div className="bg-red-500/5 border border-red-500/10 px-3 py-2 rounded-xl flex justify-between items-center gap-3 text-[9.5px]">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                      <span className="font-bold text-[var(--foreground)]">Karan M. <span className="text-red-400">2★</span></span>
+                      <span className="text-[var(--text-muted)] truncate max-w-[100px] sm:max-w-[130px]">Cold naan delay.</span>
                     </div>
-                    <span className="px-1.5 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-[7px] text-red-400 font-bold uppercase whitespace-nowrap">
+                    <span className="px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-[7px] text-red-400 font-bold uppercase whitespace-nowrap tracking-wider">
                       Apology Sent
                     </span>
                   </div>
 
-                  <div className="bg-[var(--brand-border-subtle)] border border-[var(--brand-border-subtle)] px-2 py-1.5 rounded-xl flex justify-between items-center gap-2 text-[9px]">
-                    <div>
-                      <span className="font-bold text-white">Rohan S. <span className="text-green-400">5★</span></span>
-                      <span className="text-white/60 ml-2">Perfect Butter Chicken!</span>
+                  <div className="bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] px-3 py-2 rounded-xl flex justify-between items-center gap-3 text-[9.5px]">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                      <span className="font-bold text-[var(--foreground)]">Rohan S. <span className="text-green-400">5★</span></span>
+                      <span className="text-[var(--text-muted)] truncate max-w-[100px] sm:max-w-[130px]">Perfect Butter Chicken!</span>
                     </div>
-                    <span className="px-1.5 py-0.5 rounded bg-green-500/10 border border-green-500/20 text-[7px] text-green-400 font-bold uppercase whitespace-nowrap">
+                    <span className="px-2 py-0.5 rounded bg-green-500/10 border border-green-500/20 text-[7px] text-green-400 font-bold uppercase whitespace-nowrap tracking-wider">
                       Google Shared
                     </span>
                   </div>
@@ -133,61 +143,61 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Floating Card A: Health Index (Top Left) */}
-          <div className="absolute -top-6 -left-8 z-20 liquid-glass-card dot-grid p-3.5 w-[140px] animate-float-delayed">
+          {/* Floating Card A: Health Index (Top Left - Spaced beautifully for zero overlaps) */}
+          <div className="absolute -top-6 lg:-top-12 -left-6 lg:-left-16 z-20 liquid-glass-card dot-grid p-4 w-[140px] lg:w-[155px] hover:scale-[1.08] hover:-translate-y-1 transition-all duration-300 cursor-pointer shadow-2xl flex flex-col justify-between">
             <div className="liquid-glass-glow" />
-            <div className="relative z-10 space-y-1.5 text-left text-xs">
-              <span className="text-[8px] uppercase tracking-wider text-white/40 font-semibold block">Audit Score</span>
+            <div className="relative z-10 space-y-2.5 text-left">
+              <span className="text-[8.5px] uppercase tracking-wider text-[var(--text-dim)] font-semibold block">Audit Score</span>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-xl font-bold text-white">B+</span>
-                <span className="text-[9px] text-brand-purple-text font-mono font-bold">78/100</span>
+                <span className="text-2xl font-extrabold text-[var(--foreground)] leading-none font-display">B+</span>
+                <span className="text-[9.5px] text-[var(--brand-purple-text)] font-mono font-bold">78/100</span>
               </div>
-              <div className="w-full bg-white/[0.04] h-1 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-[#9d4edd] to-[#c77dff] h-full w-[78%]" />
+              <div className="w-full bg-[var(--brand-border)] h-1.5 rounded-full overflow-hidden">
+                <div className="bg-gradient-to-r from-[#9d4edd] to-[#c77dff] h-full w-[78%] rounded-full shadow-[0_0_8px_rgba(157,78,221,0.5)] animate-pulse" />
               </div>
             </div>
           </div>
 
-          {/* Floating Card B: Launch Offer Vouchers (Top Right) */}
-          <div className="absolute -top-4 -right-6 z-20 liquid-glass-card dot-grid p-3.5 w-[150px] animate-float">
+          {/* Floating Card B: Launch Offer Vouchers (Top Right - Spaced beautifully for zero overlaps) */}
+          <div className="absolute -top-4 lg:-top-8 -right-6 lg:-right-16 z-20 liquid-glass-card dot-grid p-4 w-[150px] lg:w-[165px] hover:scale-[1.08] hover:-translate-y-1 transition-all duration-300 cursor-pointer shadow-2xl">
             <div className="liquid-glass-glow" />
-            <div className="relative z-10 text-left space-y-1.5 text-xs flex flex-col justify-between h-full">
-              <div className="flex items-center gap-1.5 text-[8px] text-brand-purple-text font-bold uppercase tracking-wider">
-                <Sparkles className="w-3 h-3 animate-spin" />
+            <div className="relative z-10 text-left space-y-2 text-xs flex flex-col justify-between h-full">
+              <div className="flex items-center gap-1.5 text-[8.5px] text-[var(--brand-purple-text)] font-bold uppercase tracking-wider">
+                <Sparkles className="w-3 h-3 text-[var(--brand-purple-text)] animate-pulse" />
                 Campaign Active
               </div>
-              <p className="text-[10px] text-white leading-tight font-medium">SORRY20 • 20% off Naan</p>
-              <div className="text-[8px] bg-white/10 px-2 py-0.5 rounded text-white/80 font-mono text-center uppercase tracking-wider">
+              <p className="text-[10px] text-[var(--foreground)] leading-snug font-bold">SORRY20 • 20% off Naan</p>
+              <div className="text-[8.5px] bg-[var(--brand-purple-text)]/10 border border-[var(--brand-purple-text)]/20 py-1 rounded text-[var(--brand-purple-text)] font-mono text-center uppercase tracking-wider font-bold shadow-sm">
                 Auto-Recovery
               </div>
             </div>
           </div>
 
-          {/* Floating Card C: Customer Star rating (Bottom Right) */}
-          <div className="absolute -bottom-6 -right-8 z-20 liquid-glass-card dot-grid p-3.5 w-[140px] animate-float-delayed">
+          {/* Floating Card C: Customer Star rating (Bottom Right - Spaced beautifully for zero overlaps) */}
+          <div className="absolute -bottom-6 lg:-bottom-12 -right-6 lg:-right-16 z-20 liquid-glass-card dot-grid p-4 w-[140px] lg:w-[155px] hover:scale-[1.08] hover:translate-y-1 transition-all duration-300 cursor-pointer shadow-2xl">
             <div className="liquid-glass-glow" />
             <div className="relative z-10 text-left space-y-1 text-xs">
-              <span className="text-[8px] uppercase tracking-wider text-white/40 block">Diner Rating</span>
-              <div className="text-lg font-bold text-white">4.8</div>
-              <div className="flex text-yellow-400">
+              <span className="text-[8.5px] uppercase tracking-wider text-[var(--text-dim)] block font-semibold">Diner Rating</span>
+              <div className="text-2xl font-extrabold text-[var(--foreground)] font-display leading-none">4.8</div>
+              <div className="flex text-amber-400 gap-0.5 pt-1">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-2.5 h-2.5 fill-current" />
+                  <Star key={s} className="w-3 h-3 fill-current" />
                 ))}
               </div>
-              <span className="text-[8px] text-white/50 block font-light">342 reviews imported</span>
+              <span className="text-[8.5px] text-[var(--text-muted)] block font-light pt-1">342 reviews imported</span>
             </div>
           </div>
 
-          {/* Floating Card D: Private Triage Alert (Bottom Left) */}
-          <div className="absolute -bottom-8 -left-6 z-20 liquid-glass-card dot-grid p-3.5 w-[150px] animate-float">
+          {/* Floating Card D: Private Triage Alert (Bottom Left - Spaced beautifully for zero overlaps) */}
+          <div className="absolute -bottom-8 lg:-bottom-14 -left-6 lg:-left-16 z-20 liquid-glass-card dot-grid p-4 w-[150px] lg:w-[165px] hover:scale-[1.08] hover:translate-y-1 transition-all duration-300 cursor-pointer shadow-2xl">
             <div className="liquid-glass-glow" />
-            <div className="relative z-10 text-left space-y-1.5 text-xs">
-              <div className="flex items-center gap-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping" />
-                <span className="text-[8px] text-red-400 font-bold uppercase tracking-wider">CRITICAL ALARM</span>
+            <div className="relative z-10 text-left space-y-2 text-xs">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_#ef4444]" />
+                <span className="text-[8.5px] text-red-500 font-bold uppercase tracking-wider">CRITICAL ALARM</span>
               </div>
-              <p className="text-[9px] text-white/70 font-light leading-snug">"Starters were dry, Naan cold."</p>
-              <span className="text-[8px] text-white/40 block font-mono">Table 4 • floor Alert</span>
+              <p className="text-[9.5px] text-[var(--text-muted)] font-light leading-snug italic">"Starters were dry, Naan cold."</p>
+              <span className="text-[8.5px] text-[var(--text-dim)] block font-mono">Table 4 • Floor Alert</span>
             </div>
           </div>
 

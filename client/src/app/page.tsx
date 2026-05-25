@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowUpRight, Sun, Moon, ChevronDown, LayoutDashboard, ShieldAlert, Sparkles, TrendingUp } from "lucide-react";
 
 // Import modular sub-components
@@ -30,6 +30,22 @@ export default function TableTalkLandingPage() {
   const [activeTab, setActiveTab] = useState("mumbai");
   const [theme, setTheme] = useState("dark");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userSlug, setUserSlug] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedSlug = localStorage.getItem("tabletalk_restaurant_slug") || 
+                         localStorage.getItem("tabletalk_restaurant_id");
+      const storedEmail = localStorage.getItem("tabletalk_user_email");
+      if (storedSlug && storedEmail) {
+        setIsLoggedIn(true);
+        setUserSlug(storedSlug);
+        // Seamlessly auto-redirect GM to their active control center
+        window.location.href = `/dashboard/${storedSlug}`;
+      }
+    }
+  }, []);
 
   const toggleTheme = () => {
     const nextTheme = theme === "dark" ? "light" : "dark";
@@ -67,14 +83,31 @@ export default function TableTalkLandingPage() {
         </nav>
 
         <div className="flex items-center gap-4 relative">
-
-          <a 
-            href="/onboard"
-            className="px-5 py-2.5 bg-[#0c0516] text-[#ffffff] hover:bg-[#1a0f2b] rounded-full text-xs font-bold transition-all duration-300 transform active:scale-95 shadow-md flex items-center gap-1.5 cursor-pointer border border-white/5"
-          >
-            Get a demo
-            <ArrowUpRight className="w-4 h-4 text-[#ffffff]" />
-          </a>
+          {isLoggedIn ? (
+            <a 
+              href={`/dashboard/${userSlug}`}
+              className="px-5 py-2.5 bg-[#c77dff] text-black hover:bg-[#b55fe6] rounded-full text-xs font-bold transition-all duration-300 transform active:scale-95 shadow-md flex items-center gap-1.5 cursor-pointer border border-white/5"
+            >
+              Go to Dashboard
+              <ArrowUpRight className="w-4 h-4 text-black" />
+            </a>
+          ) : (
+            <>
+              <a 
+                href="/signin"
+                className="text-xs font-bold text-[var(--text-muted)] hover:text-[var(--foreground)] pr-2 transition-colors duration-300 cursor-pointer"
+              >
+                Sign In
+              </a>
+              <a 
+                href="/onboard"
+                className="px-5 py-2.5 bg-[#0c0516] text-[#ffffff] hover:bg-[#1a0f2b] rounded-full text-xs font-bold transition-all duration-300 transform active:scale-95 shadow-md flex items-center gap-1.5 cursor-pointer border border-white/5"
+              >
+                Get started
+                <ArrowUpRight className="w-4 h-4 text-[#ffffff]" />
+              </a>
+            </>
+          )}
           
           {/* Explore Suites guest dropdown settings menu */}
           <div className="relative">
