@@ -460,8 +460,8 @@ export default function TableTalkLandingPage() {
           {/* Top Footer Columns Grid */}
           <div className="grid grid-cols-2 md:grid-cols-12 gap-10 md:gap-8">
             
-            {/* Col 1: Brand details (4 cols) */}
-            <div className="col-span-2 md:col-span-4 space-y-5 text-left">
+            {/* Col 1: Brand details (6 cols) */}
+            <div className="col-span-2 md:col-span-6 space-y-5 text-left">
               <div className="flex items-center">
                 <img 
                   src={theme === "dark" ? "/assets/logos/logo_dark.svg" : "/assets/logos/logo_light.svg"} 
@@ -469,49 +469,9 @@ export default function TableTalkLandingPage() {
                   className="h-7 w-auto object-contain transition-all duration-300"
                 />
               </div>
-              <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed max-w-sm transition-colors duration-300">
+              <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed max-w-md transition-colors duration-300">
                 Making offline restaurant operations profitable using autonomous AI customer intelligence, private triage loops, and automated retention marketing.
               </p>
-              
-              {/* Region Indicators */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">Active Hubs</span>
-                <div className="flex flex-wrap gap-2.5 items-center">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--orb-bg)] border border-[var(--orb-border)] text-[10px] text-[var(--text-muted)] font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Mumbai
-                  </span>
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--orb-bg)] border border-[var(--orb-border)] text-[10px] text-[var(--text-muted)] font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Delhi NCR
-                  </span>
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--orb-bg)] border border-[var(--orb-border)] text-[10px] text-[var(--text-muted)] font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Bengaluru
-                  </span>
-                </div>
-              </div>
-
-              {/* Newsletter Sign-up */}
-              <div className="space-y-2.5 pt-2 max-w-xs">
-                <span className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">Weekly GM Intelligence</span>
-                <p className="text-[10.5px] text-[var(--text-muted)] font-light leading-snug">
-                  Join 1,200+ Indian GMs getting offline operations & retention playbooks.
-                </p>
-                <form onSubmit={(e) => e.preventDefault()} className="relative flex items-center mt-1">
-                  <input 
-                    type="email" 
-                    placeholder="manager@restaurant.com" 
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--brand-card)] border border-[var(--brand-border)] text-xs text-[var(--foreground)] placeholder-[var(--text-dim)] focus:outline-none focus:border-[var(--brand-purple-text)] focus:ring-1 focus:ring-[var(--brand-purple-text)]/20 transition-all duration-300 pr-12"
-                  />
-                  <button 
-                    type="submit" 
-                    className="absolute right-1 px-3 py-1.5 bg-[#0c0516] text-[#ffffff] hover:bg-[#1a0f2b] rounded-lg text-[10px] font-bold transition-all duration-300 border border-white/5 cursor-pointer"
-                  >
-                    Join
-                  </button>
-                </form>
-              </div>
             </div>
 
             {/* Col 2: Product Suites (2 cols) */}
@@ -525,18 +485,7 @@ export default function TableTalkLandingPage() {
               </ul>
             </div>
 
-            {/* Col 3: Resources (2 cols) */}
-            <div className="col-span-1 md:col-span-2 space-y-4 text-left">
-              <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">Resources</h5>
-              <ul className="space-y-2.5 font-light transition-colors duration-300">
-                <FooterLink href="#testimonials">Customer Stories</FooterLink>
-                <FooterLink href="#agent-orchestration">Autonomous Loop</FooterLink>
-                <FooterLink href="#faq">General FAQ</FooterLink>
-                <FooterLink href="/onboard">Request Live Demo</FooterLink>
-              </ul>
-            </div>
-
-            {/* Col 4: Integrations & Tech (2 cols) */}
+            {/* Col 3: Developer APIs (2 cols) */}
             <div className="col-span-1 md:col-span-2 space-y-4 text-left">
               <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">Developer APIs</h5>
               <ul className="space-y-2.5 font-light transition-colors duration-300">
@@ -555,7 +504,7 @@ export default function TableTalkLandingPage() {
               </ul>
             </div>
 
-            {/* Col 5: Company & POS Trust (2 cols) */}
+            {/* Col 4: Company & Trust (2 cols) */}
             <div className="col-span-1 md:col-span-2 space-y-4 text-left">
               <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">Company & Trust</h5>
               <ul className="space-y-2.5 font-light transition-colors duration-300">
@@ -563,21 +512,6 @@ export default function TableTalkLandingPage() {
                 <FooterLink href="#security">Security Standards</FooterLink>
                 <FooterLink href="#contact">Contact Success</FooterLink>
               </ul>
-              
-              <div className="pt-2">
-                <div className="p-3.5 bg-[var(--brand-card)] border border-[var(--brand-border)] rounded-xl space-y-2 transition-colors duration-300">
-                  <span className="text-[9px] uppercase tracking-wider text-[var(--text-dim)] font-semibold block leading-none">Integration Status</span>
-                  <span className="text-[10.5px] font-bold text-[var(--foreground)] block leading-none">POS Active</span>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    <span className="text-[9px] bg-brand-purple-text/10 border border-brand-purple-text/20 px-2 py-0.5 rounded text-brand-purple-text font-mono font-bold leading-none transition-colors duration-300">
-                      POS READY
-                    </span>
-                    <span className="text-[9px] bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded text-emerald-500 font-mono font-bold leading-none">
-                      SECURE
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
 
           </div>
