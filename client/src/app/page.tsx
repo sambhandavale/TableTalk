@@ -469,7 +469,7 @@ export default function TableTalkLandingPage() {
                   className="h-7 w-auto object-contain transition-all duration-300"
                 />
               </div>
-              <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed max-w-md transition-colors duration-300">
+              <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed max-w-sm transition-colors duration-300">
                 Making offline restaurant operations profitable using autonomous AI customer intelligence, private triage loops, and automated retention marketing.
               </p>
             </div>
