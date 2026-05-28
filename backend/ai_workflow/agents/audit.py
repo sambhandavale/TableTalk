@@ -29,53 +29,90 @@ class OnboardingAuditAgent:
         name: str, 
         cuisine: str, 
         location: str, 
-        maps_url: str
+        maps_url: str,
+        real_scraped_reviews: List[Dict[str, Any]] = None
     ) -> List[Dict[str, Any]]:
-        """AI Scraper Agent: Prompts LLM to scrape/reconstruct high-fidelity reviews from public profiles."""
+        """AI Scraper Agent: Prompts LLM to scrape/reconstruct/enrich review records."""
         logger.info(f"AI Scraper Agent triggered for restaurant: {name}")
         
-        prompt = f"""
-        Please extract reviews for:
-        - Restaurant Name: {name}
-        - Location Area: {location}
-        - Google Maps URL: {maps_url}
-        """
+        import json
         
-        fallback_reviews = [
-            ScrapedReview(
-                rating=5,
-                text=f"Hands down the best place in {location}! The {cuisine} was absolutely fresh and delicious.",
-                ordered_items=["Chef Special Combo"],
-                visitor_type="returning",
-                diner_name="Aarav Sharma",
-                timestamp="2026-05-24T19:30:00Z"
-            ),
-            ScrapedReview(
-                rating=5,
-                text=f"Amazing dining experience at {name}! Very warm hospitality, nice staff, clean ambience.",
-                ordered_items=["Signature Platter"],
-                visitor_type="returning",
-                diner_name="Deepa Patel",
-                timestamp="2026-05-20T21:00:00Z"
-            ),
-            ScrapedReview(
-                rating=2,
-                text="Food was okay but service was extremely slow on Friday night. They forgot our starters.",
-                ordered_items=["Appetizers"],
-                visitor_type="first-time",
-                diner_name="Kabir Kapoor",
-                timestamp="2026-05-15T22:15:00Z"
-            ),
-            ScrapedReview(
-                rating=4,
-                text="Decent food quality and nice portion sizes. Loved the seating area.",
-                ordered_items=["Paneer Curry", "Stuffed Naan"],
-                visitor_type="first-time",
-                diner_name="Neha Gupta",
-                timestamp="2026-05-10T13:30:00Z"
-            )
-        ]
-        fallback_output = ScraperStructuredOutput(reviews=fallback_reviews)
+        if real_scraped_reviews:
+            logger.info(f"AI Scraper Agent is parsing & structuring {len(real_scraped_reviews)} REAL reviews.")
+            prompt = f"""
+            We have successfully scraped the following REAL public customer reviews for:
+            - Restaurant Name: {name}
+            - Location Area: {location}
+            - Google Maps URL: {maps_url}
+            
+            Real Reviews List:
+            {json.dumps(real_scraped_reviews, indent=2)}
+            
+            INSTRUCTIONS:
+            Parse and convert ALL of these real reviews into our structured database schema:
+            1. Retain the exact 'diner_name', 'rating', 'text', and 'raw_review_id' from the scraped data.
+            2. Infer realistic 'ordered_items' based on dishes mentioned in the text (e.g. "Masala Dosa" -> ["Masala Dosa"]). If no specific dishes are named, infer highly signature dishes that match this restaurant's actual cuisine ({cuisine}) and context.
+            3. Infer the 'visitor_type' ("returning" or "first-time") based on semantic hints in their feedback.
+            4. Assign realistic timestamps over the last 6 months.
+            """
+            # Create a robust fallback using the actual scraped data instead of throwing it away
+            fallback_reviews = []
+            for r in real_scraped_reviews:
+                fallback_reviews.append(
+                    ScrapedReview(
+                        rating=int(r.get("rating", 5)),
+                        text=r.get("text") or "",
+                        ordered_items=[],
+                        visitor_type="unknown",
+                        diner_name=r.get("diner_name", "Google Diner"),
+                        timestamp=r.get("timestamp", "2026-05-25T18:00:00Z"),
+                        raw_review_id=r.get("raw_review_id")
+                    )
+                )
+            fallback_output = ScraperStructuredOutput(reviews=fallback_reviews)
+        else:
+            logger.info("No real reviews provided. Generating simulated high-fidelity reviews.")
+            prompt = f"""
+            Please extract reviews for:
+            - Restaurant Name: {name}
+            - Location Area: {location}
+            - Google Maps URL: {maps_url}
+            """
+            fallback_reviews = [
+                ScrapedReview(
+                    rating=5,
+                    text=f"Hands down the best place in {location}! The {cuisine} was absolutely fresh and delicious.",
+                    ordered_items=["Chef Special Combo"],
+                    visitor_type="returning",
+                    diner_name="Aarav Sharma",
+                    timestamp="2026-05-24T19:30:00Z"
+                ),
+                ScrapedReview(
+                    rating=5,
+                    text=f"Amazing dining experience at {name}! Very warm hospitality, nice staff, clean ambience.",
+                    ordered_items=["Signature Platter"],
+                    visitor_type="returning",
+                    diner_name="Deepa Patel",
+                    timestamp="2026-05-20T21:00:00Z"
+                ),
+                ScrapedReview(
+                    rating=2,
+                    text="Food was okay but service was extremely slow on Friday night. They forgot our starters.",
+                    ordered_items=["Appetizers"],
+                    visitor_type="first-time",
+                    diner_name="Kabir Kapoor",
+                    timestamp="2026-05-15T22:15:00Z"
+                ),
+                ScrapedReview(
+                    rating=4,
+                    text="Decent food quality and nice portion sizes. Loved the seating area.",
+                    ordered_items=["Paneer Curry", "Stuffed Naan"],
+                    visitor_type="first-time",
+                    diner_name="Neha Gupta",
+                    timestamp="2026-05-10T13:30:00Z"
+                )
+            ]
+            fallback_output = ScraperStructuredOutput(reviews=fallback_reviews)
         
         try:
             structured_output = await llm_service.generate_structured_output(
@@ -97,7 +134,8 @@ class OnboardingAuditAgent:
                 "ordered_items": rev.ordered_items,
                 "visitor_type": rev.visitor_type,
                 "diner_name": rev.diner_name,
-                "timestamp": rev.timestamp
+                "timestamp": rev.timestamp,
+                "raw_review_id": rev.raw_review_id
             } for rev in structured_output.reviews]
             
         except Exception as e:
@@ -109,7 +147,8 @@ class OnboardingAuditAgent:
                 "ordered_items": r.ordered_items,
                 "visitor_type": r.visitor_type,
                 "diner_name": r.diner_name,
-                "timestamp": r.timestamp
+                "timestamp": r.timestamp,
+                "raw_review_id": r.raw_review_id
             } for r in fallback_reviews]
 
     async def analyze_reviews_flow(

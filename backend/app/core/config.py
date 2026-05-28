@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     
     # Gemini AI Key
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    
+    # Third-Party Scraper API Keys
+    APIFY_API_TOKEN: str = os.getenv("APIFY_API_TOKEN", "")
 
     class Config:
         env_file = ".env"

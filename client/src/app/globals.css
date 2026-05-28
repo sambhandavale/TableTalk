@@ -173,5 +173,30 @@ body {
   transition: opacity 0.5s ease;
 }
 
+@layer utilities {
+  /* Sleek Dark UI Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;  /* Thin and unobtrusive */
+    height: 6px;
+  }
 
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #0c0516; /* Matches your sidebar background */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #1e293b; /* Matches your border color */
+    border-radius: 9999px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a855f7; /* Subtle brand purple pop on hover */
+  }
+
+  /* Firefox Support */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #1e293b #0c0516;
+  }
+}
 

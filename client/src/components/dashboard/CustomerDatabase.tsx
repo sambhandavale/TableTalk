@@ -1,0 +1,112 @@
+import React, { useState } from "react";
+import { Users, Filter, Send, Phone, Star, Search } from "lucide-react";
+
+export default function CustomerDatabase({ customers = [] }: any) {
+  const [segmentFilter, setSegmentFilter] = useState("All");
+
+  const filtered = segmentFilter === "All" ? customers : customers.filter((c: any) => c.segment === segmentFilter);
+
+  return (
+    <div className="space-y-4 w-full max-w-[1400px]">
+      
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[#1e293b]">
+        <div>
+          <h2 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+            <Users className="w-5 h-5 text-[#a855f7]" />
+            Customer Database (CRM)
+          </h2>
+          <p className="text-[11px] text-[#64748b] mt-1">
+            Diners who opted-in with contact information via the TableTalk QR Intercept.
+          </p>
+        </div>
+        
+        <button className="px-4 py-2 bg-[#a855f7]/10 border border-[#a855f7] text-[#a855f7] hover:bg-[#a855f7] hover:text-black text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 rounded-none transition-colors">
+          <Send className="w-3.5 h-3.5" />
+          Send Campaign
+        </button>
+      </div>
+
+      {/* Filters & Search */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0c0516] p-2 border border-[#1e293b] rounded-none">
+        <div className="flex items-center gap-2 bg-[#1e293b]/20 px-2 py-1 border border-[#1e293b]">
+          <Filter className="w-3 h-3 text-[#64748b]" />
+          <select 
+            value={segmentFilter}
+            onChange={(e) => setSegmentFilter(e.target.value)}
+            className="bg-transparent text-[10px] font-semibold text-white focus:outline-none uppercase tracking-widest cursor-pointer"
+          >
+            <option value="All">All Segments</option>
+            <option value="Happy Regular">Happy Regulars</option>
+            <option value="New">New</option>
+            <option value="At Risk">At Risk</option>
+            <option value="Lost">Lost</option>
+          </select>
+        </div>
+
+        <div className="flex items-center relative flex-1 max-w-xs">
+          <Search className="absolute left-2 w-3.5 h-3.5 text-[#64748b]" />
+          <input
+            type="text"
+            placeholder="Search by name or phone..."
+            className="w-full pl-7 pr-3 py-1 bg-[#1e293b]/20 border border-[#1e293b] text-[10px] text-white focus:outline-none focus:border-[#a855f7] rounded-none placeholder-[#64748b]"
+          />
+        </div>
+      </div>
+
+      {/* CRM Table */}
+      <div className="bg-[#0c0516] border border-[#1e293b] rounded-none overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b border-[#1e293b] bg-[#1e293b]/20 text-[9px] uppercase tracking-widest text-[#64748b]">
+              <th className="p-3 font-bold">Diner Name</th>
+              <th className="p-3 font-bold">Contact</th>
+              <th className="p-3 font-bold">Visits</th>
+              <th className="p-3 font-bold">Avg Rating</th>
+              <th className="p-3 font-bold">AI Segment</th>
+              <th className="p-3 font-bold">Last Visit</th>
+              <th className="p-3 font-bold text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#1e293b]">
+            {filtered.map((c: any, idx: number) => (
+              <tr key={idx} className="hover:bg-[#1e293b]/10 transition-colors">
+                <td className="p-3 text-xs font-semibold text-white">{c.name || c.diner_name || "Guest"}</td>
+                <td className="p-3 text-[10px] text-[#94a3b8] flex items-center gap-1.5 mt-0.5">
+                  <Phone className="w-3 h-3 text-[#64748b]" /> {c.contact || c.phone || "N/A"}
+                </td>
+                <td className="p-3 text-[10px] text-white font-mono">{c.visits || c.visit_count || 1}</td>
+                <td className="p-3 text-[10px] text-white flex items-center gap-1 mt-0.5">
+                  <Star className={`w-3 h-3 ${(c.avgRating || 0) >= 4 ? 'text-[#10b981]' : (c.avgRating || 0) <= 2 ? 'text-[#f43f5e]' : 'text-[#f59e0b]'}`} />
+                  {(c.avgRating || 0).toFixed(1)}
+                </td>
+                <td className="p-3">
+                  <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest border rounded-none ${
+                    c.segment === "Happy Regular" ? "bg-[#10b981]/10 border-[#10b981]/30 text-[#10b981]" :
+                    c.segment === "At Risk" ? "bg-[#f59e0b]/10 border-[#f59e0b]/30 text-[#f59e0b]" :
+                    c.segment === "Lost" ? "bg-[#f43f5e]/10 border-[#f43f5e]/30 text-[#f43f5e]" :
+                    "bg-[#a855f7]/10 border-[#a855f7]/30 text-[#a855f7]"
+                  }`}>
+                    {c.segment || "New"}
+                  </span>
+                </td>
+                <td className="p-3 text-[10px] text-[#94a3b8]">{c.lastVisit || c.last_visit ? new Date(c.lastVisit || c.last_visit).toLocaleDateString() : "Recently"}</td>
+                <td className="p-3 text-right">
+                  <button className="text-[#a855f7] hover:text-white text-[9px] font-bold uppercase tracking-widest transition-colors">
+                    View Profile
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {filtered.length === 0 && (
+          <div className="p-8 text-center text-[#64748b] text-[10px] uppercase tracking-widest font-bold">
+            {customers.length === 0 ? "No customers collected yet. Deploy your TableTalk QR codes to start building your CRM." : "No customers found in this segment."}
+          </div>
+        )}
+      </div>
+
+    </div>
+  );
+}

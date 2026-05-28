@@ -34,6 +34,63 @@
             ],
             "visitor_type": "first-time",
             "timestamp": "2026-05-23T14:30:00Z"
+        },
+        {
+            "source": "google",
+            "rating": 5,
+            "text": "Hands down the best place in Mumbai! The Multi-Cuisine was absolutely fresh and delicious.",
+            "ordered_items": [
+                "Chef Special Combo"
+            ],
+            "visitor_type": "returning",
+            "diner_name": "Aarav Sharma",
+            "timestamp": "2026-05-24T19:30:00Z",
+            "restaurant_id": "rest-61548",
+            "id": "revi-34908",
+            "ai_response_draft": "Hi Aarav Sharma! We are thrilled to hear you loved our our Chef Special Combo! Our team takes great pride in crafting these fresh daily. Looking forward to your next visit!"
+        },
+        {
+            "source": "google",
+            "rating": 5,
+            "text": "Amazing dining experience at Unknown Restaurant! Very warm hospitality, nice staff, clean ambience.",
+            "ordered_items": [
+                "Signature Platter"
+            ],
+            "visitor_type": "returning",
+            "diner_name": "Deepa Patel",
+            "timestamp": "2026-05-20T21:00:00Z",
+            "restaurant_id": "rest-61548",
+            "id": "revi-24727",
+            "ai_response_draft": "Hi Deepa Patel! We are thrilled to hear you loved our our Signature Platter! Our team takes great pride in crafting these fresh daily. Looking forward to your next visit!"
+        },
+        {
+            "source": "google",
+            "rating": 2,
+            "text": "Food was okay but service was extremely slow on Friday night. They forgot our starters.",
+            "ordered_items": [
+                "Appetizers"
+            ],
+            "visitor_type": "first-time",
+            "diner_name": "Kabir Kapoor",
+            "timestamp": "2026-05-15T22:15:00Z",
+            "restaurant_id": "rest-61548",
+            "id": "revi-16761",
+            "ai_response_draft": "Thank you for your feedback, Kabir Kapoor. We sincerely apologize for the delay regarding your our Appetizers. We have addressed this with our kitchen team and hope to welcome you back to offer a much smoother service."
+        },
+        {
+            "source": "google",
+            "rating": 4,
+            "text": "Decent food quality and nice portion sizes. Loved the seating area.",
+            "ordered_items": [
+                "Paneer Curry",
+                "Stuffed Naan"
+            ],
+            "visitor_type": "first-time",
+            "diner_name": "Neha Gupta",
+            "timestamp": "2026-05-10T13:30:00Z",
+            "restaurant_id": "rest-61548",
+            "id": "revi-23735",
+            "ai_response_draft": "Hi Neha Gupta! We are thrilled to hear you loved our our Paneer Curry, Stuffed Naan! Our team takes great pride in crafting these fresh daily. Looking forward to your next visit!"
         }
     ],
     "insights": [
@@ -56,6 +113,28 @@
                 "Highlight Biryani as signature dish on Google Maps.",
                 "Review tandoor-to-table pathway for cold Naan alerts."
             ]
+        },
+        {
+            "restaurant_id": "rest-61548",
+            "generated_date": "2026-05-25T18:00:00Z",
+            "themes": {
+                "praised": [
+                    "Warm Hospitality",
+                    "Food Portions",
+                    "Ambience"
+                ],
+                "complaints": [
+                    {
+                        "issue": "Slow beverage delivery during peak hours",
+                        "impact": "High"
+                    }
+                ]
+            },
+            "health_score": 84,
+            "action_items": [
+                "Optimize pathing from kitchen to tables during dinner rushes."
+            ],
+            "id": "insi-15265"
         }
     ],
     "campaigns": [

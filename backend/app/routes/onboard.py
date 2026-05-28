@@ -35,18 +35,47 @@ async def trigger_background_audit(restaurant_id: str, maps_url: str):
         cuisine = restaurant.get("cuisine", "Multi-Cuisine") if restaurant else "Multi-Cuisine"
         location = restaurant.get("location", "Mumbai") if restaurant else "Mumbai"
         
-        # 3. Call Pure AI Scraper Agent to fetch reviews structured
+        # 3. Call CID AJAX Scraper Utility to extract real reviews first
+        from app.core.utils import scrape_real_google_reviews
+        real_reviews = await scrape_real_google_reviews(resolved_url)
+        
+        # 3.5 Ingest Raw Reviews to MongoDB safely
+        if real_reviews:
+            import uuid
+            for rr in real_reviews:
+                rr["restaurant_id"] = restaurant_id
+                rr["raw_review_id"] = f"raw-{uuid.uuid4().hex[:8]}"
+            await db.insert_many("raw_reviews", real_reviews)
+            logger.info(f"Ingested {len(real_reviews)} raw reviews safely to database.")
+        
+        # 4. Call Pure AI Scraper Agent to structure and enrich reviews
         raw_reviews = await audit_agent.scrape_reviews_flow(
             name=name,
             cuisine=cuisine,
             location=location,
-            maps_url=resolved_url
+            maps_url=resolved_url,
+            real_scraped_reviews=real_reviews or None
         )
         
-        # 4. Save reviews collection records to MongoDB (Business / DB logic)
+        # 5. Save reviews collection records to MongoDB (Business / DB logic)
         saved_reviews = []
         for r in raw_reviews:
             r["restaurant_id"] = restaurant_id
+            
+            # Merge actual metadata from the live scraper if matched
+            if real_reviews:
+                for real_r in real_reviews:
+                    real_text = real_r.get("text") or ""
+                    r_text = r.get("text") or ""
+                    
+                    if real_r.get("diner_name") == r.get("diner_name") or (r_text and r_text[:20] in real_text):
+                        r["timestamp"] = real_r.get("timestamp", r.get("timestamp", "2026-05-25T18:00:00Z"))
+                        if "owner_approved_reply" in real_r:
+                            r["owner_approved_reply"] = real_r["owner_approved_reply"]
+                        if "final_reply_content" in real_r:
+                            r["final_reply_content"] = real_r["final_reply_content"]
+                        break
+            
             saved = await db.insert_one("reviews", r)
             saved_reviews.append(saved)
         
@@ -76,7 +105,7 @@ async def trigger_background_audit(restaurant_id: str, maps_url: str):
             "generated_date": "2026-05-25T18:00:00Z",
             "themes": {
                 "praised": analysis_result.praised,
-                "complaints": [c.issue for c in analysis_result.complaints]
+                "complaints": [{"issue": c.issue, "impact": c.impact} for c in analysis_result.complaints]
             },
             "health_score": analysis_result.health_score,
             "action_items": analysis_result.action_items

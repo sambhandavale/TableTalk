@@ -143,7 +143,11 @@ class ResilientDB:
     async def get_collection(self, collection_name: str) -> List[Dict[str, Any]]:
         if self.is_mongodb_connected and self.db is not None:
             cursor = self.db[collection_name].find({})
-            return await cursor.to_list(length=1000)
+            docs = await cursor.to_list(length=1000)
+            for doc in docs:
+                if "_id" in doc:
+                    doc["_id"] = str(doc["_id"])
+            return docs
         return self.fallback_data.get(collection_name, [])
 
     async def insert_one(self, collection_name: str, document: Dict[str, Any]) -> Dict[str, Any]:
@@ -163,6 +167,28 @@ class ResilientDB:
         self.fallback_data[collection_name].append(document)
         self._save_fallback_data()
         return document
+
+    async def insert_many(self, collection_name: str, documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        if not documents:
+            return []
+            
+        for doc in documents:
+            if "id" not in doc and "_id" not in doc:
+                doc["id"] = f"{collection_name[:4]}-{int(os.urandom(4).hex(), 16) % 100000}"
+                
+        if self.is_mongodb_connected and self.db is not None:
+            await self.db[collection_name].insert_many(documents)
+            for doc in documents:
+                if "_id" in doc:
+                    doc["_id"] = str(doc["_id"])
+            return documents
+            
+        # Local JSON fallback
+        if collection_name not in self.fallback_data:
+            self.fallback_data[collection_name] = []
+        self.fallback_data[collection_name].extend(documents)
+        self._save_fallback_data()
+        return documents
 
     async def find_one(self, collection_name: str, query: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         if self.is_mongodb_connected and self.db is not None:
