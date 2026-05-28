@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from app.database import db
 from app.schemas.onboard import RestaurantOnboardRequest, RestaurantProfileUpdateRequest, UserLoginRequest
-
+from app.core.utils import resolve_maps_url
 
 # Import Agent 1
 from ai_workflow import audit_agent
@@ -18,7 +18,82 @@ def hash_password(password: str) -> str:
 
 async def trigger_background_audit(restaurant_id: str, maps_url: str):
     """Fires Agent 1 silently in background to scrape & audit Google Reviews."""
-    await audit_agent.run_audit_flow(restaurant_id, maps_url)
+    import logging
+    logger = logging.getLogger("TableTalk.BackendAudit")
+    logger.info(f"Orchestrating onboarding audit & scraper workflow for Restaurant ID: {restaurant_id}")
+    
+    try:
+        # 1. Resolve shortened Maps link redirects
+        resolved_url = await resolve_maps_url(maps_url)
+        
+        # 2. Retrieve restaurant context metadata for targeted LLM scraping
+        restaurant = await db.find_one("restaurants", {"id": restaurant_id})
+        if not restaurant:
+            restaurant = await db.find_one("restaurants", {"slug": restaurant_id})
+            
+        name = restaurant.get("name", "Unknown Restaurant") if restaurant else "Unknown Restaurant"
+        cuisine = restaurant.get("cuisine", "Multi-Cuisine") if restaurant else "Multi-Cuisine"
+        location = restaurant.get("location", "Mumbai") if restaurant else "Mumbai"
+        
+        # 3. Call Pure AI Scraper Agent to fetch reviews structured
+        raw_reviews = await audit_agent.scrape_reviews_flow(
+            name=name,
+            cuisine=cuisine,
+            location=location,
+            maps_url=resolved_url
+        )
+        
+        # 4. Save reviews collection records to MongoDB (Business / DB logic)
+        saved_reviews = []
+        for r in raw_reviews:
+            r["restaurant_id"] = restaurant_id
+            saved = await db.insert_one("reviews", r)
+            saved_reviews.append(saved)
+        
+        logger.info(f"Saved {len(saved_reviews)} scraped reviews to MongoDB.")
+        
+        # 5. Compile reviews for structured AI Sentiment Analysis Agent
+        reviews_summary_text = "\n".join([f"Rating: {r['rating']} - Text: {r['text']}" for r in raw_reviews])
+        analysis_result = await audit_agent.analyze_reviews_flow(
+            reviews_summary_text=reviews_summary_text,
+            maps_url=resolved_url
+        )
+        
+        # 6. Draft recovery dynamic responses for each imported review
+        for rev in saved_reviews:
+            items = rev.get("ordered_items", [])
+            item_ref = f"our {', '.join(items)}" if items else "our food and service"
+            if rev["rating"] <= 3:
+                draft = f"Thank you for your feedback, {rev.get('diner_name', 'Guest')}. We sincerely apologize for the delay regarding your {item_ref}. We have addressed this with our kitchen team and hope to welcome you back to offer a much smoother service."
+                await db.update_one("reviews", {"id": rev["id"]}, {"$set": {"ai_response_draft": draft}})
+            else:
+                draft = f"Hi {rev.get('diner_name', 'Guest')}! We are thrilled to hear you loved our {item_ref}! Our team takes great pride in crafting these fresh daily. Looking forward to your next visit!"
+                await db.update_one("reviews", {"id": rev["id"]}, {"$set": {"ai_response_draft": draft}})
+                
+        # 7. Write consolidated insights records to MongoDB
+        insights_data = {
+            "restaurant_id": restaurant_id,
+            "generated_date": "2026-05-25T18:00:00Z",
+            "themes": {
+                "praised": analysis_result.praised,
+                "complaints": [c.issue for c in analysis_result.complaints]
+            },
+            "health_score": analysis_result.health_score,
+            "action_items": analysis_result.action_items
+        }
+        await db.insert_one("insights", insights_data)
+        
+        # 8. Mark restaurant audit status as complete & update operational health index
+        await db.update_one(
+            "restaurants",
+            {"id": restaurant_id},
+            {"$set": {"health_score": analysis_result.health_score, "audit_completed": True}}
+        )
+        
+        logger.info(f"Onboarding background audit completed successfully for Restaurant ID: {restaurant_id}")
+        
+    except Exception as e:
+        logger.error(f"Onboarding background audit encountered error: {e}", exc_info=True)
 
 @router.post("")
 async def onboard_restaurant(request: RestaurantOnboardRequest, background_tasks: BackgroundTasks):

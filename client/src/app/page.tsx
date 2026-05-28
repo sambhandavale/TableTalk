@@ -29,10 +29,11 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 export default function TableTalkLandingPage() {
   const [activeTab, setActiveTab] = useState("mumbai");
   const [theme, setTheme] = useState("dark");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userSlug, setUserSlug] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [exploreDropdownOpen, setExploreDropdownOpen] = useState(false);
+  const [authDropdownOpen, setAuthDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -67,7 +68,6 @@ export default function TableTalkLandingPage() {
       <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[160px] pointer-events-none" />
       <div className="absolute bottom-[5%] left-[20%] w-[500px] h-[500px] bg-purple-950/20 rounded-full blur-[140px] pointer-events-none" />
 
-      {/* HEADER */}
       <header className="w-full max-w-7xl mx-auto px-6 md:px-12 py-6 flex justify-between items-center border-b border-[var(--brand-border-subtle)] relative z-50 transition-colors duration-300">
         <div className="flex items-center">
           <img 
@@ -77,161 +77,99 @@ export default function TableTalkLandingPage() {
           />
         </div>
 
-        <div className="flex items-center relative">
+        {/* Navigation Buttons Container */}
+        <div className="flex items-center gap-3 relative">
           
-          {/* Unified Explorer & Access Dropdown */}
+          {/* BUTTON 1: Explore Dropdown */}
           <div className="relative">
             <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
+              onClick={() => {
+                setExploreDropdownOpen(!exploreDropdownOpen);
+                setAuthDropdownOpen(false); // Close auth menu if open
+              }}
               className="h-10 px-5 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center gap-2.5 text-xs font-bold text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
             >
-              <span className="text-[var(--text-muted)] font-medium">Explore & Sign In</span>
-              <ChevronDown className={`w-3.5 h-3.5 text-[var(--text-dim)] transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`} />
+              <span className="text-[var(--text-muted)] font-medium">Explore</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-[var(--text-dim)] transition-transform duration-300 ${exploreDropdownOpen ? "rotate-180" : ""}`} />
             </button>
 
-            {dropdownOpen && (
+            {exploreDropdownOpen && (
               <>
                 <div 
                   className="fixed inset-0 z-40 cursor-default" 
-                  onClick={() => setDropdownOpen(false)} 
+                  onClick={() => setExploreDropdownOpen(false)} 
                 />
-                <div className="absolute right-0 mt-2.5 w-68 rounded-2xl bg-[var(--brand-card)] border border-[var(--brand-border)] p-2 shadow-2xl backdrop-blur-xl z-50 animate-fadeIn text-left space-y-1.5">
+                <div className="absolute right-0 mt-2.5 w-64 rounded-2xl bg-[var(--brand-card)] border border-[var(--brand-border)] p-2 shadow-2xl backdrop-blur-xl z-50 animate-fadeIn text-left space-y-1.5">
                   
-                  {/* SECTION 1: Dynamic GM Authentication Portal */}
-                  <div className="p-3 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] rounded-xl space-y-2.5">
-                    {isLoggedIn ? (
-                      <>
-                        <div className="space-y-0.5">
-                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">General Manager</span>
-                          <span className="text-xs font-extrabold text-[var(--foreground)] block truncate">{userEmail}</span>
-                        </div>
-                        <a 
-                          href={`/dashboard/${userSlug}`}
-                          onClick={() => setDropdownOpen(false)}
-                          className="w-full py-2 bg-gradient-to-r from-[#c77dff] to-[#9d4edd] text-black hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-purple-300/10"
-                        >
-                          Go to Dashboard
-                          <ArrowUpRight className="w-3 h-3 text-black" />
-                        </a>
-                        <button
-                          onClick={() => {
-                            setDropdownOpen(false);
-                            if (typeof window !== "undefined") {
-                              localStorage.removeItem("tabletalk_restaurant_id");
-                              localStorage.removeItem("tabletalk_restaurant_slug");
-                              localStorage.removeItem("tabletalk_user_email");
-                              window.location.reload();
-                            }
-                          }}
-                          className="w-full text-center text-[9px] text-red-400 hover:underline pt-0.5 block cursor-pointer"
-                        >
-                          Sign Out of Session
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <div className="space-y-0.5">
-                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">GM Control Hub</span>
-                          <span className="text-[10px] text-[var(--text-muted)] font-light block leading-tight">Access review scraper audits & campaigns</span>
-                        </div>
-                        <div className="space-y-1.5 pt-1">
-                          <a 
-                            href="/onboard"
-                            onClick={() => setDropdownOpen(false)}
-                            className="w-full py-2 bg-gradient-to-r from-[var(--brand-purple-text)] to-[#9d4edd] text-white hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-white/5"
-                          >
-                            Get started
-                            <ArrowUpRight className="w-3 h-3 text-white" />
-                          </a>
-                          <a 
-                            href="/signin"
-                            onClick={() => setDropdownOpen(false)}
-                            className="w-full py-2 bg-transparent text-[var(--foreground)] hover:bg-[var(--orb-bg)] border border-[var(--brand-border)] rounded-lg text-[10px] font-bold transition-all duration-300 flex items-center justify-center cursor-pointer"
-                          >
-                            Sign In to Account
-                          </a>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* SECTION 2: Platform Core Suites */}
+                  {/* Platform Core Suites */}
                   <div className="py-1 border-b border-[var(--brand-border-subtle)]">
                     <span className="px-2.5 text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block mb-1">Product Suites</span>
                     <a 
                       href="#insights-suite" 
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => setExploreDropdownOpen(false)}
                       className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
                     >
                       <LayoutDashboard className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
-                      <div>
-                        <span className="font-bold block leading-none">Multi-Unit Insights</span>
-                      </div>
+                      <span className="font-bold block leading-none">Multi-Unit Insights</span>
                     </a>
                     <a 
                       href="#triage-simulator" 
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => setExploreDropdownOpen(false)}
                       className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
                     >
                       <ShieldAlert className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
-                      <div>
-                        <span className="font-bold block leading-none">Feedback Intercept</span>
-                      </div>
+                      <span className="font-bold block leading-none">Feedback Intercept</span>
                     </a>
                     <a 
                       href="#growth-suite" 
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => setExploreDropdownOpen(false)}
                       className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
-                      <div>
-                        <span className="font-bold block leading-none">Retention Vouchers</span>
-                      </div>
+                      <span className="font-bold block leading-none">Retention Vouchers</span>
                     </a>
                     <a 
                       href="#agent-orchestration" 
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => setExploreDropdownOpen(false)}
                       className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
                     >
                       <TrendingUp className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
-                      <div>
-                        <span className="font-bold block leading-none">SEO Map Booster</span>
-                      </div>
+                      <span className="font-bold block leading-none">SEO Map Booster</span>
                     </a>
                   </div>
 
-                  {/* SECTION 3: Standard Page Anchor Links */}
+                  {/* Standard Page Anchor Links */}
                   <div className="py-1 border-b border-[var(--brand-border-subtle)] flex flex-col">
                     <span className="px-2.5 text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block mb-1">Company & Links</span>
                     <a 
                       href="#features" 
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => setExploreDropdownOpen(false)}
                       className="px-2.5 py-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all"
                     >
                       Features
                     </a>
                     <a 
                       href="#growth-suite" 
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => setExploreDropdownOpen(false)}
                       className="px-2.5 py-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all"
                     >
                       Growth Suite
                     </a>
                     <a 
                       href="#testimonials" 
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => setExploreDropdownOpen(false)}
                       className="px-2.5 py-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all"
                     >
                       Customer Stories
                     </a>
                   </div>
 
-                  {/* SECTION 4: Theme Settings Toggle */}
+                  {/* Theme Settings Toggle */}
                   <div className="pt-1.5">
                     <button
                       onClick={() => {
                         toggleTheme();
-                        setDropdownOpen(false);
+                        setExploreDropdownOpen(false);
                       }}
                       className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200 cursor-pointer"
                     >
@@ -253,6 +191,92 @@ export default function TableTalkLandingPage() {
               </>
             )}
           </div>
+
+          {/* BUTTON 2: Dynamic Authentication Portal */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setAuthDropdownOpen(!authDropdownOpen);
+                setExploreDropdownOpen(false); // Close explore menu if open
+              }}
+              className="h-10 px-5 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center gap-2.5 text-xs font-bold text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
+            >
+              <span className="text-[var(--text-muted)] font-medium">
+                {isLoggedIn ? "Account Hub" : "Sign In"}
+              </span>
+              <ChevronDown className={`w-3.5 h-3.5 text-[var(--text-dim)] transition-transform duration-300 ${authDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {authDropdownOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40 cursor-default" 
+                  onClick={() => setAuthDropdownOpen(false)} 
+                />
+                <div className="absolute right-0 mt-2.5 w-68 rounded-2xl bg-[var(--brand-card)] border border-[var(--brand-border)] p-2 shadow-2xl backdrop-blur-xl z-50 animate-fadeIn text-left">
+                  
+                  <div className="p-3 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] rounded-xl space-y-2.5">
+                    {isLoggedIn ? (
+                      <>
+                        <div className="space-y-0.5">
+                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">General Manager</span>
+                          <span className="text-xs font-extrabold text-[var(--foreground)] block truncate">{userEmail}</span>
+                        </div>
+                        <a 
+                          href={`/dashboard/${userSlug}`}
+                          onClick={() => setAuthDropdownOpen(false)}
+                          className="w-full py-2 bg-gradient-to-r from-[#c77dff] to-[#9d4edd] text-black hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-purple-300/10"
+                        >
+                          Go to Dashboard
+                          <ArrowUpRight className="w-3 h-3 text-black" />
+                        </a>
+                        <button
+                          onClick={() => {
+                            setAuthDropdownOpen(false);
+                            if (typeof window !== "undefined") {
+                              localStorage.removeItem("tabletalk_restaurant_id");
+                              localStorage.removeItem("tabletalk_restaurant_slug");
+                              localStorage.removeItem("tabletalk_user_email");
+                              window.location.reload();
+                            }
+                          }}
+                          className="w-full text-center text-[9px] text-red-400 hover:underline pt-0.5 block cursor-pointer"
+                        >
+                          Sign Out of Session
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <div className="space-y-0.5">
+                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">GM Control Hub</span>
+                          <span className="text-[10px] text-[var(--text-muted)] font-light block leading-tight">Access review scraper audits & campaigns</span>
+                        </div>
+                        <div className="space-y-1.5 pt-1">
+                          <a 
+                            href="/onboard"
+                            onClick={() => setAuthDropdownOpen(false)}
+                            className="w-full py-2 bg-gradient-to-r from-[var(--brand-purple-text)] to-[#9d4edd] text-white hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-white/5"
+                          >
+                            Get started
+                            <ArrowUpRight className="w-3 h-3 text-white" />
+                          </a>
+                          <a 
+                            href="/signin"
+                            onClick={() => setAuthDropdownOpen(false)}
+                            className="w-full py-2 bg-transparent text-[var(--foreground)] hover:bg-[var(--orb-bg)] border border-[var(--brand-border)] rounded-lg text-[10px] font-bold transition-all duration-300 flex items-center justify-center cursor-pointer"
+                          >
+                            Sign In to Account
+                          </a>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                </div>
+              </>
+            )}
+          </div>
+
         </div>
       </header>
 

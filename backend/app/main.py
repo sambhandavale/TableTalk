@@ -1,11 +1,3 @@
-import os
-import sys
-
-# Dynamically add workspace root to Python path so that 'ai_workflow' is importable
-WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if WORKSPACE_ROOT not in sys.path:
-    sys.path.append(WORKSPACE_ROOT)
-
 import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, APIRouter
