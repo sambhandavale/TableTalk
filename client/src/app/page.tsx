@@ -300,7 +300,7 @@ export default function TableTalkLandingPage() {
                 />
                 <text className="fill-current uppercase">
                   <textPath href="#badgePath" startOffset="0%">
-                    • Platform For Offline Restaurants • AI Agents Funnel •
+                    • Platform For Offline Businesses • AI Agents Funnel •
                   </textPath>
                 </text>
               </svg>
@@ -350,7 +350,7 @@ export default function TableTalkLandingPage() {
                   : "text-white/60 hover:text-white"
               }`}
             >
-              Mumbai Outlets
+              Retail & Clinics
             </button>
             <button
               onClick={() => setActiveTab("cafes")}
@@ -360,7 +360,7 @@ export default function TableTalkLandingPage() {
                   : "text-white/60 hover:text-white"
               }`}
             >
-              Cafes & Lounges
+              Restaurants & Cafes
             </button>
           </div>
         </div>
@@ -377,35 +377,35 @@ export default function TableTalkLandingPage() {
               const list = activeTab === "mumbai" 
                 ? [
                     {
-                      id: "SG",
-                      name: "Spice Garden Bistro",
-                      brand: "Spice Garden",
+                      id: "SK",
+                      name: "SkinGlow Clinic",
+                      brand: "SkinGlow",
                       location: "Bandra West, Mumbai",
-                      quote: "TableTalk intercepted three critical 1-star complaints regarding service delays on our first busy Friday weekend. The diners left happy and our public Google Maps rating soared by +0.3 in weeks!",
+                      quote: "TableTalk intercepted three critical 1-star complaints regarding wait times on our first busy Friday weekend. The patients left happy and our public Google Maps rating soared by +0.3 in weeks!",
                       metrics: [
                         { value: "+45%", label: "Google reviews" },
-                        { value: "98%", label: "Diners Retained" }
+                        { value: "98%", label: "Patients Retained" }
                       ]
                     },
                     {
-                      id: "GD",
-                      name: "Golden Dragon Dhaba",
-                      brand: "Golden Dragon",
+                      id: "ST",
+                      name: "Style Threads Boutique",
+                      brand: "Style Threads",
                       location: "Chembur, Mumbai",
-                      quote: "Our weekend takeaway orders were collapsing due to dry starters. TableTalk flagged the tandoor delay pattern. We altered prep and saw average ticket values climb by +18%!",
+                      quote: "Our weekend walk-in conversions were collapsing due to poor fitting room management. TableTalk flagged the delay pattern. We altered staffing and saw average ticket values climb by +18%!",
                       metrics: [
                         { value: "+18%", label: "Ticket Values" },
-                        { value: "-55%", label: "Starters delays" }
+                        { value: "-55%", label: "Fitting room delays" }
                       ]
                     },
                     {
-                      id: "BK",
-                      name: "Bandra Kebab Co",
-                      brand: "Bandra Kebab Co",
+                      id: "SS",
+                      name: "Serenity Spa",
+                      brand: "Serenity Spa",
                       location: "Bandra, Mumbai",
-                      quote: "TableTalk's retention campaigns recovered 42 at-risk regular VIP diners via SMS apology coupons last month alone. Dynamic apology dispatches are absolute game-changers.",
+                      quote: "TableTalk's retention campaigns recovered 42 at-risk regular VIP clients via SMS apology coupons last month alone. Dynamic apology dispatches are absolute game-changers.",
                       metrics: [
-                        { value: "42 VIPs", label: "Diners Recovered" },
+                        { value: "42 VIPs", label: "Clients Recovered" },
                         { value: "+30%", label: "Loyalty Returns" }
                       ]
                     },
@@ -438,7 +438,7 @@ export default function TableTalkLandingPage() {
                       location: "Pali Hill, Bandra",
                       quote: "TableTalk's custom WhatsApp engagement brought back over 80 at-risk regulars who hadn't visited in 30 days. The ROI on our retention campaign was immediate and spectacular.",
                       metrics: [
-                        { value: "+62%", label: "Diners Retained" },
+                        { value: "+62%", label: "Customers Retained" },
                         { value: "94%", label: "NPS Score" }
                       ]
                     }
@@ -473,8 +473,8 @@ export default function TableTalkLandingPage() {
                       location: "Fort, Mumbai",
                       quote: "Retaining our heritage guests while attracting a younger crowd was a challenge. TableTalk's custom SMS campaigns brought back 120+ legacy patrons in a single month!",
                       metrics: [
-                        { value: "+35%", label: "Parsi Chai Orders" },
-                        { value: "97%", label: "Happy Diners" }
+                        { value: "+35%", label: "Special Orders" },
+                        { value: "97%", label: "Happy Customers" }
                       ]
                     },
                     {
@@ -519,7 +519,7 @@ export default function TableTalkLandingPage() {
                 >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-purple-950/20 rounded-full blur-[30px] pointer-events-none" />
                   
-                  {/* Left Side: Mock Restaurant Image Frame */}
+                  {/* Left Side: Mock Business Image Frame */}
                   <div className="w-[110px] h-[140px] bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] rounded-xl flex flex-col items-center justify-center text-center p-3 flex-shrink-0 relative overflow-hidden transition-colors duration-300">
                     <div className="w-10 h-10 rounded-full bg-[var(--foreground)] text-[var(--background)] flex items-center justify-center font-bold text-sm mb-1.5 relative z-20 transition-colors duration-300">
                       {item.id}
@@ -577,7 +577,7 @@ export default function TableTalkLandingPage() {
                 />
               </div>
               <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed max-w-sm transition-colors duration-300">
-                Making offline restaurant operations profitable using autonomous AI customer intelligence, private triage loops, and automated retention marketing.
+                Making offline business operations profitable using autonomous AI customer intelligence, private triage loops, and automated retention marketing.
               </p>
             </div>
 
@@ -627,7 +627,7 @@ export default function TableTalkLandingPage() {
           <div className="border-t border-[var(--brand-border)] pt-8 flex flex-col md:flex-row justify-between items-center gap-6 transition-colors duration-300">
             <div className="flex flex-col gap-1 items-center md:items-start text-center md:text-left">
               <p className="font-sans text-[var(--text-muted)] transition-colors duration-300">
-                &copy; {new Date().getFullYear()} TableTalk AI. Built with care for offline restaurants in India.
+                &copy; {new Date().getFullYear()} TableTalk AI. Built with care for offline businesses in India.
               </p>
               <p className="text-[10px] text-[var(--text-dim)] leading-none mt-0.5 transition-colors duration-300">
                 Proudly engineered in Bengaluru & Mumbai 🇮🇳

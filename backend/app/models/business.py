@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
-class RestaurantDB(BaseModel):
+class BusinessDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
     name: str
     cuisine: str
@@ -23,3 +23,7 @@ class RestaurantDB(BaseModel):
     dining_duration_mins: Optional[int] = 60
     is_pure_veg: Optional[bool] = False
     valet_parking: Optional[bool] = False
+
+    # Incentive Programs (Rewards & Coupons)
+    has_incentives: Optional[bool] = False
+    coupons: Optional[list] = []

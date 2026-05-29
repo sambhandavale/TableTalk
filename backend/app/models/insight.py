@@ -11,7 +11,7 @@ class ThemeInsights(BaseModel):
 
 class InsightDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
-    restaurant_id: str
+    business_id: str
     generated_date: str
     themes: ThemeInsights
     health_score: int

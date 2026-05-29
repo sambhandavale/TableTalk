@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class RestaurantOnboardRequest(BaseModel):
+class BusinessOnboardRequest(BaseModel):
     email: str
     password: str
     name: str
@@ -11,7 +11,7 @@ class RestaurantOnboardRequest(BaseModel):
     maps_url: str
     seating_capacity: Optional[int] = 30
 
-class RestaurantProfileUpdateRequest(BaseModel):
+class BusinessProfileUpdateRequest(BaseModel):
     contact_phone: Optional[str] = ""
     business_hours: Optional[str] = "12:00 PM - 11:30 PM"
     cost_for_two: Optional[int] = 1200
@@ -22,6 +22,8 @@ class RestaurantProfileUpdateRequest(BaseModel):
     is_pure_veg: Optional[bool] = False
     valet_parking: Optional[bool] = False
     seating_capacity: Optional[int] = 60
+    has_incentives: Optional[bool] = False
+    coupons: Optional[list] = []
 
 class UserLoginRequest(BaseModel):
     email: str

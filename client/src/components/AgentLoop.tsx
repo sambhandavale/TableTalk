@@ -37,21 +37,21 @@ export default function InfiniteAgentLoop() {
       title: "Analysis Agent",
       desc: "Aggregates rating trends & isolates service spikes.",
       logs: [
-        "[ANALYST_AGENT] > aggregate --reviews --duration=7d --scope=dishes",
+        "[ANALYST_AGENT] > aggregate --reviews --duration=7d --scope=services",
         "[ANALYST_AGENT] ✔ Weekly NPS score compiled successfully: 92%",
-        "[ANALYST_AGENT] ⚠ Trend Alert: Slow kitchen ticket times during Friday rush",
-        "[ANALYST_AGENT] ✔ Praised dish: Mutton Biryani has 4.9★ rating"
+        "[ANALYST_AGENT] ⚠ Trend Alert: Slow checkout times during Friday rush",
+        "[ANALYST_AGENT] ✔ Praised service: Premium Consultation has 4.9★ rating"
       ]
     },
     {
       id: 3,
       number: "04",
       title: "Checklist Agent",
-      desc: "Issues operational check tasks to kitchen staff.",
+      desc: "Issues operational check tasks to staff.",
       logs: [
         "[STRATEGIST_AGENT] > compile --operational-checklist",
-        "[STRATEGIST_AGENT] ✔ Action: Feature Mutton Biryani on Google Maps",
-        "[STRATEGIST_AGENT] ⚠ Warning: Naan arriving cold Table 4. Check paths.",
+        "[STRATEGIST_AGENT] ✔ Action: Feature Premium Consultation on Google Maps",
+        "[STRATEGIST_AGENT] ⚠ Warning: Waiting area congested. Check paths.",
         "[STRATEGIST_AGENT] ✔ Recommendation checklist compiled: 4 tasks added"
       ]
     },

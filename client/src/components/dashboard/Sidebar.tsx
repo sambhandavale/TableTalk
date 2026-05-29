@@ -157,7 +157,7 @@ export default function Sidebar({ activeTab, setActiveTab, restaurantName, userE
         <SectionHeader sectionKey="settings" label="Settings" />
         {openSections.settings && (
           <div className="space-y-0.5 ml-1 border-l border-[#1e293b] pl-2 mb-4">
-            <NavItem tab="settings" icon={Store} label="Restaurant Profile" />
+            <NavItem tab="settings" icon={Store} label="Business Profile" />
             <NavItem tab="qr_print" icon={Printer} label="QR Kit & Print" disabled />
             <NavItem tab="team" icon={UserCheck} label="Team Members" disabled />
             <NavItem tab="billing" icon={CreditCard} label="Billing" disabled />

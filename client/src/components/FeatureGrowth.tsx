@@ -25,9 +25,9 @@ export default function FeatureGrowth() {
               <QrCode className="w-4 h-4" />
             </div>
             <div>
-              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Create QR reviews tent - fast</h5>
+              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Smart QR & Private Feedback</h5>
               <p className="text-xs text-[var(--text-muted)] font-light mt-1 max-w-sm transition-colors duration-300">
-                Generate print-ready unique QR bill-stickers and table tents. Diners scan and review in under 30 seconds.
+                Generate print-ready unique QR stands and stickers. Customers scan and review in under 30 seconds before leaving the premises.
               </p>
             </div>
           </div>
@@ -38,9 +38,9 @@ export default function FeatureGrowth() {
               <Send className="w-4 h-4" />
             </div>
             <div>
-              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Automate triage and discounts</h5>
+              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Dynamic AI Rewards & Triage</h5>
               <p className="text-xs text-[var(--text-muted)] font-light mt-1 max-w-sm transition-colors duration-300">
-                Ratings 4-5 are pushed to Google Maps with coupon codes. Ratings 1-3 trigger private captures and notify floor managers.
+                Smart sentiment routing pushes 4-5 stars to Google Maps. Negative feedback triggers private alerts and dispatches stock-managed apology coupons automatically.
               </p>
             </div>
           </div>
@@ -51,9 +51,9 @@ export default function FeatureGrowth() {
               <Check className="w-4 h-4" />
             </div>
             <div>
-              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Tweak and retrieve in real-time</h5>
+              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Targeted Retention Campaigns</h5>
               <p className="text-xs text-[var(--text-muted)] font-light mt-1 max-w-sm transition-colors duration-300">
-                AI dynamically drafts personalized apology text templates with automatic discount codes ready for instant manager approval.
+                Our CRM tracks customers by phone to segment them (Regulars, At-Risk, Lost). Launch scheduled SMS campaigns with attached incentives in seconds.
               </p>
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function FeatureGrowth() {
                   At-Risk Customers
                 </span>
                 <span className="px-2.5 py-1 rounded bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] text-[9px] text-[var(--text-muted)] font-medium transition-colors duration-300">
-                  Lost regular
+                  Lost Regulars
                 </span>
               </div>
             </div>
@@ -97,14 +97,14 @@ export default function FeatureGrowth() {
             <div className="space-y-1.5">
               <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-semibold block transition-colors duration-300">Campaign Message</span>
               <div className="bg-[var(--background)] border border-[var(--brand-border)] p-3 rounded-xl text-xs text-[var(--foreground)]/80 font-light leading-normal transition-colors duration-300">
-                "We miss you! It's been 21 days since your last order. Here is 15% off your next dining bill on us. Show coupon at floor."
+                "We miss you! It's been 21 days since your last visit. Here is 15% off your next purchase on us. Show coupon at checkout."
               </div>
             </div>
 
             <div className="bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] p-3 rounded-xl flex justify-between items-center transition-colors duration-300">
               <div>
                 <span className="text-[8px] text-[var(--text-dim)] block transition-colors duration-300">Estimated Reach</span>
-                <span className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">42 Diners</span>
+                <span className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">42 Customers</span>
               </div>
               <button className="px-3.5 py-1.5 bg-[var(--foreground)] text-[var(--background)] font-bold text-[9px] rounded-lg transition-colors duration-300">
                 Launch Campaign

@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { Megaphone, Plus, MessageSquare, Send, CheckCircle, Smartphone } from "lucide-react";
 
-export default function RetentionCampaigns({ campaigns = [] }: any) {
+export default function RetentionCampaigns({ campaigns = [], business, setActiveTab }: any) {
   const [isCreating, setIsCreating] = useState(false);
+  
+  const [scheduleType, setScheduleType] = useState("now");
+  const [scheduleTime, setScheduleTime] = useState("17:00");
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [selectedCouponCode, setSelectedCouponCode] = useState("");
+  const [messageTemplate, setMessageTemplate] = useState("Hi {Name}, we miss you at {RestaurantName}! Show this SMS to get a complimentary dessert on your next visit.");
+
+  const coupons = business?.coupons || [];
 
   return (
     <div className="space-y-6 w-full max-w-[1400px]">
@@ -57,9 +65,86 @@ export default function RetentionCampaigns({ campaigns = [] }: any) {
               <div className="space-y-1.5">
                 <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Message Template</label>
                 <textarea 
+                  value={messageTemplate}
+                  onChange={(e) => setMessageTemplate(e.target.value)}
                   className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none min-h-[100px] resize-none"
-                  defaultValue="Hi {Name}, we miss you at Mumbai Masala! Show this SMS to get a complimentary dessert on your next visit. Valid for 7 days."
                 />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Scheduling</label>
+                <select 
+                  value={scheduleType}
+                  onChange={(e) => setScheduleType(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none appearance-none mb-2"
+                >
+                  <option value="now">Send Right Now</option>
+                  <option value="daily">Every day at specific time</option>
+                  <option value="specific">At a specific date and time</option>
+                </select>
+                
+                {scheduleType === "daily" && (
+                  <input type="time" value={scheduleTime} onChange={(e) => setScheduleTime(e.target.value)} className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none font-mono" />
+                )}
+                
+                {scheduleType === "specific" && (
+                  <input type="datetime-local" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none font-mono" />
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Attach Incentive (Optional)</label>
+                <select 
+                  value={selectedCouponCode}
+                  onChange={(e) => setSelectedCouponCode(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none appearance-none"
+                >
+                  <option value="">No Incentive</option>
+                  {coupons.map((c: any, idx: number) => {
+                    const q = c.quantity;
+                    const stock = (q === undefined || q === null || q === "") ? "Unlimited" : parseInt(q);
+                    return (
+                      <option key={idx} value={c.coupon_code}>
+                        {c.discount_amount} (Code: {c.coupon_code}) - Stock: {stock}
+                      </option>
+                    )
+                  })}
+                </select>
+                
+                {selectedCouponCode && (
+                  (() => {
+                    const selected = coupons.find((c: any) => c.coupon_code === selectedCouponCode);
+                    const stock = selected && selected.quantity !== undefined && selected.quantity !== "" ? parseInt(selected.quantity) : "Unlimited";
+                    
+                    if (stock !== "Unlimited" && stock <= 0) {
+                      return (
+                        <div className="mt-2 text-[10px] text-[#f43f5e] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-[#f43f5e]/10 border border-[#f43f5e]/20 p-3">
+                          <span>⚠️ Out of stock! This campaign will not run properly.</span>
+                          <button 
+                            onClick={() => setActiveTab("settings")}
+                            className="bg-[#f43f5e] text-white px-2 py-1 uppercase tracking-widest font-bold hover:bg-[#e11d48] transition-colors whitespace-nowrap"
+                          >
+                            Add Quantity
+                          </button>
+                        </div>
+                      )
+                    }
+                    if (stock !== "Unlimited" && stock < 10) {
+                      return (
+                         <div className="mt-2 text-[10px] text-[#f59e0b] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-[#f59e0b]/10 border border-[#f59e0b]/20 p-3">
+                          <span>⚠️ Low stock: only {stock} remaining.</span>
+                          <button 
+                            onClick={() => setActiveTab("settings")}
+                            className="bg-[#f59e0b] text-black px-2 py-1 uppercase tracking-widest font-bold hover:bg-[#d97706] transition-colors whitespace-nowrap"
+                          >
+                            Add Quantity
+                          </button>
+                        </div>
+                      )
+                    }
+                    return null;
+                  })()
+                )}
               </div>
 
               <button className="w-full py-2.5 bg-[#a855f7] hover:bg-[#b55fe6] text-black text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-none transition-colors">
@@ -73,8 +158,9 @@ export default function RetentionCampaigns({ campaigns = [] }: any) {
               <div className="w-[200px] h-[340px] border-4 border-[#1e293b] rounded-3xl bg-[#0c0516] flex flex-col overflow-hidden">
                 <div className="bg-[#1e293b] p-2 text-center text-[10px] font-bold text-white">SMS</div>
                 <div className="p-3 flex-1 bg-black">
-                  <div className="bg-[#334155] rounded-xl rounded-bl-sm p-2 mb-2 w-[85%] text-[10px] text-white">
-                    Hi Ananya, we miss you at Mumbai Masala! Show this SMS to get a complimentary dessert on your next visit. Valid for 7 days.
+                  <div className="bg-[#334155] rounded-xl rounded-bl-sm p-2 mb-2 w-[85%] text-[10px] text-white whitespace-pre-wrap">
+                    {messageTemplate.replace(/{Name}/g, "Ananya").replace(/{RestaurantName}/g, business?.name || "our business")}
+                    {selectedCouponCode && `\n\nUse Code: ${selectedCouponCode}`}
                   </div>
                 </div>
               </div>

@@ -3,7 +3,7 @@ from typing import Optional
 
 class CampaignDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
-    restaurant_id: str
+    business_id: str
     segment: str  # "Happy Regular" | "At-Risk" | "Lost/Unhappy" | "New Customer"
     message: str
     coupon_code: str

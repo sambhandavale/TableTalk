@@ -5,16 +5,16 @@ from app.database import db
 logger = logging.getLogger("TableTalk.AnalysisAgent")
 
 class PatternAnalysisAgent:
-    async def generate_restaurant_insights(self, restaurant_id: str) -> Dict[str, Any]:
+    async def generate_restaurant_insights(self, business_id: str) -> Dict[str, Any]:
         """Runs Agent 3 (Pattern Finder) and Agent 4 (Action Recommendations) in unison."""
-        logger.info(f"Firing Analysis & Recommendation Agents #3 & #4 for Restaurant {restaurant_id}")
+        logger.info(f"Firing Analysis & Recommendation Agents #3 & #4 for Business {business_id}")
         
-        # 1. Fetch all reviews for this restaurant
+        # 1. Fetch all reviews for this business
         all_reviews = await db.get_collection("reviews")
-        restaurant_reviews = [r for r in all_reviews if r.get("restaurant_id") == restaurant_id]
+        restaurant_reviews = [r for r in all_reviews if r.get("business_id") == business_id]
         
         if not restaurant_reviews:
-            logger.warning(f"No reviews found to analyze for {restaurant_id}")
+            logger.warning(f"No reviews found to analyze for {business_id}")
             return {}
 
         # 2. Emulate aggregate analysis calculations
@@ -62,7 +62,7 @@ class PatternAnalysisAgent:
         ]
 
         insights_record = {
-            "restaurant_id": restaurant_id,
+            "business_id": business_id,
             "generated_date": "2026-05-25T18:05:00Z",
             "themes": {
                 "praised": praised,
@@ -75,14 +75,14 @@ class PatternAnalysisAgent:
         # Save freshly compiled insights record
         await db.insert_one("insights", insights_record)
         
-        # Update restaurant's cached health score
+        # Update business's cached health score
         await db.update_one(
-            "restaurants",
-            {"id": restaurant_id},
+            "businesses",
+            {"id": business_id},
             {"$set": {"health_score": health_score}}
         )
 
-        logger.info(f"Successfully generated analytical insights & weekly priority actions for {restaurant_id}")
+        logger.info(f"Successfully generated analytical insights & weekly priority actions for {business_id}")
         return insights_record
 
 # Global agent instance

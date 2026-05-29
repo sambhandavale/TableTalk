@@ -25,8 +25,8 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
   
-  // Restaurant ID/Slug reference
-  const [restaurantId, setRestaurantId] = useState("mumbai-masala-bandra");
+  // Business ID/Slug reference
+  const [businessId, setRestaurantId] = useState("mumbai-masala-bandra");
 
   // Rich Profile State
   const [formData, setFormData] = useState({
@@ -50,7 +50,7 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    // Check if the user has an onboarded restaurant ID/slug in localStorage
+    // Check if the user has an onboarded business ID/slug in localStorage
     if (typeof window !== "undefined") {
       const storedId = localStorage.getItem("tabletalk_restaurant_id") || 
                        localStorage.getItem("tabletalk_restaurant_slug");
@@ -64,28 +64,28 @@ export default function ProfilePage() {
     }
   }, []);
 
-  // Fetch current restaurant data
+  // Fetch current business data
   useEffect(() => {
     const fetchProfile = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:8000/api/onboard/${restaurantId}/status`);
+        const response = await fetch(`http://localhost:8000/api/onboard/${businessId}/status`);
         if (!response.ok) {
-          throw new Error("Restaurant not found in database.");
+          throw new Error("Business not found in database.");
         }
         const data = await response.json();
         
         // Merge with defaults
-        if (data.restaurant) {
+        if (data.business) {
           setFormData(prev => ({
             ...prev,
-            ...data.restaurant,
+            ...data.business,
             // Ensure capacity and integers are correct
-            seating_capacity: Number(data.restaurant.seating_capacity || 60),
-            cost_for_two: Number(data.restaurant.cost_for_two || 1200),
-            dining_duration_mins: Number(data.restaurant.dining_duration_mins || 60),
-            is_pure_veg: Boolean(data.restaurant.is_pure_veg),
-            valet_parking: Boolean(data.restaurant.valet_parking)
+            seating_capacity: Number(data.business.seating_capacity || 60),
+            cost_for_two: Number(data.business.cost_for_two || 1200),
+            dining_duration_mins: Number(data.business.dining_duration_mins || 60),
+            is_pure_veg: Boolean(data.business.is_pure_veg),
+            valet_parking: Boolean(data.business.valet_parking)
           }));
         }
       } catch (err) {
@@ -96,7 +96,7 @@ export default function ProfilePage() {
     };
 
     fetchProfile();
-  }, [restaurantId]);
+  }, [businessId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -120,7 +120,7 @@ export default function ProfilePage() {
     setMessage({ type: "", text: "" });
 
     try {
-      const response = await fetch(`http://localhost:8000/api/onboard/${restaurantId}/profile`, {
+      const response = await fetch(`http://localhost:8000/api/onboard/${businessId}/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -151,8 +151,8 @@ export default function ProfilePage() {
       });
       
       // Update stored ID if slug returned
-      if (data.restaurant?.slug) {
-        localStorage.setItem("tabletalk_restaurant_slug", data.restaurant.slug);
+      if (data.business?.slug) {
+        localStorage.setItem("tabletalk_restaurant_slug", data.business.slug);
       }
 
     } catch (err: any) {
@@ -370,7 +370,7 @@ export default function ProfilePage() {
                           <option value="Petpooja">Petpooja (India)</option>
                           <option value="POSist">POSist / Prime</option>
                           <option value="Toast">Toast POS</option>
-                          <option value="Square">Square Restaurant</option>
+                          <option value="Square">Square Business</option>
                         </select>
                       </div>
                     </div>
@@ -476,7 +476,7 @@ export default function ProfilePage() {
               {/* Submitting Control Row */}
               <div className="flex justify-between items-center pt-6 border-t border-[var(--brand-border-subtle)]">
                 <span className="text-[10px] text-[var(--text-dim)] font-medium">
-                  Linked to Outlet ID: <span className="font-mono text-brand-purple-text font-bold">{restaurantId}</span>
+                  Linked to Outlet ID: <span className="font-mono text-brand-purple-text font-bold">{businessId}</span>
                 </span>
                 
                 <button

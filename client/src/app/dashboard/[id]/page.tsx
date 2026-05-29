@@ -21,7 +21,7 @@ export default function DashboardPage() {
   const id = params?.id as string;
 
   const [activeTab, setActiveTab] = useState("overview");
-  const [restaurant, setRestaurant] = useState({
+  const [business, setRestaurant] = useState({
     id: "",
     slug: "",
     name: "Mumbai Masala Bistro",
@@ -38,6 +38,7 @@ export default function DashboardPage() {
   const [customers, setCustomers] = useState<any[]>([]);
   const [competitors, setCompetitors] = useState<any[]>([]);
   const [auditStatus, setAuditStatus] = useState<any>({});
+  const [qrStats, setQrStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchDashboardData = async () => {
@@ -47,7 +48,7 @@ export default function DashboardPage() {
       if (!resp.ok) throw new Error("Failed to fetch dashboard");
       const data = await resp.json();
       
-      setRestaurant(data.restaurant || restaurant);
+      setRestaurant(data.business || business);
       setReviews(data.reviews || []);
       setInsights(data.insights || null);
       setAllInsights(data.all_insights || []);
@@ -55,6 +56,7 @@ export default function DashboardPage() {
       setCustomers(data.customers || []);
       setCompetitors(data.competitors || []);
       setAuditStatus(data.audit_status || {});
+      setQrStats(data.qr_stats || null);
     } catch (err) {
       console.warn("Failed to fetch real data from backend. Falling back to empty state.", err);
       // Empty Fallback
@@ -99,7 +101,7 @@ export default function DashboardPage() {
       case "overview":
         return (
           <OverviewPanel 
-            restaurant={restaurant} 
+            business={business} 
             reviews={reviews} 
             insights={insights} 
             auditStatus={auditStatus} 
@@ -117,8 +119,9 @@ export default function DashboardPage() {
             onApprove={handleApproveReply}
           >
             <QRDisplay 
-              url={`http://localhost:3000/r/${restaurant.slug || restaurant.id}`}
-              restaurantName={restaurant.name}
+              url={`http://localhost:3000/b/${business.slug || business.id}`}
+              restaurantName={business.name}
+              qrStats={qrStats}
             />
           </ReviewPanel>
         );
@@ -157,16 +160,16 @@ export default function DashboardPage() {
         return <CompetitorWatch competitors={competitors} />;
         
       case "customer_db":
-        return <CustomerDatabase customers={customers} />;
+        return <CustomerDatabase customers={customers} reviews={reviews} />;
         
       case "retention":
-        return <RetentionCampaigns campaigns={campaigns} />;
+        return <RetentionCampaigns campaigns={campaigns} business={business} setActiveTab={setActiveTab} />;
         
       case "seo_health":
         return <SEOHealth auditStatus={auditStatus} />;
 
       case "settings":
-        return <SettingsPanel restaurantId={restaurant.id} />;
+        return <SettingsPanel businessId={business.id} />;
 
       default:
         return (
@@ -185,8 +188,8 @@ export default function DashboardPage() {
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        restaurantName={restaurant.name}
-        userEmail={restaurant.owner_email || "manager@mumbaimasala.in"}
+        restaurantName={business.name}
+        userEmail={business.owner_email || "manager@mumbaimasala.in"}
         onSignOut={() => window.location.href = "/signin"}
       />
 

@@ -23,7 +23,7 @@ class ResilientDB:
         # Fallback local file storage
         self.fallback_file = "local_db_fallback.json"
         self.fallback_data: Dict[str, List[Any]] = {
-            "restaurants": [],
+            "businesses": [],
             "reviews": [],
             "insights": [],
             "campaigns": [],
@@ -52,8 +52,8 @@ class ResilientDB:
             logger.error(f"Failed to write to fallback file: {e}")
 
     def _seed_fallback_data(self):
-        """Seed initial high-quality Mumbai restaurant demo data."""
-        self.fallback_data["restaurants"] = [
+        """Seed initial high-quality Mumbai business demo data."""
+        self.fallback_data["businesses"] = [
             {
                 "id": "mumbai-masala-bandra",
                 "name": "Mumbai Masala Bistro",
@@ -67,7 +67,7 @@ class ResilientDB:
         self.fallback_data["reviews"] = [
             {
                 "id": "rev-1",
-                "restaurant_id": "mumbai-masala-bandra",
+                "business_id": "mumbai-masala-bandra",
                 "source": "google",
                 "rating": 5,
                 "text": "The Mutton Biryani was exceptionally soft and aromatic. Highly recommend!",
@@ -77,7 +77,7 @@ class ResilientDB:
             },
             {
                 "id": "rev-2",
-                "restaurant_id": "mumbai-masala-bandra",
+                "business_id": "mumbai-masala-bandra",
                 "source": "google",
                 "rating": 2,
                 "text": "Naan was cold and rubbery, took 25 minutes to arrive. Butter chicken was good though.",
@@ -89,7 +89,7 @@ class ResilientDB:
         self.fallback_data["insights"] = [
             {
                 "id": "ins-1",
-                "restaurant_id": "mumbai-masala-bandra",
+                "business_id": "mumbai-masala-bandra",
                 "generated_date": "2026-05-25T00:00:00Z",
                 "themes": {
                     "praised": ["Mutton Biryani", "Butter Chicken"],
@@ -105,7 +105,7 @@ class ResilientDB:
         self.fallback_data["campaigns"] = [
             {
                 "id": "camp-1",
-                "restaurant_id": "mumbai-masala-bandra",
+                "business_id": "mumbai-masala-bandra",
                 "segment": "Lost/Unhappy",
                 "message": "We have improved! Get a free Butter Naan on your next order.",
                 "sent_count": 0,
@@ -115,7 +115,7 @@ class ResilientDB:
         self.fallback_data["customers"] = [
             {
                 "phone": "+919876543210",
-                "restaurant_id": "mumbai-masala-bandra",
+                "business_id": "mumbai-masala-bandra",
                 "visit_count": 3,
                 "last_visit": "2026-05-24T12:00:00Z",
                 "segment": "Happy Regular"
@@ -229,6 +229,30 @@ class ResilientDB:
                 self._save_fallback_data()
                 return True
         return False
+
+    async def delete_many(self, collection_name: str, query: Dict[str, Any]) -> int:
+        if self.is_mongodb_connected and self.db is not None:
+            result = await self.db[collection_name].delete_many(query)
+            return result.deleted_count
+            
+        # Local JSON fallback emulation
+        items = self.fallback_data.get(collection_name, [])
+        initial_count = len(items)
+        new_items = []
+        for item in items:
+            match = True
+            for k, v in query.items():
+                if item.get(k) != v:
+                    match = False
+                    break
+            if not match:
+                new_items.append(item)
+                
+        self.fallback_data[collection_name] = new_items
+        deleted = initial_count - len(new_items)
+        if deleted > 0:
+            self._save_fallback_data()
+        return deleted
 
 # Global database instance
 db = ResilientDB()

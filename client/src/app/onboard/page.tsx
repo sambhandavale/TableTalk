@@ -118,8 +118,8 @@ export default function OnboardingPage() {
       // Simulate a premium AI Audit scan sequence (visual loader)
       setTimeout(() => {
         if (typeof window !== "undefined") {
-          localStorage.setItem("tabletalk_restaurant_id", data.restaurant?.id || "");
-          localStorage.setItem("tabletalk_restaurant_slug", data.restaurant?.slug || "");
+          localStorage.setItem("tabletalk_restaurant_id", data.business?.id || "");
+          localStorage.setItem("tabletalk_restaurant_slug", data.business?.slug || "");
           localStorage.setItem("tabletalk_user_email", data.account?.email || formData.email);
         }
         setIsSubmitting(false);
@@ -208,7 +208,7 @@ export default function OnboardingPage() {
                 </div>
                 <div>
                   <span className={`text-xs font-bold block leading-none ${step >= 2 ? "text-[var(--foreground)]" : "text-[var(--text-dim)]"}`}>Outlet Settings</span>
-                  <span className="text-[9px] text-[var(--text-dim)] block mt-0.5">Restaurant details & capacity</span>
+                  <span className="text-[9px] text-[var(--text-dim)] block mt-0.5">Business details & capacity</span>
                 </div>
               </div>
 
@@ -258,7 +258,7 @@ export default function OnboardingPage() {
               
               {/* Fake agent log activity terminal block */}
               <div className="w-full max-w-md bg-black/60 border border-[var(--brand-border)] rounded-xl p-3 text-left font-mono text-[9px] text-slate-300 space-y-1.5 overflow-hidden h-24">
-                <div className="text-purple-400">&gt; Initializing audit_agent.py on restaurant_id: pending</div>
+                <div className="text-purple-400">&gt; Initializing audit_agent.py on business_id: pending</div>
                 <div className="text-slate-400">&gt; Hooking Google Maps web scraper pipeline</div>
                 <div className="text-yellow-400">&gt; [Gemini] extract review themes and metrics...</div>
                 <div className="text-green-400">&gt; Scanned successfully. Calculating private customer health...</div>
@@ -290,12 +290,12 @@ export default function OnboardingPage() {
                     <span className="font-bold text-[var(--foreground)] block mt-1">{successData.account?.role || "General Manager"}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">Restaurant Name</span>
-                    <span className="font-bold text-[var(--foreground)] block mt-1 truncate">{successData.restaurant?.name || formData.restaurantName}</span>
+                    <span className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">Business Name</span>
+                    <span className="font-bold text-[var(--foreground)] block mt-1 truncate">{successData.business?.name || formData.restaurantName}</span>
                   </div>
                   <div>
                     <span className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">Registered Cuisine</span>
-                    <span className="font-bold text-[var(--foreground)] block mt-1">{successData.restaurant?.cuisine || formData.cuisine}</span>
+                    <span className="font-bold text-[var(--foreground)] block mt-1">{successData.business?.cuisine || formData.cuisine}</span>
                   </div>
                 </div>
                 
@@ -307,7 +307,7 @@ export default function OnboardingPage() {
 
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <a 
-                  href={`/dashboard/${successData.restaurant?.slug || successData.restaurant?.id || "mumbai-masala-bandra"}`}
+                  href={`/dashboard/${successData.business?.slug || successData.business?.id || "mumbai-masala-bandra"}`}
                   className="flex-1 py-3.5 bg-[#c77dff] text-black hover:bg-[#b55fe6] text-xs font-bold rounded-xl text-center cursor-pointer transition-all duration-300 shadow-md transform active:scale-95 flex items-center justify-center gap-1.5"
                 >
                   Proceed to Manager Dashboard
@@ -331,7 +331,7 @@ export default function OnboardingPage() {
                   Step {step} of 3
                 </span>
                 <span className="text-[10px] text-[var(--text-dim)] tracking-wider uppercase font-semibold">
-                  {step === 1 ? "Business Account Setup" : step === 2 ? "Restaurant Outlet Profile" : "AI Review Pipeline Setup"}
+                  {step === 1 ? "Business Account Setup" : step === 2 ? "Business Outlet Profile" : "AI Review Pipeline Setup"}
                 </span>
               </div>
 
@@ -402,12 +402,12 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {/* STEP 2: Restaurant Profile details */}
+              {/* STEP 2: Business Profile details */}
               {step === 2 && (
                 <div className="space-y-4 animate-fadeIn">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5 text-left">
-                      <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">Restaurant Name</label>
+                      <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">Business Name</label>
                       <div className="relative flex items-center">
                         <Utensils className="absolute left-3.5 w-4 h-4 text-[var(--text-dim)]" />
                         <input 

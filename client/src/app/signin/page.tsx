@@ -69,8 +69,8 @@ export default function SignInPage() {
 
       // Write session details to storage
       if (typeof window !== "undefined") {
-        localStorage.setItem("tabletalk_restaurant_id", data.restaurant?.id || "");
-        localStorage.setItem("tabletalk_restaurant_slug", data.restaurant?.slug || "");
+        localStorage.setItem("tabletalk_restaurant_id", data.business?.id || "");
+        localStorage.setItem("tabletalk_restaurant_slug", data.business?.slug || "");
         localStorage.setItem("tabletalk_user_email", data.user?.email || email);
       }
 
@@ -78,7 +78,7 @@ export default function SignInPage() {
       
       // Navigate to dashboard
       setTimeout(() => {
-        const targetId = data.restaurant?.slug || data.restaurant?.id;
+        const targetId = data.business?.slug || data.business?.id;
         window.location.href = `/dashboard/${targetId}`;
       }, 1500);
 

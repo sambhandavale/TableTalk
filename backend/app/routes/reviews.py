@@ -1,25 +1,31 @@
 from fastapi import APIRouter, HTTPException, Body
 from typing import Optional
 from app.database import db
-from app.schemas.review import QRReviewSubmitRequest
+from app.schemas.review import QRReviewSubmitRequest, VoiceExtractRequest
 
 # Import Agent 2 & Agent 5
-from ai_workflow import triage_agent, response_agent
+from ai_workflow import triage_agent, response_agent, extractor_agent
 
 router = APIRouter(prefix="/reviews", tags=["Reviews"])
 
+@router.post("/extract-voice")
+async def extract_voice(request: VoiceExtractRequest):
+    """Takes raw voice transcript and returns structured JSON (name, items, clean review)."""
+    extracted_data = await extractor_agent.extract_voice_transcript(request.transcript)
+    return extracted_data.model_dump()
+
 @router.post("")
 async def submit_qr_review(request: QRReviewSubmitRequest):
-    # Find restaurant
-    restaurant = await db.find_one("restaurants", {"slug": request.restaurant_slug})
-    if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
+    # Find business
+    business = await db.find_one("businesses", {"slug": request.restaurant_slug})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
         
-    restaurant_id = restaurant["id"]
+    business_id = business["id"]
     
     # Construct base review record
     review_data = {
-        "restaurant_id": restaurant_id,
+        "business_id": business_id,
         "source": "qr",
         "rating": request.rating,
         "text": request.text,
@@ -38,7 +44,7 @@ async def submit_qr_review(request: QRReviewSubmitRequest):
     review_id = saved_review["id"]
     
     # Run Agent 2 (Triage Agent) to check rating & generate recovery content
-    triage_result = await triage_agent.triage_review(review_id, saved_review)
+    triage_result = await triage_agent.triage_review(review_id, saved_review, business)
     
     return {
         "message": "Review submitted successfully",
@@ -48,30 +54,35 @@ async def submit_qr_review(request: QRReviewSubmitRequest):
 
 @router.get("/{slug}")
 async def get_restaurant_reviews(slug: str, source: Optional[str] = None):
-    restaurant = await db.find_one("restaurants", {"slug": slug})
-    if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
+    business = await db.find_one("businesses", {"slug": slug})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
         
     all_reviews = await db.get_collection("reviews")
-    filtered = [r for r in all_reviews if r.get("restaurant_id") == restaurant["id"]]
+    filtered = [r for r in all_reviews if r.get("business_id") == business["id"]]
     
     if source:
         filtered = [r for r in filtered if r.get("source") == source]
         
     return {
-        "restaurant_name": restaurant["name"],
+        "restaurant_name": business["name"],
         "count": len(filtered),
         "reviews": filtered
     }
 
+@router.post("/{review_id}/approve")
 @router.post("/{review_id}/approve-reply")
-async def approve_google_reply(review_id: str, custom_reply: Optional[str] = Body(None)):
+async def approve_google_reply(
+    review_id: str, 
+    custom_reply: Optional[str] = Body(None),
+    final_reply_content: Optional[str] = Body(None)
+):
     """Agent 5: Approves and marks a drafted Google Review response as dispatched."""
     review = await db.find_one("reviews", {"id": review_id})
     if not review:
         raise HTTPException(status_code=404, detail="Review not found")
         
-    final_reply = custom_reply or review.get("ai_response_draft", "Thank you for the review!")
+    final_reply = final_reply_content or custom_reply or review.get("ai_response_draft", "Thank you for the review!")
     
     await db.update_one(
         "reviews",
@@ -83,4 +94,24 @@ async def approve_google_reply(review_id: str, custom_reply: Optional[str] = Bod
         "message": "AI reply approved and successfully posted to Google!",
         "review_id": review_id,
         "posted_content": final_reply
+    }
+
+@router.post("/{review_id}/regenerate-draft")
+async def regenerate_review_draft(review_id: str):
+    """Agent 5: Re-evaluates review text and drafts a new response using only actual details."""
+    review = await db.find_one("reviews", {"id": review_id})
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+        
+    # Re-draft response (which automatically cleans hallucinated items in-place)
+    new_draft = await response_agent.draft_response(review_id, review)
+    
+    # Retrieve updated review to return the cleaned items list
+    updated_review = await db.find_one("reviews", {"id": review_id})
+    
+    return {
+        "message": "AI reply draft regenerated successfully!",
+        "review_id": review_id,
+        "ai_response_draft": new_draft,
+        "ordered_items": updated_review.get("ordered_items", [])
     }

@@ -15,7 +15,7 @@ const leagueGothic = League_Gothic({
 
 export const metadata: Metadata = {
   title: "TableTalk | AI-Powered Customer Intelligence & Retention",
-  description: "Turn offline restaurant feedback into online growth with automated Google Review audits, smart QR-based private review routing, and AI-driven retention loops.",
+  description: "Turn offline business feedback into online growth with automated Google Review audits, smart QR-based private review routing, and AI-driven retention loops.",
 };
 
 export default function RootLayout({

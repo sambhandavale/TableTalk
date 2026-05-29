@@ -12,13 +12,13 @@ You are an expert Google Maps scraping agent specializing in retrieving public r
 Your task is to scrape the last 6 months of public reviews for a specified location.
 
 Given:
-- Restaurant Name: {name}
+- Business Name: {name}
 - Location Area: {location}
 - Google Maps URL: {maps_url}
 
 INSTRUCTIONS:
-1. If this is a REAL-WORLD, existing, or famous restaurant (e.g., 'The Bombay Canteen', 'Bademiya', 'Mahesh Lunch Home', 'Spice Garden Bistro' at Bandra, or any other real place), use your pre-trained knowledge base of its actual public feedback, customer complaints, popular signature dishes, and rating distribution to reconstruct 6-8 extremely realistic public reviews. Ensure the reviews mention actual dishes, real service issues, or unique praise from that specific restaurant's public review history.
-2. If this is a fictitious, sandbox, or newly registered restaurant, generate 6-8 highly realistic reviews that perfectly fit its brand name, cuisine type, and location. Ensure diner names are common Indian/regional names and review timestamps are spread over the last 6 months.
+1. If this is a REAL-WORLD, existing, or famous business (e.g., 'The Bombay Canteen', 'Bademiya', 'Mahesh Lunch Home', 'Spice Garden Bistro' at Bandra, or any other real place), use your pre-trained knowledge base of its actual public feedback, customer complaints, popular signature dishes, and rating distribution to reconstruct 6-8 extremely realistic public reviews. Ensure the reviews mention actual dishes, real service issues, or unique praise from that specific business's public review history.
+2. If this is a fictitious, sandbox, or newly registered business, generate 6-8 highly realistic reviews that perfectly fit its brand name, cuisine type, and location. Ensure diner names are common Indian/regional names and review timestamps are spread over the last 6 months.
 3. Distribute ratings realistically (e.g., a mix of 5-star praises, a 4-star decent experience, and 1-3 star critical complaints regarding wait times, delays, or food preparation).
 4. Return the data structured matching the response schema.
 """
@@ -33,7 +33,7 @@ class OnboardingAuditAgent:
         real_scraped_reviews: List[Dict[str, Any]] = None
     ) -> List[Dict[str, Any]]:
         """AI Scraper Agent: Prompts LLM to scrape/reconstruct/enrich review records."""
-        logger.info(f"AI Scraper Agent triggered for restaurant: {name}")
+        logger.info(f"AI Scraper Agent triggered for business: {name}")
         
         import json
         
@@ -41,7 +41,7 @@ class OnboardingAuditAgent:
             logger.info(f"AI Scraper Agent is parsing & structuring {len(real_scraped_reviews)} REAL reviews.")
             prompt = f"""
             We have successfully scraped the following REAL public customer reviews for:
-            - Restaurant Name: {name}
+            - Business Name: {name}
             - Location Area: {location}
             - Google Maps URL: {maps_url}
             
@@ -51,7 +51,7 @@ class OnboardingAuditAgent:
             INSTRUCTIONS:
             Parse and convert ALL of these real reviews into our structured database schema:
             1. Retain the exact 'diner_name', 'rating', 'text', and 'raw_review_id' from the scraped data.
-            2. Infer realistic 'ordered_items' based on dishes mentioned in the text (e.g. "Masala Dosa" -> ["Masala Dosa"]). If no specific dishes are named, infer highly signature dishes that match this restaurant's actual cuisine ({cuisine}) and context.
+            2. Extract 'ordered_items' from the review text. ONLY include dishes that are explicitly mentioned or clearly eaten/enjoyed by the reviewer (e.g. "enjoying Filter Coffee" -> ["Filter Coffee"]). Crucially, if no specific dishes are mentioned in the review text, do NOT infer, guess, or assume any dishes; leave 'ordered_items' as an empty list [].
             3. Infer the 'visitor_type' ("returning" or "first-time") based on semantic hints in their feedback.
             4. Assign realistic timestamps over the last 6 months.
             """
@@ -74,7 +74,7 @@ class OnboardingAuditAgent:
             logger.info("No real reviews provided. Generating simulated high-fidelity reviews.")
             prompt = f"""
             Please extract reviews for:
-            - Restaurant Name: {name}
+            - Business Name: {name}
             - Location Area: {location}
             - Google Maps URL: {maps_url}
             """
@@ -170,7 +170,7 @@ class OnboardingAuditAgent:
             ]
         )
         
-        prompt = f"Please analyze these historical reviews for restaurant with maps_url {maps_url}:\n\n{reviews_summary_text}"
+        prompt = f"Please analyze these historical reviews for business with maps_url {maps_url}:\n\n{reviews_summary_text}"
         
         try:
             structured_audit = await llm_service.generate_structured_output(

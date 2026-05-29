@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Globe, Edit2, CornerDownRight, Check, Send, QrCode } from "lucide-react";
+import { Globe, Edit2, CornerDownRight, Check, Send, QrCode, RotateCw } from "lucide-react";
 
 export default function ReviewCard({ rev, onApprove }: any) {
   const [isEditing, setIsEditing] = useState(false);
   const [customDraft, setCustomDraft] = useState(rev.ai_response_draft || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const [currentOrderedItems, setCurrentOrderedItems] = useState(rev.ordered_items || []);
 
   const isApproved = rev.owner_approved_reply || rev.final_reply_content;
 
@@ -16,6 +18,25 @@ export default function ReviewCard({ rev, onApprove }: any) {
     setIsSubmitting(true);
     await onApprove(rev.id, customDraft);
     setIsSubmitting(false);
+  };
+
+  const handleRegenerate = async () => {
+    setIsRegenerating(true);
+    try {
+      const resp = await fetch(`http://localhost:8000/api/reviews/${rev.id}/regenerate-draft`, {
+        method: "POST",
+      });
+      if (!resp.ok) throw new Error("Failed to regenerate draft");
+      const data = await resp.json();
+      
+      setCustomDraft(data.ai_response_draft);
+      setCurrentOrderedItems(data.ordered_items || []);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to regenerate AI draft.");
+    } finally {
+      setIsRegenerating(false);
+    }
   };
 
   return (
@@ -42,12 +63,12 @@ export default function ReviewCard({ rev, onApprove }: any) {
           <p className="text-[10px] text-[#94a3b8] leading-snug">
             {rev.text}
           </p>
-          {rev.ordered_items && rev.ordered_items.length > 0 && (
+          {currentOrderedItems && currentOrderedItems.length > 0 && (
             <div className="flex items-center gap-1 text-[9px] text-[#64748b] pt-0.5">
               <span>Items:</span>
               <div className="flex flex-wrap gap-1">
-                {rev.ordered_items.map((item: string, i: number) => (
-                  <span key={i} className="text-[#cbd5e1]">{item}{i < rev.ordered_items.length - 1 ? ',' : ''}</span>
+                {currentOrderedItems.map((item: string, i: number) => (
+                  <span key={i} className="text-[#cbd5e1]">{item}{i < currentOrderedItems.length - 1 ? ',' : ''}</span>
                 ))}
               </div>
             </div>
@@ -78,13 +99,24 @@ export default function ReviewCard({ rev, onApprove }: any) {
           </div>
           
           {!isApproved && !isEditing && (
-            <button 
-              onClick={() => setIsEditing(true)}
-              className="text-[#a855f7] hover:text-white text-[9px] font-semibold flex items-center gap-1 transition-colors"
-            >
-              <Edit2 className="w-2.5 h-2.5" />
-              Edit
-            </button>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={handleRegenerate}
+                disabled={isRegenerating}
+                className="text-[#a855f7] hover:text-white text-[9px] font-semibold flex items-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RotateCw className={`w-2.5 h-2.5 ${isRegenerating ? 'animate-spin' : ''}`} />
+                {isRegenerating ? "Regenerating..." : "Regenerate"}
+              </button>
+
+              <button 
+                onClick={() => setIsEditing(true)}
+                className="text-[#a855f7] hover:text-white text-[9px] font-semibold flex items-center gap-1 transition-colors"
+              >
+                <Edit2 className="w-2.5 h-2.5" />
+                Edit
+              </button>
+            </div>
           )}
         </div>
 

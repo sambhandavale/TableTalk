@@ -15,15 +15,27 @@ class GoogleReviewResponseAgent:
         name = review_data.get("diner_name", "Valued Guest")
         items = review_data.get("ordered_items", [])
         
+        # Clean up items to ensure they are actually mentioned in the review text to prevent hallucination
+        cleaned_items = []
+        for item in items:
+            if item.lower() in text.lower():
+                cleaned_items.append(item)
+            else:
+                words = [w for w in item.replace(",", " ").replace("&", " ").split() if len(w) > 3]
+                if words and any(w.lower() in text.lower() for w in words):
+                    cleaned_items.append(item)
+        items = cleaned_items
+        
         logger.info(f"Response Agent #5 drafting Google reply for review {review_id}. Rating: {rating} stars.")
 
-        item_str = f"our {', '.join(items)}" if items else "our food and service"
+        # Ensure correct grammar (no double 'our')
+        item_str = f"{', '.join(items)}" if items else "food and service"
 
         # Heuristic fallbacks
         if rating >= 4:
             fallback_reply = (
                 f"Hi {name}! Thank you so much for the wonderful review. "
-                f"We are absolutely thrilled that you enjoyed {item_str}! "
+                f"We are absolutely thrilled that you enjoyed our {item_str}! "
                 f"Our kitchen staff takes immense pride in sourcing the freshest local ingredients "
                 f"and preparing everything to order. We look forward to welcoming you back for another "
                 f"stellar meal very soon!"
@@ -59,11 +71,14 @@ class GoogleReviewResponseAgent:
 
         draft = structured_response.drafted_reply
 
-        # Update the review document with the AI-drafted reply
+        # Update the review document with the AI-drafted reply and cleaned items
         await db.update_one(
             "reviews",
             {"id": review_id},
-            {"$set": {"ai_response_draft": draft}}
+            {"$set": {
+                "ai_response_draft": draft,
+                "ordered_items": items
+            }}
         )
 
         return draft

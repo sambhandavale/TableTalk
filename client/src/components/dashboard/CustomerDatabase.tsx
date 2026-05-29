@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Users, Filter, Send, Phone, Star, Search } from "lucide-react";
+import { Users, Filter, Send, Phone, Star, Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
 
-export default function CustomerDatabase({ customers = [] }: any) {
+export default function CustomerDatabase({ customers = [], reviews = [] }: any) {
   const [segmentFilter, setSegmentFilter] = useState("All");
+  const [expandedCustomerPhone, setExpandedCustomerPhone] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filtered = segmentFilter === "All" ? customers : customers.filter((c: any) => c.segment === segmentFilter);
 
@@ -69,16 +71,32 @@ export default function CustomerDatabase({ customers = [] }: any) {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#1e293b]">
-            {filtered.map((c: any, idx: number) => (
-              <tr key={idx} className="hover:bg-[#1e293b]/10 transition-colors">
+            {filtered.map((c: any, idx: number) => {
+              const isExpanded = expandedCustomerPhone === (c.phone || c.contact);
+              const customerReviews = reviews.filter((r: any) => 
+                (c.phone && r.diner_phone === c.phone) || 
+                (c.contact && r.diner_phone === c.contact) || 
+                (!c.phone && !c.contact && r.diner_name === (c.name || c.diner_name))
+              ).sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+              
+              const totalPages = Math.ceil(customerReviews.length / 5);
+              const paginatedReviews = customerReviews.slice((currentPage - 1) * 5, currentPage * 5);
+              
+              const avgRating = customerReviews.length > 0 
+                ? customerReviews.reduce((acc: number, r: any) => acc + (r.rating || 0), 0) / customerReviews.length 
+                : (c.avgRating || 0);
+
+              return (
+              <React.Fragment key={idx}>
+              <tr className={`hover:bg-[#1e293b]/10 transition-colors ${isExpanded ? 'bg-[#1e293b]/10' : ''}`}>
                 <td className="p-3 text-xs font-semibold text-white">{c.name || c.diner_name || "Guest"}</td>
                 <td className="p-3 text-[10px] text-[#94a3b8] flex items-center gap-1.5 mt-0.5">
                   <Phone className="w-3 h-3 text-[#64748b]" /> {c.contact || c.phone || "N/A"}
                 </td>
-                <td className="p-3 text-[10px] text-white font-mono">{c.visits || c.visit_count || 1}</td>
+                <td className="p-3 text-[10px] text-white font-mono">{c.visits || c.visit_count || customerReviews.length || 1}</td>
                 <td className="p-3 text-[10px] text-white flex items-center gap-1 mt-0.5">
-                  <Star className={`w-3 h-3 ${(c.avgRating || 0) >= 4 ? 'text-[#10b981]' : (c.avgRating || 0) <= 2 ? 'text-[#f43f5e]' : 'text-[#f59e0b]'}`} />
-                  {(c.avgRating || 0).toFixed(1)}
+                  <Star className={`w-3 h-3 ${avgRating >= 4 ? 'text-[#10b981]' : avgRating <= 2 ? 'text-[#f43f5e]' : 'text-[#f59e0b]'}`} />
+                  {avgRating.toFixed(1)}
                 </td>
                 <td className="p-3">
                   <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest border rounded-none ${
@@ -87,17 +105,93 @@ export default function CustomerDatabase({ customers = [] }: any) {
                     c.segment === "Lost" ? "bg-[#f43f5e]/10 border-[#f43f5e]/30 text-[#f43f5e]" :
                     "bg-[#a855f7]/10 border-[#a855f7]/30 text-[#a855f7]"
                   }`}>
-                    {c.segment || "New"}
+                    {c.segment || "New Customer"}
                   </span>
                 </td>
                 <td className="p-3 text-[10px] text-[#94a3b8]">{c.lastVisit || c.last_visit ? new Date(c.lastVisit || c.last_visit).toLocaleDateString() : "Recently"}</td>
                 <td className="p-3 text-right">
-                  <button className="text-[#a855f7] hover:text-white text-[9px] font-bold uppercase tracking-widest transition-colors">
-                    View Profile
+                  <button 
+                    onClick={() => {
+                      if (isExpanded) {
+                        setExpandedCustomerPhone(null);
+                      } else {
+                        setExpandedCustomerPhone(c.phone || c.contact);
+                        setCurrentPage(1);
+                      }
+                    }}
+                    className="text-[#a855f7] hover:text-white text-[9px] font-bold uppercase tracking-widest transition-colors flex items-center justify-end gap-1 ml-auto"
+                  >
+                    View Reviews
+                    {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                   </button>
                 </td>
               </tr>
-            ))}
+              {isExpanded && (
+                <tr className="bg-[#05020a]">
+                  <td colSpan={7} className="p-0 border-b border-[#1e293b]">
+                    <div className="p-4 pl-8 border-l-2 border-[#a855f7] space-y-3">
+                      <h4 className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold flex items-center gap-2">
+                        <MessageSquare className="w-3 h-3" />
+                        Customer Review History ({customerReviews.length})
+                      </h4>
+                      
+                      {customerReviews.length === 0 ? (
+                        <p className="text-[10px] text-[#475569] italic">No review text found for this customer.</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {paginatedReviews.map((r: any, rIdx: number) => (
+                            <div key={rIdx} className="bg-[#1e293b]/20 border border-[#1e293b] p-3 rounded-none">
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-1">
+                                  {[...Array(5)].map((_, i) => (
+                                    <Star key={i} className={`w-3 h-3 ${i < r.rating ? 'text-[#f59e0b] fill-[#f59e0b]' : 'text-[#334155]'}`} />
+                                  ))}
+                                </div>
+                                <span className="text-[9px] text-[#64748b] font-mono">{new Date(r.timestamp).toLocaleDateString()}</span>
+                              </div>
+                              <p className="text-xs text-[#cbd5e1] leading-relaxed">"{r.text}"</p>
+                              {r.ordered_items && r.ordered_items.length > 0 && (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                  {r.ordered_items.map((item: string, iIdx: number) => (
+                                    <span key={iIdx} className="text-[9px] bg-[#a855f7]/10 text-[#c084fc] px-1.5 py-0.5 border border-[#a855f7]/20 uppercase tracking-wider">{item}</span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-[9px] text-[#64748b] uppercase tracking-widest font-semibold">
+                            Page {currentPage} of {totalPages}
+                          </span>
+                          <div className="flex gap-1">
+                            <button 
+                              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                              disabled={currentPage === 1}
+                              className="p-1 border border-[#1e293b] bg-[#1e293b]/50 hover:bg-[#a855f7] hover:text-black disabled:opacity-50 disabled:hover:bg-[#1e293b]/50 disabled:hover:text-white transition-colors"
+                            >
+                              <ChevronLeft className="w-3.5 h-3.5" />
+                            </button>
+                            <button 
+                              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                              disabled={currentPage === totalPages}
+                              className="p-1 border border-[#1e293b] bg-[#1e293b]/50 hover:bg-[#a855f7] hover:text-black disabled:opacity-50 disabled:hover:bg-[#1e293b]/50 disabled:hover:text-white transition-colors"
+                            >
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              )}
+              </React.Fragment>
+              );
+            })}
           </tbody>
         </table>
         {filtered.length === 0 && (

@@ -5,11 +5,35 @@ import { Download, QrCode, Smartphone, BarChart2 } from "lucide-react";
 interface QRDisplayProps {
   url: string;
   restaurantName: string;
+  qrStats?: {
+    total_scans: number;
+    feedback_submitted: number;
+    redirected: number;
+    confirmed_google: number;
+    redemption_rate: number;
+  };
 }
 
-export default function QRDisplay({ url, restaurantName }: QRDisplayProps) {
+export default function QRDisplay({ url, restaurantName, qrStats }: QRDisplayProps) {
   const [qrDataUrl, setQrDataUrl] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Dynamic values calculated from backend DB with seeding fallbacks if empty
+  const stats = qrStats || {
+    total_scans: 0,
+    feedback_submitted: 0,
+    redirected: 0,
+    confirmed_google: 0,
+    redemption_rate: 0
+  };
+
+  const feedbackConv = stats.total_scans > 0 
+    ? Math.round((stats.feedback_submitted / stats.total_scans) * 100) 
+    : 0;
+
+  const googleConv = stats.redirected > 0 
+    ? Math.round((stats.confirmed_google / stats.redirected) * 100) 
+    : 0;
 
   useEffect(() => {
     if (url) {
@@ -82,43 +106,43 @@ export default function QRDisplay({ url, restaurantName }: QRDisplayProps) {
       <div className="mt-auto space-y-2">
         <div className="flex items-center gap-1.5 mb-3">
           <BarChart2 className="w-3.5 h-3.5 text-[#a855f7]" />
-          <span className="text-[10px] uppercase tracking-widest text-white font-bold">QR Funnel Stats (30 Days)</span>
+          <span className="text-[10px] uppercase tracking-widest text-white font-bold">QR Funnel Stats (Live)</span>
         </div>
 
         <div className="space-y-2 border-l border-[#1e293b] pl-3">
           <div className="flex justify-between items-center text-[10px]">
             <span className="text-[#94a3b8]">Total Scans (Menu / Standee)</span>
-            <span className="font-semibold text-white">428</span>
+            <span className="font-semibold text-white">{stats.total_scans}</span>
           </div>
           
           <div className="w-full bg-[#1e293b] h-0.5" />
           <div className="flex justify-between items-center text-[10px]">
             <span className="text-[#94a3b8] flex items-center gap-1"><div className="w-1 h-1 bg-[#a855f7]" /> Feedback Submitted</span>
             <div className="text-right">
-              <span className="font-semibold text-white">142</span>
-              <span className="text-[8px] text-[#a855f7] ml-2">(33% Conv.)</span>
+              <span className="font-semibold text-white">{stats.feedback_submitted}</span>
+              <span className="text-[8px] text-[#a855f7] ml-2">({feedbackConv}% Conv.)</span>
             </div>
           </div>
           
           <div className="w-full bg-[#1e293b] h-0.5" />
           <div className="flex justify-between items-center text-[10px]">
             <span className="text-[#94a3b8] flex items-center gap-1"><div className="w-1 h-1 bg-[#10b981]" /> 4-5★ Redirected to Google</span>
-            <span className="font-semibold text-white">96</span>
+            <span className="font-semibold text-white">{stats.redirected}</span>
           </div>
-
+ 
           <div className="w-full bg-[#1e293b] h-0.5" />
           <div className="flex justify-between items-center text-[10px]">
             <span className="text-[#94a3b8] flex items-center gap-1"><div className="w-1 h-1 bg-[#f59e0b]" /> Confirmed Google Review</span>
             <div className="text-right">
-              <span className="font-semibold text-white">41</span>
-              <span className="text-[8px] text-[#f59e0b] ml-2">(42% Conv.)</span>
+              <span className="font-semibold text-white">{stats.confirmed_google}</span>
+              <span className="text-[8px] text-[#f59e0b] ml-2">({googleConv}% Conv.)</span>
             </div>
           </div>
-
+ 
           <div className="w-full bg-[#1e293b] h-0.5" />
           <div className="flex justify-between items-center text-[10px] pt-1">
             <span className="text-[#94a3b8]">Coupon Redemption Rate</span>
-            <span className="font-semibold text-[#10b981]">18%</span>
+            <span className="font-semibold text-[#10b981]">{stats.redemption_rate}%</span>
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@ export default function HeroSection() {
       <div className="lg:col-span-6 text-left space-y-8 animate-fadeIn">
 
         <h2 className="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.05] text-white font-extrabold max-w-xl">
-          Making Offline Restaurant Operations Profitable with AI
+          Making Offline Business Operations Profitable with AI
         </h2>
 
         <p className="text-sm sm:text-base text-white/70 max-w-lg font-light leading-relaxed">
@@ -94,9 +94,9 @@ export default function HeroSection() {
               <div className="flex-1 flex flex-col justify-between overflow-hidden text-left">
                 <div className="flex justify-between items-start gap-4">
                   <div className="min-w-0">
-                    <span className="text-[8.5px] text-[var(--text-dim)] uppercase tracking-wider font-semibold block">Restaurant</span>
+                    <span className="text-[8.5px] text-[var(--text-dim)] uppercase tracking-wider font-semibold block">Business</span>
                     <h4 className="text-xs sm:text-sm font-bold text-[var(--foreground)] leading-tight truncate transition-colors duration-300">
-                      Mumbai Masala Bistro
+                      Urban Retail & Services
                     </h4>
                   </div>
                   
@@ -121,7 +121,7 @@ export default function HeroSection() {
                     <div className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
                       <span className="font-bold text-[var(--foreground)]">Karan M. <span className="text-red-400">2★</span></span>
-                      <span className="text-[var(--text-muted)] truncate max-w-[100px] sm:max-w-[130px]">Cold naan delay.</span>
+                      <span className="text-[var(--text-muted)] truncate max-w-[100px] sm:max-w-[130px]">Service was slow today.</span>
                     </div>
                     <span className="px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-[7px] text-red-400 font-bold uppercase whitespace-nowrap tracking-wider">
                       Apology Sent
@@ -132,7 +132,7 @@ export default function HeroSection() {
                     <div className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                       <span className="font-bold text-[var(--foreground)]">Rohan S. <span className="text-green-400">5★</span></span>
-                      <span className="text-[var(--text-muted)] truncate max-w-[100px] sm:max-w-[130px]">Perfect Butter Chicken!</span>
+                      <span className="text-[var(--text-muted)] truncate max-w-[100px] sm:max-w-[130px]">Perfect experience!</span>
                     </div>
                     <span className="px-2 py-0.5 rounded bg-green-500/10 border border-green-500/20 text-[7px] text-green-400 font-bold uppercase whitespace-nowrap tracking-wider">
                       Google Shared
@@ -166,7 +166,7 @@ export default function HeroSection() {
                 <Sparkles className="w-3 h-3 text-[var(--brand-purple-text)] animate-pulse" />
                 Campaign Active
               </div>
-              <p className="text-[10px] text-[var(--foreground)] leading-snug font-bold">SORRY20 • 20% off Naan</p>
+              <p className="text-[10px] text-[var(--foreground)] leading-snug font-bold">SORRY20 • 20% off Next Visit</p>
               <div className="text-[8.5px] bg-[var(--brand-purple-text)]/10 border border-[var(--brand-purple-text)]/20 py-1 rounded text-[var(--brand-purple-text)] font-mono text-center uppercase tracking-wider font-bold shadow-sm">
                 Auto-Recovery
               </div>
@@ -177,7 +177,7 @@ export default function HeroSection() {
           <div className="absolute -bottom-6 lg:-bottom-12 -right-6 lg:-right-16 z-20 liquid-glass-card dot-grid p-4 w-[140px] lg:w-[155px] hover:scale-[1.08] hover:translate-y-1 transition-all duration-300 cursor-pointer shadow-2xl">
             <div className="liquid-glass-glow" />
             <div className="relative z-10 text-left space-y-1 text-xs">
-              <span className="text-[8.5px] uppercase tracking-wider text-[var(--text-dim)] block font-semibold">Diner Rating</span>
+              <span className="text-[8.5px] uppercase tracking-wider text-[var(--text-dim)] block font-semibold">Customer Rating</span>
               <div className="text-2xl font-extrabold text-[var(--foreground)] font-display leading-none">4.8</div>
               <div className="flex text-amber-400 gap-0.5 pt-1">
                 {[1, 2, 3, 4, 5].map((s) => (
@@ -196,8 +196,8 @@ export default function HeroSection() {
                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_#ef4444]" />
                 <span className="text-[8.5px] text-red-500 font-bold uppercase tracking-wider">CRITICAL ALARM</span>
               </div>
-              <p className="text-[9.5px] text-[var(--text-muted)] font-light leading-snug italic">"Starters were dry, Naan cold."</p>
-              <span className="text-[8.5px] text-[var(--text-dim)] block font-mono">Table 4 • Floor Alert</span>
+              <p className="text-[9.5px] text-[var(--text-muted)] font-light leading-snug italic">"Staff was unattentive, waited 20m."</p>
+              <span className="text-[8.5px] text-[var(--text-dim)] block font-mono">Service Area A • Floor Alert</span>
             </div>
           </div>
 

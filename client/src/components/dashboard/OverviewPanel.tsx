@@ -27,7 +27,7 @@ import {
   Cell
 } from "recharts";
 
-export default function OverviewPanel({ restaurant, reviews = [], insights, auditStatus }: any) {
+export default function OverviewPanel({ business, reviews = [], insights, auditStatus }: any) {
   const unansweredCount = reviews.filter((r: any) => !r.owner_approved_reply && !r.final_reply_content).length;
 
   const chartData = [
@@ -39,7 +39,7 @@ export default function OverviewPanel({ restaurant, reviews = [], insights, audi
 
   const healthSparkline = [
     { score: 70 }, { score: 72 }, { score: 68 }, { score: 75 }, 
-    { score: 78 }, { score: 74 }, { score: 82 }, { score: restaurant.health_score || 0 }
+    { score: 78 }, { score: 74 }, { score: 82 }, { score: business.health_score || 0 }
   ];
 
   const googleCount = reviews.filter((r: any) => r.source === 'google').length;
@@ -71,11 +71,11 @@ export default function OverviewPanel({ restaurant, reviews = [], insights, audi
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4 pb-4 border-b border-[#1e293b]">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-[var(--foreground)] font-sans leading-none">
-            {restaurant.name}
+            {business.name}
           </h1>
           <p className="text-[11px] text-[#64748b] mt-1.5 flex items-center gap-1.5">
             <MapPin className="w-3 h-3 text-[#a855f7]" />
-            {restaurant.location} | <span className="font-medium text-[#a855f7]">{restaurant.cuisine}</span>
+            {business.location} | <span className="font-medium text-[#a855f7]">{business.cuisine}</span>
           </p>
         </div>
         
@@ -100,7 +100,7 @@ export default function OverviewPanel({ restaurant, reviews = [], insights, audi
             <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Health Score</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-xl font-semibold text-[var(--foreground)] leading-none">
-                {restaurant.health_score || 88}%
+                {business.health_score || 88}%
               </span>
               <span className="text-[9px] text-[#10b981] font-semibold flex items-center">
                 <ArrowUpRight className="w-2.5 h-2.5" /> 4% WoW

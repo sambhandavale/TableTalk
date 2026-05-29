@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from app.database import db
-from app.schemas.onboard import RestaurantOnboardRequest, RestaurantProfileUpdateRequest, UserLoginRequest
+from app.schemas.onboard import BusinessOnboardRequest, BusinessProfileUpdateRequest, UserLoginRequest
 from app.core.utils import resolve_maps_url
 
 # Import Agent 1
@@ -16,24 +16,24 @@ def hash_password(password: str) -> str:
     hash_obj = hashlib.sha256((salt + password).encode('utf-8'))
     return hash_obj.hexdigest()
 
-async def trigger_background_audit(restaurant_id: str, maps_url: str):
+async def trigger_background_audit(business_id: str, maps_url: str):
     """Fires Agent 1 silently in background to scrape & audit Google Reviews."""
     import logging
     logger = logging.getLogger("TableTalk.BackendAudit")
-    logger.info(f"Orchestrating onboarding audit & scraper workflow for Restaurant ID: {restaurant_id}")
+    logger.info(f"Orchestrating onboarding audit & scraper workflow for Business ID: {business_id}")
     
     try:
         # 1. Resolve shortened Maps link redirects
         resolved_url = await resolve_maps_url(maps_url)
         
-        # 2. Retrieve restaurant context metadata for targeted LLM scraping
-        restaurant = await db.find_one("restaurants", {"id": restaurant_id})
-        if not restaurant:
-            restaurant = await db.find_one("restaurants", {"slug": restaurant_id})
+        # 2. Retrieve business context metadata for targeted LLM scraping
+        business = await db.find_one("businesses", {"id": business_id})
+        if not business:
+            business = await db.find_one("businesses", {"slug": business_id})
             
-        name = restaurant.get("name", "Unknown Restaurant") if restaurant else "Unknown Restaurant"
-        cuisine = restaurant.get("cuisine", "Multi-Cuisine") if restaurant else "Multi-Cuisine"
-        location = restaurant.get("location", "Mumbai") if restaurant else "Mumbai"
+        name = business.get("name", "Unknown Business") if business else "Unknown Business"
+        cuisine = business.get("cuisine", "Multi-Cuisine") if business else "Multi-Cuisine"
+        location = business.get("location", "Mumbai") if business else "Mumbai"
         
         # 3. Call CID AJAX Scraper Utility to extract real reviews first
         from app.core.utils import scrape_real_google_reviews
@@ -43,7 +43,7 @@ async def trigger_background_audit(restaurant_id: str, maps_url: str):
         if real_reviews:
             import uuid
             for rr in real_reviews:
-                rr["restaurant_id"] = restaurant_id
+                rr["business_id"] = business_id
                 rr["raw_review_id"] = f"raw-{uuid.uuid4().hex[:8]}"
             await db.insert_many("raw_reviews", real_reviews)
             logger.info(f"Ingested {len(real_reviews)} raw reviews safely to database.")
@@ -60,7 +60,7 @@ async def trigger_background_audit(restaurant_id: str, maps_url: str):
         # 5. Save reviews collection records to MongoDB (Business / DB logic)
         saved_reviews = []
         for r in raw_reviews:
-            r["restaurant_id"] = restaurant_id
+            r["business_id"] = business_id
             
             # Merge actual metadata from the live scraper if matched
             if real_reviews:
@@ -91,7 +91,7 @@ async def trigger_background_audit(restaurant_id: str, maps_url: str):
         # 6. Draft recovery dynamic responses for each imported review
         for rev in saved_reviews:
             items = rev.get("ordered_items", [])
-            item_ref = f"our {', '.join(items)}" if items else "our food and service"
+            item_ref = f"{', '.join(items)}" if items else "food and service"
             if rev["rating"] <= 3:
                 draft = f"Thank you for your feedback, {rev.get('diner_name', 'Guest')}. We sincerely apologize for the delay regarding your {item_ref}. We have addressed this with our kitchen team and hope to welcome you back to offer a much smoother service."
                 await db.update_one("reviews", {"id": rev["id"]}, {"$set": {"ai_response_draft": draft}})
@@ -101,7 +101,7 @@ async def trigger_background_audit(restaurant_id: str, maps_url: str):
                 
         # 7. Write consolidated insights records to MongoDB
         insights_data = {
-            "restaurant_id": restaurant_id,
+            "business_id": business_id,
             "generated_date": "2026-05-25T18:00:00Z",
             "themes": {
                 "praised": analysis_result.praised,
@@ -112,20 +112,20 @@ async def trigger_background_audit(restaurant_id: str, maps_url: str):
         }
         await db.insert_one("insights", insights_data)
         
-        # 8. Mark restaurant audit status as complete & update operational health index
+        # 8. Mark business audit status as complete & update operational health index
         await db.update_one(
-            "restaurants",
-            {"id": restaurant_id},
+            "businesses",
+            {"id": business_id},
             {"$set": {"health_score": analysis_result.health_score, "audit_completed": True}}
         )
         
-        logger.info(f"Onboarding background audit completed successfully for Restaurant ID: {restaurant_id}")
+        logger.info(f"Onboarding background audit completed successfully for Business ID: {business_id}")
         
     except Exception as e:
         logger.error(f"Onboarding background audit encountered error: {e}", exc_info=True)
 
 @router.post("")
-async def onboard_restaurant(request: RestaurantOnboardRequest, background_tasks: BackgroundTasks):
+async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: BackgroundTasks):
     # 1. Check if the business account email already exists
     existing_user = await db.find_one("users", {"email": request.email})
     if existing_user:
@@ -136,15 +136,15 @@ async def onboard_restaurant(request: RestaurantOnboardRequest, background_tasks
 
     slug = request.name.lower().replace(" ", "-").replace("&", "and")
     
-    # Check if restaurant slug already exists
-    existing_restaurant = await db.find_one("restaurants", {"slug": slug})
+    # Check if business slug already exists
+    existing_restaurant = await db.find_one("businesses", {"slug": slug})
     if existing_restaurant:
         raise HTTPException(
             status_code=400,
-            detail="A restaurant with this name has already been registered."
+            detail="A business with this name has already been registered."
         )
         
-    # 2. Onboard new restaurant entry
+    # 2. Onboard new business entry
     new_restaurant = {
         "name": request.name,
         "cuisine": request.cuisine,
@@ -157,25 +157,25 @@ async def onboard_restaurant(request: RestaurantOnboardRequest, background_tasks
         "audit_completed": False
     }
     
-    saved_restaurant = await db.insert_one("restaurants", new_restaurant)
-    restaurant_id = saved_restaurant["id"]
+    saved_restaurant = await db.insert_one("businesses", new_restaurant)
+    business_id = saved_restaurant["id"]
     
     # 3. Create secure business user account document
     new_user = {
         "email": request.email,
         "password_hash": hash_password(request.password),
-        "restaurant_id": restaurant_id,
+        "business_id": business_id,
         "owner_contact": request.owner_contact,
         "role": "General Manager"
     }
     await db.insert_one("users", new_user)
     
     # Trigger AI Audit Agent 1 asynchronously in background to scrape Google reviews
-    background_tasks.add_task(trigger_background_audit, restaurant_id, request.maps_url)
+    background_tasks.add_task(trigger_background_audit, business_id, request.maps_url)
     
     return {
-        "message": "Business account and restaurant onboarding successfully initiated. AI Audit dispatched.",
-        "restaurant": saved_restaurant,
+        "message": "Business account and business onboarding successfully initiated. AI Audit dispatched.",
+        "business": saved_restaurant,
         "account": {
             "email": request.email,
             "role": "General Manager",
@@ -202,16 +202,16 @@ async def login_user(request: UserLoginRequest):
             detail="Incorrect security password."
         )
     
-    # 3. Look up associated restaurant details
-    restaurant_id = user.get("restaurant_id")
-    restaurant = await db.find_one("restaurants", {"id": restaurant_id})
-    if not restaurant:
+    # 3. Look up associated business details
+    business_id = user.get("business_id")
+    business = await db.find_one("businesses", {"id": business_id})
+    if not business:
         # Check by slug fallback
-        restaurant = await db.find_one("restaurants", {"slug": restaurant_id})
-        if not restaurant:
+        business = await db.find_one("businesses", {"slug": business_id})
+        if not business:
             raise HTTPException(
                 status_code=404,
-                detail="Associated restaurant profile not found."
+                detail="Associated business profile not found."
             )
             
     return {
@@ -221,46 +221,46 @@ async def login_user(request: UserLoginRequest):
             "role": user.get("role", "General Manager"),
             "owner_contact": user.get("owner_contact")
         },
-        "restaurant": {
-            "id": restaurant.get("id"),
-            "name": restaurant.get("name"),
-            "slug": restaurant.get("slug"),
-            "cuisine": restaurant.get("cuisine"),
-            "location": restaurant.get("location"),
-            "maps_url": restaurant.get("maps_url")
+        "business": {
+            "id": business.get("id"),
+            "name": business.get("name"),
+            "slug": business.get("slug"),
+            "cuisine": business.get("cuisine"),
+            "location": business.get("location"),
+            "maps_url": business.get("maps_url")
         }
     }
 
 @router.get("/{slug}/status")
 async def get_onboarding_status(slug: str):
-    restaurant = await db.find_one("restaurants", {"slug": slug})
-    if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
+    business = await db.find_one("businesses", {"slug": slug})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
         
     reviews = await db.get_collection("reviews")
-    restaurant_reviews = [r for r in reviews if r.get("restaurant_id") == restaurant.get("id")]
+    restaurant_reviews = [r for r in reviews if r.get("business_id") == business.get("id")]
     
     # Find latest insights
     insights = await db.get_collection("insights")
-    restaurant_insights = [i for i in insights if i.get("restaurant_id") == restaurant.get("id")]
+    restaurant_insights = [i for i in insights if i.get("business_id") == business.get("id")]
     
     return {
-        "restaurant": restaurant,
+        "business": business,
         "audit_completed": len(restaurant_reviews) > 0,
         "reviews_imported_count": len(restaurant_reviews),
         "latest_audit": restaurant_insights[0] if restaurant_insights else None
     }
 
-@router.put("/{restaurant_id}/profile")
-async def update_restaurant_profile(restaurant_id: str, request: RestaurantProfileUpdateRequest):
-    # 1. Verify restaurant exists (by ID or Slug)
-    restaurant = await db.find_one("restaurants", {"id": restaurant_id})
-    if not restaurant:
-        restaurant = await db.find_one("restaurants", {"slug": restaurant_id})
-        if not restaurant:
-            raise HTTPException(status_code=404, detail="Restaurant not found")
+@router.put("/{business_id}/profile")
+async def update_restaurant_profile(business_id: str, request: BusinessProfileUpdateRequest):
+    # 1. Verify business exists (by ID or Slug)
+    business = await db.find_one("businesses", {"id": business_id})
+    if not business:
+        business = await db.find_one("businesses", {"slug": business_id})
+        if not business:
+            raise HTTPException(status_code=404, detail="Business not found")
             
-    actual_id = restaurant["id"]
+    actual_id = business["id"]
     
     # 2. Prepare database update fields
     update_data = {
@@ -273,17 +273,29 @@ async def update_restaurant_profile(restaurant_id: str, request: RestaurantProfi
         "dining_duration_mins": request.dining_duration_mins,
         "is_pure_veg": request.is_pure_veg,
         "valet_parking": request.valet_parking,
-        "seating_capacity": request.seating_capacity
+        "seating_capacity": request.seating_capacity,
+        "has_incentives": request.has_incentives
     }
     
-    # 3. Save updates into MongoDB restaurants collection
-    success = await db.update_one("restaurants", {"id": actual_id}, {"$set": update_data})
+    # 3. Save updates into MongoDB businesses collection
+    success = await db.update_one("businesses", {"id": actual_id}, {"$set": update_data})
+    
+    # 4. Handle decoupled coupons
+    await db.delete_many("coupons", {"business_id": actual_id})
+    if request.coupons and len(request.coupons) > 0:
+        new_coupons = []
+        for c in request.coupons:
+            c_dict = dict(c) if hasattr(c, 'dict') else c
+            c_dict["business_id"] = actual_id
+            c_dict["is_active"] = True
+            new_coupons.append(c_dict)
+        await db.insert_many("coupons", new_coupons)
     
     # Fetch refreshed document
-    refreshed_restaurant = await db.find_one("restaurants", {"id": actual_id})
+    refreshed_restaurant = await db.find_one("businesses", {"id": actual_id})
     
     return {
-        "message": "Restaurant profile operational settings successfully updated.",
-        "restaurant": refreshed_restaurant,
+        "message": "Business profile operational settings successfully updated.",
+        "business": refreshed_restaurant,
         "success": success
     }

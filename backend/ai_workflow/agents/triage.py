@@ -8,16 +8,42 @@ from ai_workflow.schemas.triage import StructuredTriageOutput
 logger = logging.getLogger("TableTalk.TriageAgent")
 
 class ReviewTriageAgent:
-    async def triage_review(self, review_id: str, review_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def triage_review(self, review_id: str, review_data: Dict[str, Any], business_obj: Dict[str, Any] = None) -> Dict[str, Any]:
         """Classifies incoming reviews and orchestrates responses."""
         rating = review_data.get("rating", 5)
         text = review_data.get("text", "")
         items = review_data.get("ordered_items", [])
         phone = review_data.get("diner_phone", "")
         name = review_data.get("diner_name", "Valued Guest")
-        restaurant_id = review_data.get("restaurant_id")
+        business_id = review_data.get("business_id")
         visitor_type = review_data.get("visitor_type", "first-time")
         
+        # Incentive Configurations
+        has_incentives = business_obj.get("has_incentives", False) if business_obj else False
+        all_coupons = await db.get_collection("coupons")
+        coupons = [c for c in all_coupons if c.get("business_id") == business_id]
+        
+        # Determine sentiment for targeting
+        sentiment = "positive" if rating >= 4 else "negative"
+        
+        # Filter eligible coupons by target and quantity
+        eligible_coupons = []
+        for i, c in enumerate(coupons):
+            q = c.get("quantity")
+            t = c.get("target_sentiment", "all")
+            try:
+                has_stock = (q is None or str(q).strip() == "" or int(q) > 0)
+            except ValueError:
+                has_stock = True
+                
+            matches_target = (t == "all" or t == sentiment)
+            if has_stock and matches_target:
+                eligible_coupons.append((i, c))
+                
+        import random
+        chosen_coupon_data = random.choice(eligible_coupons) if eligible_coupons else None
+        rest_coupon_code = chosen_coupon_data[1].get("coupon_code", "DELICIOUS15") if chosen_coupon_data else "DELICIOUS15"
+
         logger.info(f"Triage Agent #2 evaluating review {review_id}. Rating: {rating} stars.")
 
         # Construct raw inputs for LLM Triage evaluation
@@ -53,7 +79,7 @@ class ReviewTriageAgent:
             segment=calculated_segment,
             route="public" if rating >= 4 else "private_alarm",
             google_redirect=True if rating >= 4 else False,
-            reward_code="DELICIOUS15" if rating >= 4 else "SORRY20",
+            reward_code=rest_coupon_code if has_incentives else None,
             alert_owner=False if rating >= 4 else True,
             apology_draft=None if rating >= 4 else fallback_apology
         )
@@ -66,27 +92,73 @@ class ReviewTriageAgent:
             fallback_data=fallback_triage
         )
 
-        # Update customer cohort / contact database
+        # CRM Update & Milestone Logic
+        give_reward = False
         if phone:
-            existing_cust = await db.find_one("customers", {"phone": phone, "restaurant_id": restaurant_id})
+            existing_cust = await db.find_one("customers", {"phone": phone, "business_id": business_id})
+            
+            inc_good = 1 if rating >= 4 else 0
+            inc_bad = 1 if rating <= 3 else 0
+            
             if existing_cust:
+                new_good = existing_cust.get("good_reviews_count", 0) + inc_good
+                new_bad = existing_cust.get("bad_reviews_count", 0) + inc_bad
+                new_total = existing_cust.get("total_reviews_count", 0) + 1
+                
                 await db.update_one(
                     "customers",
-                    {"phone": phone, "restaurant_id": restaurant_id},
+                    {"phone": phone, "business_id": business_id},
                     {
                         "$set": {"segment": structured_triage.segment, "last_visit": "2026-05-25T18:00:00Z"},
-                        "$inc": {"visit_count": 1}
+                        "$inc": {
+                            "visit_count": 1,
+                            "good_reviews_count": inc_good,
+                            "bad_reviews_count": inc_bad,
+                            "total_reviews_count": 1
+                        }
                     }
                 )
+                
+                # Milestone triggers
+                if new_good > 0 and new_good % 3 == 0:
+                    give_reward = True
+                elif new_bad > 0 and new_bad % 2 == 0:
+                    give_reward = True
+                    
             else:
                 new_cust = {
                     "phone": phone,
-                    "restaurant_id": restaurant_id,
+                    "business_id": business_id,
                     "visit_count": 1,
                     "last_visit": "2026-05-25T18:00:00Z",
-                    "segment": structured_triage.segment
+                    "segment": structured_triage.segment,
+                    "good_reviews_count": inc_good,
+                    "bad_reviews_count": inc_bad,
+                    "total_reviews_count": 1
                 }
                 await db.insert_one("customers", new_cust)
+                give_reward = True  # First review gets a reward!
+        else:
+            # Without phone number to track, default to giving reward for first time only visually
+            give_reward = True if visitor_type == "first-time" else False
+
+        # Apply final reward decision
+        final_reward_code = rest_coupon_code if (give_reward and has_incentives and chosen_coupon_data) else None
+
+        # Decrement stock if dispatched
+        if final_reward_code and chosen_coupon_data:
+            c_obj = chosen_coupon_data[1]
+            q = c_obj.get("quantity")
+            coupon_code = c_obj.get("coupon_code")
+            try:
+                if q is not None and str(q).strip() != "" and int(q) > 0:
+                    await db.update_one(
+                        "coupons",
+                        {"business_id": business_id, "coupon_code": coupon_code},
+                        {"$inc": {"quantity": -1}}
+                    )
+            except ValueError:
+                pass
 
         # Update review record in DB
         update_fields = {
@@ -101,7 +173,7 @@ class ReviewTriageAgent:
         return {
             "route": structured_triage.route,
             "google_redirect": structured_triage.google_redirect,
-            "reward_code": structured_triage.reward_code,
+            "reward_code": final_reward_code,
             "alert_owner": structured_triage.alert_owner,
             "apology_draft": structured_triage.apology_draft
         }

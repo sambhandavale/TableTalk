@@ -20,7 +20,7 @@ export default function FeatureInsights() {
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-[var(--foreground)] font-bold transition-colors duration-300">Praised Menu Items</span>
+                <span className="text-[10px] text-[var(--foreground)] font-bold transition-colors duration-300">Top Rated Offerings</span>
                 <span className="text-[9px] bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded text-green-400 font-bold uppercase font-mono">
                   HIGH IMPACT
                 </span>
@@ -28,11 +28,11 @@ export default function FeatureInsights() {
               
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between items-center p-2 rounded-lg bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] transition-colors duration-300">
-                  <span className="font-medium">1. Mutton Biryani</span>
+                  <span className="font-medium">1. Customer Service</span>
                   <span className="text-brand-purple-text font-bold transition-colors duration-300">22 mentions (4.9★)</span>
                 </div>
                 <div className="flex justify-between items-center p-2 rounded-lg bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] transition-colors duration-300">
-                  <span className="font-medium">2. Butter Chicken & Naan</span>
+                  <span className="font-medium">2. Wait Time & Ambience</span>
                   <span className="text-brand-purple-text font-bold transition-colors duration-300">14 mentions (4.7★)</span>
                 </div>
               </div>
@@ -40,7 +40,7 @@ export default function FeatureInsights() {
               <div className="pt-2 border-t border-[var(--brand-border)] space-y-2 transition-colors duration-300">
                 <span className="text-[9px] text-[var(--text-dim)] block uppercase tracking-wider font-semibold transition-colors duration-300">Priority Recommendation</span>
                 <p className="text-[11px] text-[var(--foreground)]/70 italic leading-normal transition-colors duration-300">
-                  "Cold food was reported three times this week at Table 4. Consider adding insulated serving trays."
+                  "Service delays were reported three times this week at the front desk. Consider adding an additional staff member during peak hours."
                 </p>
               </div>
             </div>
@@ -61,7 +61,7 @@ export default function FeatureInsights() {
         <div className="lg:col-span-6 text-left space-y-6">
           <span className="text-xs font-bold text-brand-purple-text uppercase tracking-widest block">TableTalk Insights Suite</span>
           <h3 className="text-3xl sm:text-4xl text-[var(--foreground)] font-extrabold tracking-tight leading-tight transition-colors duration-300">
-            Customer intelligence insights across all your restaurant tables
+            Customer intelligence insights across all your business tables
           </h3>
           <p className="text-xs text-[var(--text-muted)] font-sans max-w-md font-light transition-colors duration-300">
             Get deep dashboards detailing food, service, and wait time patterns. Scrape competitive benchmarks automatically and align kitchen operations instantly.
@@ -75,9 +75,9 @@ export default function FeatureInsights() {
                 <TrendingUp className="w-4 h-4" />
               </div>
               <div>
-                <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Maximize repeat diners profitability</h5>
+                <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Maximize repeat customer profitability</h5>
                 <p className="text-xs text-[var(--text-muted)] font-light mt-1 max-w-sm transition-colors duration-300">
-                  Track the NPS index of returning regular customers vs new walk-ins. Optimize menu prices based on positive sentiment thresholds.
+                  Track the NPS index of returning regular customers vs new walk-ins. Optimize pricing based on positive sentiment thresholds.
                 </p>
               </div>
             </div>
@@ -90,7 +90,7 @@ export default function FeatureInsights() {
               <div>
                 <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Assess performance at a glance</h5>
                 <p className="text-xs text-[var(--text-muted)] font-light mt-1 max-w-sm transition-colors duration-300">
-                  Watch customer satisfaction indices update week-over-week. Find exactly which waiter or dish drives the best reviews.
+                  Watch customer satisfaction indices update week-over-week. Find exactly which staff member or service drives the best reviews.
                 </p>
               </div>
             </div>

@@ -3,7 +3,7 @@ from typing import List, Optional
 
 class ReviewDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
-    restaurant_id: str
+    business_id: str
     source: str  # "qr" | "google"
     rating: int
     text: str
