@@ -11,6 +11,7 @@ from app.routes import onboard, reviews, insights, campaigns, dashboard
 async def lifespan(app: FastAPI):
     # Connect to MongoDB or JSON fallback on startup
     await db.connect()
+    
     yield
     # Disconnect/Cleanup if required
     if db.client:

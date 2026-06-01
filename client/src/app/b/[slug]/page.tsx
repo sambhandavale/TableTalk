@@ -111,6 +111,15 @@ export default function CustomerReviewPage() {
         if (!resp.ok) throw new Error("Business not found");
         const data = await resp.json();
         setRestaurant(data.business);
+        
+        // Track the scan
+        try {
+          await fetch(`http://localhost:8000/api/dashboard/track-scan/${data.business.id}`, {
+            method: "POST"
+          });
+        } catch (e) {
+          console.error("Failed to track scan", e);
+        }
       } catch (err: any) {
         console.error(err);
         setError("We couldn't locate this business. Please check the scan code or try again.");
@@ -386,7 +395,7 @@ export default function CustomerReviewPage() {
                 </div>
               </div>
               <div className="text-center pb-2">
-                <span className="text-[10px] text-[#64748b] uppercase tracking-wider font-semibold">Tap to auto-fill form with voice, or type below</span>
+                <span className="text-[10px] text-[#64748b] uppercase tracking-wider font-semibold">Tap to auto-fill form with voice, tell us what you ate and how was it.</span>
               </div>
               
               {/* Diner Name & Visitor Segment */}

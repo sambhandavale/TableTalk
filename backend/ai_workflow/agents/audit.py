@@ -78,40 +78,7 @@ class OnboardingAuditAgent:
             - Location Area: {location}
             - Google Maps URL: {maps_url}
             """
-            fallback_reviews = [
-                ScrapedReview(
-                    rating=5,
-                    text=f"Hands down the best place in {location}! The {cuisine} was absolutely fresh and delicious.",
-                    ordered_items=["Chef Special Combo"],
-                    visitor_type="returning",
-                    diner_name="Aarav Sharma",
-                    timestamp="2026-05-24T19:30:00Z"
-                ),
-                ScrapedReview(
-                    rating=5,
-                    text=f"Amazing dining experience at {name}! Very warm hospitality, nice staff, clean ambience.",
-                    ordered_items=["Signature Platter"],
-                    visitor_type="returning",
-                    diner_name="Deepa Patel",
-                    timestamp="2026-05-20T21:00:00Z"
-                ),
-                ScrapedReview(
-                    rating=2,
-                    text="Food was okay but service was extremely slow on Friday night. They forgot our starters.",
-                    ordered_items=["Appetizers"],
-                    visitor_type="first-time",
-                    diner_name="Kabir Kapoor",
-                    timestamp="2026-05-15T22:15:00Z"
-                ),
-                ScrapedReview(
-                    rating=4,
-                    text="Decent food quality and nice portion sizes. Loved the seating area.",
-                    ordered_items=["Paneer Curry", "Stuffed Naan"],
-                    visitor_type="first-time",
-                    diner_name="Neha Gupta",
-                    timestamp="2026-05-10T13:30:00Z"
-                )
-            ]
+            fallback_reviews = []
             fallback_output = ScraperStructuredOutput(reviews=fallback_reviews)
         
         try:

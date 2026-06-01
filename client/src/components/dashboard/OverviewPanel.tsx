@@ -27,20 +27,8 @@ import {
   Cell
 } from "recharts";
 
-export default function OverviewPanel({ business, reviews = [], insights, auditStatus }: any) {
+export default function OverviewPanel({ business, reviews = [], insights, auditStatus, chartData = [], healthSparkline = [] }: any) {
   const unansweredCount = reviews.filter((r: any) => !r.owner_approved_reply && !r.final_reply_content).length;
-
-  const chartData = [
-    { name: "W1", volume: 12 },
-    { name: "W2", volume: 8 },
-    { name: "W3", volume: 15 },
-    { name: "W4", volume: reviews.length || 0 },
-  ];
-
-  const healthSparkline = [
-    { score: 70 }, { score: 72 }, { score: 68 }, { score: 75 }, 
-    { score: 78 }, { score: 74 }, { score: 82 }, { score: business.health_score || 0 }
-  ];
 
   const googleCount = reviews.filter((r: any) => r.source === 'google').length;
   const qrCount = reviews.filter((r: any) => r.source === 'tabletalk' || r.source === 'qr').length;
@@ -63,7 +51,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
   }));
 
   const topDish = insights?.themes?.praised?.[0] || "N/A";
-  const worstDish = insights?.themes?.complaints?.[0]?.issue || "N/A";
+  const worstDish = insights?.themes?.complaints?.[0] || "N/A";
 
   return (
     <div className="space-y-4 w-full max-w-[1400px]">

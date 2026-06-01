@@ -16,8 +16,10 @@ def hash_password(password: str) -> str:
     hash_obj = hashlib.sha256((salt + password).encode('utf-8'))
     return hash_obj.hexdigest()
 
-async def trigger_background_audit(business_id: str, maps_url: str):
-    """Fires Agent 1 silently in background to scrape & audit Google Reviews."""
+from datetime import datetime, timezone
+
+async def _do_background_audit(business_id: str, maps_url: str):
+    """Fires Agent 1 in background to scrape & audit Google Reviews, then generates real insights."""
     import logging
     logger = logging.getLogger("TableTalk.BackendAudit")
     logger.info(f"Orchestrating onboarding audit & scraper workflow for Business ID: {business_id}")
@@ -69,7 +71,7 @@ async def trigger_background_audit(business_id: str, maps_url: str):
                     r_text = r.get("text") or ""
                     
                     if real_r.get("diner_name") == r.get("diner_name") or (r_text and r_text[:20] in real_text):
-                        r["timestamp"] = real_r.get("timestamp", r.get("timestamp", "2026-05-25T18:00:00Z"))
+                        r["timestamp"] = real_r.get("timestamp", r.get("timestamp", datetime.now(timezone.utc).isoformat()))
                         if "owner_approved_reply" in real_r:
                             r["owner_approved_reply"] = real_r["owner_approved_reply"]
                         if "final_reply_content" in real_r:
@@ -81,51 +83,32 @@ async def trigger_background_audit(business_id: str, maps_url: str):
         
         logger.info(f"Saved {len(saved_reviews)} scraped reviews to MongoDB.")
         
-        # 5. Compile reviews for structured AI Sentiment Analysis Agent
-        reviews_summary_text = "\n".join([f"Rating: {r['rating']} - Text: {r['text']}" for r in raw_reviews])
-        analysis_result = await audit_agent.analyze_reviews_flow(
-            reviews_summary_text=reviews_summary_text,
-            maps_url=resolved_url
-        )
+        # 5. Generate REAL insights using Analysis Agent
+        from ai_workflow import analysis_agent
+        await analysis_agent.generate_insights(business_id)
         
-        # 6. Draft recovery dynamic responses for each imported review
-        for rev in saved_reviews:
-            items = rev.get("ordered_items", [])
-            item_ref = f"{', '.join(items)}" if items else "food and service"
-            if rev["rating"] <= 3:
-                draft = f"Thank you for your feedback, {rev.get('diner_name', 'Guest')}. We sincerely apologize for the delay regarding your {item_ref}. We have addressed this with our kitchen team and hope to welcome you back to offer a much smoother service."
-                await db.update_one("reviews", {"id": rev["id"]}, {"$set": {"ai_response_draft": draft}})
-            else:
-                draft = f"Hi {rev.get('diner_name', 'Guest')}! We are thrilled to hear you loved our {item_ref}! Our team takes great pride in crafting these fresh daily. Looking forward to your next visit!"
-                await db.update_one("reviews", {"id": rev["id"]}, {"$set": {"ai_response_draft": draft}})
-                
-        # 7. Write consolidated insights records to MongoDB
-        insights_data = {
-            "business_id": business_id,
-            "generated_date": "2026-05-25T18:00:00Z",
-            "themes": {
-                "praised": analysis_result.praised,
-                "complaints": [{"issue": c.issue, "impact": c.impact} for c in analysis_result.complaints]
-            },
-            "health_score": analysis_result.health_score,
-            "action_items": analysis_result.action_items
-        }
-        await db.insert_one("insights", insights_data)
+        # Get the latest generated insight to update health score
+        latest_insight = await db.get_collection("insights")
+        latest_insight = [i for i in latest_insight if i.get("business_id") == business_id]
+        health_score = latest_insight[-1].get("health_score", 0) if latest_insight else 0
+
         
         # 8. Mark business audit status as complete & update operational health index
         await db.update_one(
             "businesses",
             {"id": business_id},
-            {"$set": {"health_score": analysis_result.health_score, "audit_completed": True}}
+            {"$set": {"health_score": health_score, "audit_completed": True}}
         )
         
         logger.info(f"Onboarding background audit completed successfully for Business ID: {business_id}")
         
     except Exception as e:
         logger.error(f"Onboarding background audit encountered error: {e}", exc_info=True)
+        # Ensure UI unblocks
+        await db.update_one("businesses", {"id": business_id}, {"$set": {"audit_completed": True, "audit_failed": True}})
 
 @router.post("")
-async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: BackgroundTasks):
+async def onboard_restaurant(request: BusinessOnboardRequest):
     # 1. Check if the business account email already exists
     existing_user = await db.find_one("users", {"email": request.email})
     if existing_user:
@@ -170,8 +153,9 @@ async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: 
     }
     await db.insert_one("users", new_user)
     
-    # Trigger AI Audit Agent 1 asynchronously in background to scrape Google reviews
-    background_tasks.add_task(trigger_background_audit, business_id, request.maps_url)
+    # Trigger AI Audit Agent 1 asynchronously in background via Celery
+    from app.tasks import run_onboarding_audit_task
+    run_onboarding_audit_task.delay(business_id, request.maps_url)
     
     return {
         "message": "Business account and business onboarding successfully initiated. AI Audit dispatched.",

@@ -55,12 +55,12 @@ class GeminiLLMService:
                 logger.info("Successfully fetched structured output from Gemini LLM.")
                 return result
             except Exception as e:
-                logger.warning(f"Structured LLM execution encountered error: {e}. Gracefully reverting to mock fallback.")
+                logger.error(f"Structured LLM execution encountered error: {e}. Raising exception instead of using mock data.")
+                raise Exception(f"AI Processing Failed: {e}")
                 
-        # Return fallback data if key not set or LLM call failed
-        if isinstance(fallback_data, response_schema):
-            return fallback_data
-        return response_schema.model_validate(fallback_data)
+        # If no client is configured
+        logger.error("No Gemini Client initialized. Cannot generate AI output.")
+        raise Exception("AI Processing Failed: Gemini API Key not configured.")
 
 # Global LLM client instance
 llm_service = GeminiLLMService()

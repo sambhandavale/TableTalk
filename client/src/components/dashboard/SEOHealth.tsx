@@ -2,9 +2,9 @@ import React from "react";
 import { Activity, Globe, ArrowUp, ArrowDown, Search, CheckCircle, AlertTriangle } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-export default function SEOHealth({ auditStatus = {} }: any) {
+export default function SEOHealth({ auditStatus = {}, seoStats = {} }: any) {
   const isAudited = auditStatus?.audit_completed || false;
-  const seoScore = isAudited ? 68 : 0; // Using 68 as fallback if audited but no specific SEO score exists yet
+  const seoScore = seoStats?.score || 0;
   const pieData = [
     { value: seoScore, color: isAudited ? '#f59e0b' : '#1e293b' },
     { value: 100 - seoScore, color: '#1e293b' }
@@ -71,10 +71,10 @@ export default function SEOHealth({ auditStatus = {} }: any) {
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none space-y-3">
               <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Response Rate</span>
               <div className="flex justify-between items-end">
-                <span className="text-2xl font-semibold text-[#10b981]">40%</span>
+                <span className="text-2xl font-semibold text-[#10b981]">{seoStats?.response_rate || 0}%</span>
                 <div className="text-right">
                   <span className="text-[10px] text-[#10b981] flex items-center justify-end gap-1 font-bold">
-                    <ArrowUp className="w-3 h-3" /> Improving
+                    <ArrowUp className="w-3 h-3" />
                   </span>
                   <span className="text-[9px] text-[#64748b]">Industry avg: 25%</span>
                 </div>
@@ -84,12 +84,12 @@ export default function SEOHealth({ auditStatus = {} }: any) {
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none space-y-3">
               <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Review Velocity</span>
               <div className="flex justify-between items-end">
-                <span className="text-2xl font-semibold text-[#f43f5e]">7 <span className="text-sm text-[#64748b] font-normal">/mo</span></span>
+                <span className="text-2xl font-semibold text-[#f43f5e]">{seoStats?.review_velocity || 0} <span className="text-sm text-[#64748b] font-normal">/ 30d</span></span>
                 <div className="text-right">
                   <span className="text-[10px] text-[#f43f5e] flex items-center justify-end gap-1 font-bold">
-                    <ArrowDown className="w-3 h-3" /> Slowing Down
+                    <Activity className="w-3 h-3" />
                   </span>
-                  <span className="text-[9px] text-[#64748b]">Was 12/mo last month</span>
+                  <span className="text-[9px] text-[#64748b]">Past 30 days</span>
                 </div>
               </div>
             </div>
@@ -97,12 +97,11 @@ export default function SEOHealth({ auditStatus = {} }: any) {
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none space-y-3">
               <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Average Rating</span>
               <div className="flex justify-between items-end">
-                <span className="text-2xl font-semibold text-white">4.3 <span className="text-sm text-[#f59e0b] font-normal">★</span></span>
+                <span className="text-2xl font-semibold text-white">{seoStats?.average_rating || "0.0"} <span className="text-sm text-[#f59e0b] font-normal">★</span></span>
                 <div className="text-right">
                   <span className="text-[10px] text-[#10b981] flex items-center justify-end gap-1 font-bold">
-                    <ArrowUp className="w-3 h-3" /> Trending Up
+                    <ArrowUp className="w-3 h-3" />
                   </span>
-                  <span className="text-[9px] text-[#64748b]">Was 4.1 last month</span>
                 </div>
               </div>
             </div>
@@ -110,12 +109,11 @@ export default function SEOHealth({ auditStatus = {} }: any) {
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none space-y-3">
               <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Profile Completeness</span>
               <div className="flex justify-between items-end">
-                <span className="text-2xl font-semibold text-[#f59e0b]">80%</span>
+                <span className="text-2xl font-semibold text-[#f59e0b]">{seoStats?.profile_completeness || 0}%</span>
                 <div className="text-right">
                   <span className="text-[10px] text-[#f43f5e] flex items-center justify-end gap-1 font-bold">
-                    <AlertTriangle className="w-3 h-3" /> Missing Info
+                    {seoStats?.profile_completeness < 100 ? <AlertTriangle className="w-3 h-3" /> : <CheckCircle className="w-3 h-3 text-[#10b981]" />}
                   </span>
-                  <span className="text-[9px] text-[#64748b]">Hours, Menu Link</span>
                 </div>
               </div>
             </div>

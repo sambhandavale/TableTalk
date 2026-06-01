@@ -3,6 +3,7 @@ import httpx
 import re
 import json
 from typing import List, Dict, Any
+from datetime import datetime, timezone
 from app.core.config import settings
 
 logger = logging.getLogger("TableTalk.BackendUtils")
@@ -60,7 +61,7 @@ async def scrape_real_google_reviews(maps_url: str) -> List[Dict[str, Any]]:
                         diner_name = r.get("name", f"Google Diner #{idx+1}")
                         text_content = r.get("text", "")
                         rating = int(r.get("stars", r.get("rating", 5)))
-                        timestamp = r.get("publishedAtDate", "2026-05-25T18:00:00Z")
+                        timestamp = r.get("publishedAtDate", datetime.now(timezone.utc).isoformat())
                         owner_reply = r.get("responseFromOwnerText")
                         
                         review_obj = {

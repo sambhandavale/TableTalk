@@ -7,7 +7,9 @@ import {
   ThumbsUp,
   ThumbsDown,
   Calendar,
-  BarChart2
+  BarChart2,
+  RefreshCw,
+  Clock
 } from "lucide-react";
 import { 
   LineChart, 
@@ -22,7 +24,7 @@ import {
   Cell
 } from "recharts";
 
-export default function AIInsights({ insights }: any) {
+export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
   
   if (!insights) {
     return (
@@ -37,6 +39,22 @@ export default function AIInsights({ insights }: any) {
               AI-driven NLP analysis across all imported reviews and private intercepts.
             </p>
           </div>
+          <div className="flex items-center gap-2">
+            {onRefresh && (
+              <button 
+                onClick={onRefresh}
+                disabled={isRefreshing}
+                className={`px-3 py-1.5 border border-[#1e293b] text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-1.5 hover:bg-[#1e293b]/50 transition-colors ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Analyzing...' : 'Generate AI Data'}
+              </button>
+            )}
+            <button className="px-3 py-1.5 border border-[#1e293b] text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-1.5 hover:bg-[#1e293b]/50 transition-colors opacity-50 cursor-not-allowed">
+              <BarChart2 className="w-3.5 h-3.5" />
+              Export PDF
+            </button>
+          </div>
         </div>
         <div className="flex flex-col items-center justify-center py-20 border border-[#1e293b] bg-[#0c0516] rounded-none">
           <BrainCircuit className="w-10 h-10 text-[#64748b] mb-4 opacity-50" />
@@ -48,16 +66,14 @@ export default function AIInsights({ insights }: any) {
   }
 
   // Derive from actual insights object
-  const healthTrendData = [
-    { week: "W1", score: 65 }, { week: "W2", score: 68 }, { week: "W3", score: 70 }, 
-    { week: "W4", score: 72 }, { week: "W5", score: 78 }, { week: "W6", score: 75 }, 
-    { week: "W7", score: 82 }, { week: "Current", score: insights.health_score || 0 }
+  const healthTrendData = insights.health_trend || [
+    { week: "Current", score: insights.health_score || 0 }
   ];
 
   const sentimentData = [
-    { name: 'Positive', value: 65, color: '#10b981' },
-    { name: 'Neutral', value: 20, color: '#f59e0b' },
-    { name: 'Negative', value: 15, color: '#f43f5e' }
+    { name: 'Positive', value: insights.sentiment?.positive || 0, color: '#10b981' },
+    { name: 'Neutral', value: insights.sentiment?.neutral || 0, color: '#f59e0b' },
+    { name: 'Negative', value: insights.sentiment?.negative || 0, color: '#f43f5e' }
   ];
 
   const themesData = [
@@ -68,6 +84,16 @@ export default function AIInsights({ insights }: any) {
   const bestDish = insights.themes?.praised?.[0] || "N/A";
   const worstDish = insights.themes?.complaints?.[0];
   const worstDishName = typeof worstDish === 'string' ? worstDish : (worstDish?.issue || "N/A");
+  
+  const temporalTrends = insights.themes?.temporal_trends || "No temporal patterns detected yet.";
+  
+  const actionItems = insights.action_items || [
+    {
+      category: "operations",
+      title: "Gathering data",
+      description: "Waiting for more reviews to generate operational suggestions."
+    }
+  ];
 
   return (
     <div className="space-y-4 w-full max-w-[1400px]">
@@ -83,10 +109,22 @@ export default function AIInsights({ insights }: any) {
             AI-driven NLP analysis across all imported reviews and private intercepts.
           </p>
         </div>
-        <button className="px-3 py-1.5 border border-[#1e293b] text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-1.5 hover:bg-[#1e293b]/50 transition-colors">
-          <BarChart2 className="w-3.5 h-3.5" />
-          Export PDF
-        </button>
+        <div className="flex items-center gap-2">
+          {onRefresh && (
+            <button 
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className={`px-3 py-1.5 border border-[#1e293b] text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-1.5 hover:bg-[#1e293b]/50 transition-colors ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Analyzing...' : 'Refresh AI Data'}
+            </button>
+          )}
+          <button className="px-3 py-1.5 border border-[#1e293b] text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-1.5 hover:bg-[#1e293b]/50 transition-colors">
+            <BarChart2 className="w-3.5 h-3.5" />
+            Export PDF
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
@@ -191,14 +229,27 @@ export default function AIInsights({ insights }: any) {
         {/* Operational Intelligence */}
         <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-none justify-between">
           <div>
-            <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold border-b border-[#1e293b] pb-2 mb-3 block">Actionable AI Suggestion</span>
+            <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold border-b border-[#1e293b] pb-2 mb-3 block">Actionable AI Suggestions</span>
             
-            <div className="p-2 bg-[#1e293b]/20 border border-[#1e293b] mt-2">
-              <div className="flex items-center gap-1.5 text-[9px] font-bold text-white uppercase tracking-widest mb-1.5">
-                <AlertTriangle className="w-3 h-3 text-[#f59e0b]" /> Top Recommendation
-              </div>
-              <p className="text-[10px] text-[#94a3b8] leading-snug">
-                {insights.action_items?.[0] || "Gathering data for operational suggestions..."}
+            <div className="space-y-2 mt-2">
+              {actionItems.map((action: any, idx: number) => (
+                <div key={idx} className="p-2 bg-[#1e293b]/20 border border-[#1e293b]">
+                  <div className="flex items-center gap-1.5 text-[9px] font-bold text-white uppercase tracking-widest mb-1.5">
+                    <AlertTriangle className="w-3 h-3 text-[#f59e0b]" /> {action.title || "Recommendation"}
+                  </div>
+                  <p className="text-[10px] text-[#94a3b8] leading-snug">
+                    {typeof action === 'string' ? action : action.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="mt-4 pt-3 border-t border-[#1e293b]">
+            <div className="flex items-start gap-1.5">
+              <Clock className="w-3 h-3 text-[#64748b] mt-0.5" />
+              <p className="text-[9px] text-[#64748b] italic">
+                {temporalTrends}
               </p>
             </div>
           </div>

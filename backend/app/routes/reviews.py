@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Body
 from typing import Optional
+from datetime import datetime, timezone
 from app.database import db
 from app.schemas.review import QRReviewSubmitRequest, VoiceExtractRequest
 
@@ -34,7 +35,7 @@ async def submit_qr_review(request: QRReviewSubmitRequest):
         "diner_name": request.diner_name,
         "diner_phone": request.diner_phone,
         "diner_email": request.diner_email,
-        "timestamp": "2026-05-25T18:00:00Z",  # Mock timestamp
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "owner_alerted": False,
         "ai_apology_draft": None,
         "status": "pending_triage"
@@ -43,13 +44,14 @@ async def submit_qr_review(request: QRReviewSubmitRequest):
     saved_review = await db.insert_one("reviews", review_data)
     review_id = saved_review["id"]
     
-    # Run Agent 2 (Triage Agent) to check rating & generate recovery content
-    triage_result = await triage_agent.triage_review(review_id, saved_review, business)
+    # Run Agent 2 & Agent 5 via Celery in the background!
+    from app.tasks import process_new_review_task
+    process_new_review_task.delay(review_id)
     
     return {
         "message": "Review submitted successfully",
         "review_id": review_id,
-        "triage": triage_result
+        "triage": {"status": "processing_in_background"}
     }
 
 @router.get("/{slug}")

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { Globe, QrCode, Star } from "lucide-react";
+import { useParams, useSearchParams, useRouter, usePathname } from "next/navigation";
+import { Globe, QrCode, Star, Menu } from "lucide-react";
 
 import Sidebar from "@/components/dashboard/Sidebar";
 import OverviewPanel from "@/components/dashboard/OverviewPanel";
@@ -18,17 +18,28 @@ import SEOHealth from "@/components/dashboard/SEOHealth";
 
 export default function DashboardPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const id = params?.id as string;
 
-  const [activeTab, setActiveTab] = useState("overview");
+  const tabParam = searchParams.get("tab") || "overview";
+  const [activeTab, setActiveTabState] = useState(tabParam);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  const setActiveTab = (tab: string) => {
+    setActiveTabState(tab);
+    router.replace(`${pathname}?tab=${tab}`, { scroll: false });
+  };
   const [business, setRestaurant] = useState({
     id: "",
     slug: "",
-    name: "Mumbai Masala Bistro",
-    cuisine: "Indian Fusion",
-    location: "Bandra West, Mumbai",
+    name: "",
+    cuisine: "",
+    location: "",
     owner_email: "",
-    health_score: 88,
+    health_score: 0,
   });
   
   const [reviews, setReviews] = useState<any[]>([]);
@@ -39,6 +50,10 @@ export default function DashboardPage() {
   const [competitors, setCompetitors] = useState<any[]>([]);
   const [auditStatus, setAuditStatus] = useState<any>({});
   const [qrStats, setQrStats] = useState<any>(null);
+  const [seoStats, setSeoStats] = useState<any>(null);
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [healthSparkline, setHealthSparkline] = useState<any[]>([]);
+  const [isRefreshingInsights, setIsRefreshingInsights] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchDashboardData = async () => {
@@ -57,6 +72,9 @@ export default function DashboardPage() {
       setCompetitors(data.competitors || []);
       setAuditStatus(data.audit_status || {});
       setQrStats(data.qr_stats || null);
+      setSeoStats(data.seo_stats || null);
+      setChartData(data.chart_data || []);
+      setHealthSparkline(data.health_sparkline || []);
     } catch (err) {
       console.warn("Failed to fetch real data from backend. Falling back to empty state.", err);
       // Empty Fallback
@@ -95,6 +113,27 @@ export default function DashboardPage() {
     }
   };
 
+  const handleRefreshInsights = async () => {
+    if (!business?.slug) return;
+    setIsRefreshingInsights(true);
+    try {
+      const response = await fetch(`http://localhost:8000/api/insights/${business.slug}/trigger`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || "AI Processing Failed. Please try again later.");
+      }
+      const data = await response.json();
+      setInsights(data.insights);
+    } catch (error: any) {
+      console.error("Failed to refresh insights", error);
+      alert(error.message || "The AI model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.");
+    } finally {
+      setIsRefreshingInsights(false);
+    }
+  };
+
   // Render logic for different tabs
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -105,6 +144,8 @@ export default function DashboardPage() {
             reviews={reviews} 
             insights={insights} 
             auditStatus={auditStatus} 
+            chartData={chartData}
+            healthSparkline={healthSparkline}
           />
         );
       
@@ -112,7 +153,7 @@ export default function DashboardPage() {
         return (
           <ReviewPanel
             reviews={reviews}
-            sourceFilter="tabletalk"
+            sourceFilter="qr"
             title="TableTalk Private Intercepts"
             subtitle="Internal feedback collected via your on-table QR codes before guests leave."
             icon={<QrCode className="w-5 h-5 text-[#10b981]" />}
@@ -151,10 +192,10 @@ export default function DashboardPage() {
         );
         
       case "ai_insights":
-        return <AIInsights insights={insights} />;
+        return <AIInsights insights={insights} onRefresh={handleRefreshInsights} isRefreshing={isRefreshingInsights} />;
         
       case "recommendations":
-        return <Recommendations insights={insights} />;
+        return <Recommendations insights={insights} reviews={reviews} />;
         
       case "competitor_watch":
         return <CompetitorWatch competitors={competitors} />;
@@ -166,7 +207,7 @@ export default function DashboardPage() {
         return <RetentionCampaigns campaigns={campaigns} business={business} setActiveTab={setActiveTab} />;
         
       case "seo_health":
-        return <SEOHealth auditStatus={auditStatus} />;
+        return <SEOHealth auditStatus={auditStatus} seoStats={seoStats} />;
 
       case "settings":
         return <SettingsPanel businessId={business.id} />;
@@ -187,16 +228,49 @@ export default function DashboardPage() {
       {/* SIDEBAR NAVIGATION */}
       <Sidebar 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          setIsMobileOpen(false); // Auto-close on mobile
+        }} 
         restaurantName={business.name}
         userEmail={business.owner_email || "manager@mumbaimasala.in"}
-        onSignOut={() => window.location.href = "/signin"}
+        isCollapsed={isCollapsed}
+        setIsCollapsed={setIsCollapsed}
+        isMobileOpen={isMobileOpen}
+        setIsMobileOpen={setIsMobileOpen}
+        onSignOut={() => {
+          localStorage.removeItem("tabletalk_restaurant_id");
+          localStorage.removeItem("tabletalk_restaurant_slug");
+          localStorage.removeItem("tabletalk_user_email");
+          router.push("/signin");
+        }}
       />
+
+      {/* Mobile Backdrop */}
+      {isMobileOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col h-full relative overflow-y-auto custom-scrollbar no-scrollbar bg-[#05020a]">
         
-        <div className="w-full mx-auto p-8 relative z-20">
+        {/* Mobile Header */}
+        <div className="md:hidden sticky top-0 z-30 flex items-center justify-between p-4 bg-[#0c0516] border-b border-[#1e293b]">
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setIsMobileOpen(true)}
+              className="p-1.5 text-white hover:bg-[#1e293b]/50 rounded-md transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <img src="/assets/logos/logo_dark.svg" alt="TableTalk" className="h-4 object-contain" />
+          </div>
+        </div>
+
+        <div className="w-full mx-auto p-4 md:p-8 relative z-20">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
               <div className="w-8 h-8 border-2 border-[#1e293b] border-t-[#a855f7] rounded-none animate-spin" />

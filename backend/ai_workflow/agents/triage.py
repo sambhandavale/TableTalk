@@ -1,5 +1,6 @@
 import logging
 from typing import Dict, Any
+from datetime import datetime, timezone
 from app.database import db
 from ai_workflow.services.llm_service import llm_service
 from ai_workflow.prompts.triage_prompts import TRIAGE_SYSTEM_PROMPT
@@ -109,7 +110,7 @@ class ReviewTriageAgent:
                     "customers",
                     {"phone": phone, "business_id": business_id},
                     {
-                        "$set": {"segment": structured_triage.segment, "last_visit": "2026-05-25T18:00:00Z"},
+                        "$set": {"segment": structured_triage.segment, "last_visit": datetime.now(timezone.utc).isoformat()},
                         "$inc": {
                             "visit_count": 1,
                             "good_reviews_count": inc_good,
@@ -130,7 +131,7 @@ class ReviewTriageAgent:
                     "phone": phone,
                     "business_id": business_id,
                     "visit_count": 1,
-                    "last_visit": "2026-05-25T18:00:00Z",
+                    "last_visit": datetime.now(timezone.utc).isoformat(),
                     "segment": structured_triage.segment,
                     "good_reviews_count": inc_good,
                     "bad_reviews_count": inc_bad,

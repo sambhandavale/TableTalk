@@ -6,7 +6,40 @@ export default function CustomerDatabase({ customers = [], reviews = [] }: any) 
   const [expandedCustomerPhone, setExpandedCustomerPhone] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filtered = segmentFilter === "All" ? customers : customers.filter((c: any) => c.segment === segmentFilter);
+  const derivedCustomers = customers.length > 0 ? customers : (() => {
+    const map = new Map();
+    reviews.forEach((r: any) => {
+      if (!r.diner_name) return;
+      const key = r.diner_phone || r.diner_email || r.diner_name;
+      if (!map.has(key)) {
+        map.set(key, {
+          name: r.diner_name,
+          contact: r.diner_phone || r.diner_email || "",
+          visits: 0,
+          totalRating: 0,
+          lastVisit: r.timestamp || r.created_at || new Date().toISOString()
+        });
+      }
+      const c = map.get(key);
+      c.visits += 1;
+      c.totalRating += (r.rating || 0);
+      const rDate = new Date(r.timestamp || r.created_at || 0);
+      if (rDate > new Date(c.lastVisit)) {
+        c.lastVisit = r.timestamp || r.created_at;
+      }
+    });
+    
+    return Array.from(map.values()).map((c: any) => {
+      c.avgRating = c.visits > 0 ? c.totalRating / c.visits : 0;
+      if (c.avgRating >= 4 && c.visits > 1) c.segment = "Happy Regular";
+      else if (c.avgRating >= 4) c.segment = "New";
+      else if (c.avgRating <= 2) c.segment = "At Risk";
+      else c.segment = "New";
+      return c;
+    });
+  })();
+
+  const filtered = segmentFilter === "All" ? derivedCustomers : derivedCustomers.filter((c: any) => c.segment === segmentFilter);
 
   return (
     <div className="space-y-4 w-full max-w-[1400px]">
@@ -72,10 +105,10 @@ export default function CustomerDatabase({ customers = [], reviews = [] }: any) 
           </thead>
           <tbody className="divide-y divide-[#1e293b]">
             {filtered.map((c: any, idx: number) => {
-              const isExpanded = expandedCustomerPhone === (c.phone || c.contact);
+              const isExpanded = expandedCustomerPhone === (c.phone || c.contact || c.name);
               const customerReviews = reviews.filter((r: any) => 
                 (c.phone && r.diner_phone === c.phone) || 
-                (c.contact && r.diner_phone === c.contact) || 
+                (c.contact && (r.diner_phone === c.contact || r.diner_email === c.contact)) || 
                 (!c.phone && !c.contact && r.diner_name === (c.name || c.diner_name))
               ).sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
               
@@ -115,7 +148,7 @@ export default function CustomerDatabase({ customers = [], reviews = [] }: any) 
                       if (isExpanded) {
                         setExpandedCustomerPhone(null);
                       } else {
-                        setExpandedCustomerPhone(c.phone || c.contact);
+                        setExpandedCustomerPhone(c.phone || c.contact || c.name);
                         setCurrentPage(1);
                       }
                     }}

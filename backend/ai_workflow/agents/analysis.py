@@ -1,6 +1,10 @@
 import logging
 from typing import Dict, Any, List
 from app.database import db
+import json
+from ai_workflow.services.llm_service import llm_service
+from ai_workflow.schemas.analysis import AIInsightsOutput
+from ai_workflow.prompts.analysis_prompts import ANALYSIS_SYSTEM_PROMPT
 
 logger = logging.getLogger("TableTalk.AnalysisAgent")
 
@@ -17,59 +21,81 @@ class PatternAnalysisAgent:
             logger.warning(f"No reviews found to analyze for {business_id}")
             return {}
 
-        # 2. Emulate aggregate analysis calculations
+        # Delta Logic: Fetch previous insights
+        insights_collection = await db.get_collection("insights")
+        business_insights = [i for i in insights_collection if i.get("business_id") == business_id]
+        latest_insight = None
+        if business_insights:
+            latest_insight = sorted(business_insights, key=lambda x: x.get("generated_date", ""), reverse=True)[0]
+
+        # Filter for new reviews
+        if latest_insight and latest_insight.get("generated_date"):
+            last_date = latest_insight["generated_date"]
+            new_reviews = [r for r in restaurant_reviews if r.get("timestamp", "") > last_date]
+        else:
+            new_reviews = restaurant_reviews
+
+        if not new_reviews and latest_insight:
+            logger.info(f"No new reviews for {business_id} since last report. Returning cached insights to save LLM tokens.")
+            return latest_insight
+
+        logger.info(f"Processing {len(new_reviews)} new reviews to generate insights for {business_id}...")
+
+        # 2. Emulate aggregate analysis calculations for fallback
         total = len(restaurant_reviews)
         ratings = [r["rating"] for r in restaurant_reviews]
         avg_rating = sum(ratings) / total if total > 0 else 0
         
-        # Map dishes to positive and negative mentions
-        dish_scores: Dict[str, Dict[str, int]] = {}
-        for r in restaurant_reviews:
-            rating = r["rating"]
-            items = r.get("ordered_items", [])
-            for item in items:
-                if item not in dish_scores:
-                    dish_scores[item] = {"positive": 0, "negative": 0}
-                if rating >= 4:
-                    dish_scores[item]["positive"] += 1
-                else:
-                    dish_scores[item]["negative"] += 1
-                    
-        # Extract praised list & complaints list
-        praised = []
-        complaints = []
-        for dish, stats in dish_scores.items():
-            if stats["positive"] > stats["negative"]:
-                praised.append(dish)
-            elif stats["negative"] > stats["positive"]:
-                complaints.append(dish)
-
-        # Ensure we have default high-quality demo data if lists are empty
-        if not praised:
-            praised = ["Mutton Biryani", "Butter Naan", "Mango Lassi"]
-        if not complaints:
-            complaints = ["Seekh Kebab delays during dinner"]
-
-        # Recalculate health index out of 100 based on average rating
+        # Base fallback logic in case LLM fails
         health_score = int(avg_rating * 20)
-
-        # 3. Agent 4: Generate weekly plain-English actionable recommendations
-        action_items = [
-            f"Your {praised[0]} is driving a 4.9 average across multiple reviews. Feature it as your Signature Dish on your physical menus and Google posts.",
-            "Friday and Saturday dinner slots see 35% higher complaints regarding ticket delays. We advise adding an extra runner or floor captain during these rush periods.",
-            "Naan and roti dishes are arriving cold to tables 3 and 4. Consider reviewing server exit paths or investing in insulated delivery plates.",
-            "You have unanswered reviews waiting. Prompting replies boosts your local Google Maps SEO listing prominence by up to 40%."
+        fallback_action_items = [
+            {"category": "operations", "title": "Audit Service Paths", "description": "Investigate table turnaround times.", "source_review_ids": []},
+            {"category": "marketing", "title": "Highlight Signature Dish", "description": "Promote highest rated items on social media.", "source_review_ids": []},
+            {"category": "food", "title": "Menu Review", "description": "Review consistency of frequently complained items.", "source_review_ids": []},
+            {"category": "service", "title": "Staff Training", "description": "Ensure staff greet returning customers appropriately.", "source_review_ids": []}
         ]
+
+        fallback_insights = AIInsightsOutput(
+            health_trend_data=[
+                {"week": "W1", "score": 65}, {"week": "W2", "score": 68}, 
+                {"week": "W3", "score": 70}, {"week": "W4", "score": 72}, 
+                {"week": "W5", "score": 78}, {"week": "W6", "score": 75}, 
+                {"week": "W7", "score": 82}, {"week": "Current", "score": health_score}
+            ],
+            sentiment_data={"positive": 70, "neutral": 20, "negative": 10},
+            themes={"praised": ["Biryani"], "complaints": ["Wait Times"], "temporal_trends": "Weekends are busy."},
+            health_score=health_score,
+            action_items=fallback_action_items
+        )
+
+        # Pass summarized reviews + old report to LLM
+        from datetime import datetime, timezone
+        current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        prompt = f"Analyze for Business ID: {business_id}\n\n"
+        
+        if latest_insight:
+            prompt += f"--- PREVIOUS REPORT ---\n{json.dumps(latest_insight, indent=2)}\n\n"
+            
+        prompt += f"--- NEW REVIEWS ({len(new_reviews)} total) ---\n"
+        for r in new_reviews:
+            prompt += f"- ID: {r.get('id', str(r.get('_id', '')))}, Timestamp: {r.get('timestamp')}, Rating: {r.get('rating')}, Text: {r.get('text', 'No text')}, Items: {r.get('ordered_items', [])}\n"
+
+        structured_insights = await llm_service.generate_structured_output(
+            prompt=prompt,
+            system_instruction=ANALYSIS_SYSTEM_PROMPT,
+            response_schema=AIInsightsOutput,
+            fallback_data=fallback_insights
+        )
 
         insights_record = {
             "business_id": business_id,
-            "generated_date": "2026-05-25T18:05:00Z",
-            "themes": {
-                "praised": praised,
-                "complaints": complaints
-            },
-            "health_score": health_score,
-            "action_items": action_items
+            "generated_date": current_time,
+            "health_trend": [h.model_dump() for h in structured_insights.health_trend_data],
+            "sentiment": structured_insights.sentiment_data.model_dump(),
+            "themes": structured_insights.themes.model_dump(),
+            "health_score": structured_insights.health_score,
+            "action_items": [a.model_dump() for a in structured_insights.action_items]
         }
 
         # Save freshly compiled insights record

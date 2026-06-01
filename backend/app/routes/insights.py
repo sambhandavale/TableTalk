@@ -21,11 +21,14 @@ async def get_restaurant_insights(slug: str):
     # If no insights yet, return a pending or execute a quick run
     if not restaurant_insights:
         # Run a quick analysis to generate initial metrics
-        fresh_insights = await analysis_agent.generate_restaurant_insights(business_id)
-        return {
-            "restaurant_name": business["name"],
-            "insights": fresh_insights
-        }
+        try:
+            fresh_insights = await analysis_agent.generate_restaurant_insights(business_id)
+            return {
+                "restaurant_name": business["name"],
+                "insights": fresh_insights
+            }
+        except Exception as e:
+            raise HTTPException(status_code=503, detail=str(e))
         
     # Return latest compiled insights
     latest = sorted(restaurant_insights, key=lambda x: x.get("generated_date", ""), reverse=True)[0]
@@ -44,9 +47,12 @@ async def trigger_insights_recompilation(slug: str):
     business_id = business["id"]
     
     # Execute Agents 3 & 4
-    fresh_insights = await analysis_agent.generate_restaurant_insights(business_id)
-    
-    return {
-        "message": "Aggregated reviews and compiled fresh weekly action items successfully.",
-        "insights": fresh_insights
-    }
+    try:
+        fresh_insights = await analysis_agent.generate_restaurant_insights(business_id)
+        
+        return {
+            "message": "Aggregated reviews and compiled fresh weekly action items successfully.",
+            "insights": fresh_insights
+        }
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=str(e))

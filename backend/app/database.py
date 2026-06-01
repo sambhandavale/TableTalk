@@ -52,75 +52,12 @@ class ResilientDB:
             logger.error(f"Failed to write to fallback file: {e}")
 
     def _seed_fallback_data(self):
-        """Seed initial high-quality Mumbai business demo data."""
-        self.fallback_data["businesses"] = [
-            {
-                "id": "mumbai-masala-bandra",
-                "name": "Mumbai Masala Bistro",
-                "cuisine": "Indian Fusion",
-                "slug": "mumbai-masala-bandra",
-                "maps_url": "https://maps.google.com/?cid=mock-mumbai-masala",
-                "owner_contact": "owner@mumbaimasala.in",
-                "health_score": 82
-            }
-        ]
-        self.fallback_data["reviews"] = [
-            {
-                "id": "rev-1",
-                "business_id": "mumbai-masala-bandra",
-                "source": "google",
-                "rating": 5,
-                "text": "The Mutton Biryani was exceptionally soft and aromatic. Highly recommend!",
-                "ordered_items": ["Mutton Biryani"],
-                "visitor_type": "returning",
-                "timestamp": "2026-05-24T12:00:00Z"
-            },
-            {
-                "id": "rev-2",
-                "business_id": "mumbai-masala-bandra",
-                "source": "google",
-                "rating": 2,
-                "text": "Naan was cold and rubbery, took 25 minutes to arrive. Butter chicken was good though.",
-                "ordered_items": ["Butter Chicken & Naan"],
-                "visitor_type": "first-time",
-                "timestamp": "2026-05-23T14:30:00Z"
-            }
-        ]
-        self.fallback_data["insights"] = [
-            {
-                "id": "ins-1",
-                "business_id": "mumbai-masala-bandra",
-                "generated_date": "2026-05-25T00:00:00Z",
-                "themes": {
-                    "praised": ["Mutton Biryani", "Butter Chicken"],
-                    "complaints": ["Cold Naan", "Slow Service"]
-                },
-                "health_score": 82,
-                "action_items": [
-                    "Highlight Biryani as signature dish on Google Maps.",
-                    "Review tandoor-to-table pathway for cold Naan alerts."
-                ]
-            }
-        ]
-        self.fallback_data["campaigns"] = [
-            {
-                "id": "camp-1",
-                "business_id": "mumbai-masala-bandra",
-                "segment": "Lost/Unhappy",
-                "message": "We have improved! Get a free Butter Naan on your next order.",
-                "sent_count": 0,
-                "redemption_count": 0
-            }
-        ]
-        self.fallback_data["customers"] = [
-            {
-                "phone": "+919876543210",
-                "business_id": "mumbai-masala-bandra",
-                "visit_count": 3,
-                "last_visit": "2026-05-24T12:00:00Z",
-                "segment": "Happy Regular"
-            }
-        ]
+        """Initializes empty fallback data."""
+        self.fallback_data["businesses"] = []
+        self.fallback_data["reviews"] = []
+        self.fallback_data["insights"] = []
+        self.fallback_data["campaigns"] = []
+        self.fallback_data["customers"] = []
         self._save_fallback_data()
         logger.info(f"Seeded fallback database in {self.fallback_file}")
 
