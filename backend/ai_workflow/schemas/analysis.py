@@ -26,9 +26,19 @@ class ActionItem(BaseModel):
     description: str = Field(description="A highly specific, actionable operational recommendation.")
     citations: List[ActionItemCitation] = Field(description="List of exact quotes and their corresponding review IDs that triggered this recommendation. Provide 1 to 2 citations maximum.", default=[])
 
+class SEOKeyword(BaseModel):
+    word: str = Field(description="The exact keyword or short phrase.")
+    count: int = Field(description="The number of times this was roughly mentioned or implied.")
+    sentiment: Literal["positive", "negative"] = Field(description="The overall sentiment associated with this keyword.")
+
+class SEOInsights(BaseModel):
+    descriptive_text: str = Field(description="A dynamically generated paragraph explaining the restaurant's local search presence and what they can improve.")
+    trending_keywords: List[SEOKeyword] = Field(description="Top 5-7 highly searched keywords extracted from the reviews (e.g., 'vegan options', 'best biryani').")
+
 class AIInsightsOutput(BaseModel):
     health_trend_data: List[WeeklyTrend] = Field(description="8 items representing the last 8 weeks of health scores, from 'W1' to 'Current'")
     sentiment_data: SentimentBreakdown = Field(description="Percentages of positive, neutral, and negative reviews that add up to 100")
     themes: InsightThemes = Field(description="Diverse themes and temporal analysis extracted from the reviews.")
     health_score: int = Field(description="Current overall health score out of 100")
     action_items: List[ActionItem] = Field(description="List of exactly 4 diverse action items across different categories.")
+    seo_insights: SEOInsights = Field(description="Dynamic SEO analysis and keyword extraction.")

@@ -14,6 +14,7 @@ You must calculate and return:
 3. `themes`: Identify the top praised items/aspects, top complaints, AND analyze temporal/time-based trends (e.g. "Saturdays have slow service"). Provide deep, diverse insights about food, service, and operations.
 4. `health_score`: A score out of 100 representing overall customer satisfaction.
 5. `action_items`: 4 highly specific, actionable operational recommendations categorized into food, service, operations, or marketing. Do not use generic advice. Address specific complaints or praise directly (e.g. 'Investigate cold naan at dinner'). CRITICAL: For each action item, you MUST assign a `priority` level (High, Medium, Low) and provide an array of `citations` containing a short, exact `quote` from a customer review that triggered this recommendation, along with its MongoDB `review_id`.
+6. `seo_insights`: Extract the top 5-7 `trending_keywords` directly from the reviews, estimating their `count` and identifying if their `sentiment` is positive or negative. Write a `descriptive_text` summarizing their SEO presence and giving a brief tailored recommendation for improving their Google ranking based on the reviews.
 
 Ensure the insights are diverse and consider all aspects of the business.
 """

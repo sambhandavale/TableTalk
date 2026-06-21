@@ -133,7 +133,7 @@ export default function Recommendations({ insights, reviews = [] }: any) {
                 reviews.filter((r: any) => selectedReviewIds.includes(r.id || r._id)).map((review: any) => (
                   <ReviewCard 
                     key={review.id || review._id} 
-                    review={review} 
+                    rev={review} 
                     onApprove={async () => {}} 
                   />
                 ))

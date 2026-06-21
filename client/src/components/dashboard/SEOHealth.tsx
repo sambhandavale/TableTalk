@@ -2,7 +2,7 @@ import React from "react";
 import { Activity, Globe, ArrowUp, ArrowDown, Search, CheckCircle, AlertTriangle } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-export default function SEOHealth({ auditStatus = {}, seoStats = {} }: any) {
+export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = null }: any) {
   const isAudited = auditStatus?.audit_completed || false;
   const seoScore = seoStats?.score || 0;
   const pieData = [
@@ -10,7 +10,8 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {} }: any) {
     { value: 100 - seoScore, color: '#1e293b' }
   ];
 
-  const keywords: any[] = []; // Wait for real keyword generation in future backend update
+  const keywords = insights?.seo_insights?.trending_keywords || [];
+  const descriptiveText = insights?.seo_insights?.descriptive_text || "Your score is FAIR. You are currently losing local search traffic to competitors due to a low review response rate and incomplete profile information.";
 
   return (
     <div className="space-y-6 w-full max-w-[1400px]">
@@ -32,8 +33,8 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {} }: any) {
         
         {/* Left Side: Score & Core Metrics */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="bg-[#0c0516] border border-[#1e293b] p-6 rounded-none flex items-center gap-8">
-            <div className="w-[140px] h-[140px] relative">
+          <div className="bg-[#0c0516] border border-[#1e293b] p-6 rounded-none flex items-center gap-8 shadow-[0_0_15px_rgba(0,0,0,0.4)]">
+            <div className="w-[140px] h-[140px] relative flex-shrink-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie data={pieData} innerRadius={50} outerRadius={70} startAngle={90} endAngle={-270} dataKey="value" stroke="none">
@@ -52,16 +53,15 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {} }: any) {
             <div className="flex-1 space-y-2">
               <h3 className="text-lg font-semibold text-white">Google Presence Score</h3>
               {isAudited ? (
-                <p className="text-[10px] text-[#94a3b8] leading-snug">
-                  Your score is <span className="text-[#f59e0b] font-bold">FAIR</span>. 
-                  You are currently losing local search traffic to competitors due to a low review response rate and incomplete profile information.
+                <p className="text-[11px] text-[#94a3b8] leading-relaxed">
+                  {descriptiveText}
                 </p>
               ) : (
-                <p className="text-[10px] text-[#f43f5e] leading-snug font-bold">
+                <p className="text-[11px] text-[#f43f5e] leading-relaxed font-bold">
                   Data Not Available. You must run a full AI SEO Audit to populate this score.
                 </p>
               )}
-              <button className="px-3 py-1.5 mt-2 bg-[#3b82f6]/10 border border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6] hover:text-black text-[9px] font-bold uppercase tracking-widest transition-colors rounded-none">
+              <button className="px-4 py-2 mt-3 bg-[#3b82f6]/10 border border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6] hover:text-black text-[9px] font-bold uppercase tracking-widest transition-colors rounded-none">
                 Run Full Audit
               </button>
             </div>

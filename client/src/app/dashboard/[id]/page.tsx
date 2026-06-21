@@ -228,7 +228,7 @@ export default function DashboardPage() {
         return <RetentionCampaigns campaigns={campaigns} business={business} setActiveTab={setActiveTab} />;
         
       case "seo_health":
-        return <SEOHealth auditStatus={auditStatus} seoStats={seoStats} />;
+        return <SEOHealth auditStatus={auditStatus} seoStats={seoStats} insights={insights} />;
 
       case "settings":
         return <SettingsPanel businessId={business.id} />;

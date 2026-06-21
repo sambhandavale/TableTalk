@@ -110,9 +110,10 @@ class PatternAnalysisAgent:
                 {"week": "W7", "score": 82}, {"week": "Current", "score": health_score}
             ],
             sentiment_data={"positive": 70, "neutral": 20, "negative": 10},
-            themes={"praised": ["Biryani"], "complaints": ["Wait Times"], "temporal_trends": "Weekends are busy."},
+            themes={"praised": ["Food"], "complaints": ["Wait time"], "temporal_trends": "Busy on weekends"},
             health_score=health_score,
-            action_items=fallback_action_items
+            action_items=fallback_action_items,
+            seo_insights={"descriptive_text": "Unable to generate dynamic SEO analysis due to low review volume or API error.", "trending_keywords": []}
         )
 
         # Pass summarized reviews + old report to LLM
