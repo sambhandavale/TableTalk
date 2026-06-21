@@ -85,7 +85,7 @@ async def _do_background_audit(business_id: str, maps_url: str):
         
         # 5. Generate REAL insights using Analysis Agent
         from ai_workflow import analysis_agent
-        await analysis_agent.generate_insights(business_id)
+        await analysis_agent.generate_restaurant_insights(business_id)
         
         # Get the latest generated insight to update health score
         latest_insight = await db.get_collection("insights")
@@ -108,7 +108,7 @@ async def _do_background_audit(business_id: str, maps_url: str):
         await db.update_one("businesses", {"id": business_id}, {"$set": {"audit_completed": True, "audit_failed": True}})
 
 @router.post("")
-async def onboard_restaurant(request: BusinessOnboardRequest):
+async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: BackgroundTasks):
     # 1. Check if the business account email already exists
     existing_user = await db.find_one("users", {"email": request.email})
     if existing_user:
@@ -153,9 +153,8 @@ async def onboard_restaurant(request: BusinessOnboardRequest):
     }
     await db.insert_one("users", new_user)
     
-    # Trigger AI Audit Agent 1 asynchronously in background via Celery
-    from app.tasks import run_onboarding_audit_task
-    run_onboarding_audit_task.delay(business_id, request.maps_url)
+    # Trigger AI Audit Agent 1 asynchronously in background via FastAPI BackgroundTasks instead of Celery
+    background_tasks.add_task(_do_background_audit, business_id, request.maps_url)
     
     return {
         "message": "Business account and business onboarding successfully initiated. AI Audit dispatched.",

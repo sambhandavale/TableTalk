@@ -93,6 +93,27 @@ export default function DashboardPage() {
     if (id) fetchDashboardData();
   }, [id]);
 
+  // Real-time SSE listener for background processing updates
+  useEffect(() => {
+    if (!id) return;
+    
+    // Connect to the new SSE stream endpoint
+    const eventSource = new EventSource(`http://localhost:8000/api/dashboard/${id}/stream`);
+    
+    eventSource.onmessage = (event) => {
+      // When the backend signals that the background audit is complete
+      if (event.data === 'reload') {
+        console.log("SSE: Background processing completed. Reloading dashboard...");
+        fetchDashboardData();
+      }
+    };
+    
+    // Cleanup the connection if the user navigates away
+    return () => {
+      eventSource.close();
+    };
+  }, [id]);
+
   const handleApproveReply = async (reviewId: string, finalContent: string) => {
     try {
       const resp = await fetch(`http://localhost:8000/api/reviews/${reviewId}/approve`, {

@@ -96,10 +96,10 @@ class PatternAnalysisAgent:
         # Base fallback logic in case LLM fails
         health_score = int(avg_rating * 20)
         fallback_action_items = [
-            {"category": "operations", "title": "Audit Service Paths", "description": "Investigate table turnaround times.", "source_review_ids": []},
-            {"category": "marketing", "title": "Highlight Signature Dish", "description": "Promote highest rated items on social media.", "source_review_ids": []},
-            {"category": "food", "title": "Menu Review", "description": "Review consistency of frequently complained items.", "source_review_ids": []},
-            {"category": "service", "title": "Staff Training", "description": "Ensure staff greet returning customers appropriately.", "source_review_ids": []}
+            {"priority": "High", "category": "operations", "title": "Audit Service Paths", "description": "Investigate table turnaround times.", "citations": []},
+            {"priority": "Medium", "category": "marketing", "title": "Highlight Signature Dish", "description": "Promote highest rated items on social media.", "citations": []},
+            {"priority": "High", "category": "food", "title": "Menu Review", "description": "Review consistency of frequently complained items.", "citations": []},
+            {"priority": "Low", "category": "service", "title": "Staff Training", "description": "Ensure staff greet returning customers appropriately.", "citations": []}
         ]
 
         fallback_insights = AIInsightsOutput(

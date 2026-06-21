@@ -11,38 +11,40 @@ export default function Recommendations({ insights, reviews = [] }: any) {
   let recommendations: any[] = [];
   
   if (actionItems.length > 0) {
-    recommendations = actionItems.map((item: any, idx: number) => {
-      // Handle both string format (old fallback) and object format (new AI Insights)
-      const itemText = typeof item === 'string' ? item : (item.title + " " + item.description);
+    recommendations = actionItems.map((item: any) => {
       const displayTitle = typeof item === 'string' ? item : item.title;
       const displayContext = typeof item === 'string' ? "Identified by AI Audit" : item.description;
+      const priority = item.priority || "Medium";
+      const citations = item.citations || [];
+      const reviewIds = citations.map((c: any) => c.review_id);
 
-      const isCritical = itemText.toLowerCase().includes("urgent") || itemText.toLowerCase().includes("critical");
-      const isGrowth = itemText.toLowerCase().includes("highlight") || itemText.toLowerCase().includes("feature") || itemText.toLowerCase().includes("marketing");
+      const isCritical = priority === 'High';
+      const isGrowth = item.category?.toLowerCase() === 'marketing';
       
       return {
-        type: typeof item !== 'string' && item.category ? item.category.toUpperCase() : (isCritical ? "CRITICAL" : isGrowth ? "GROWTH" : "HIGH"),
+        type: typeof item !== 'string' && item.category ? item.category.toUpperCase() : "OPERATIONS",
         icon: isCritical ? AlertOctagon : isGrowth ? TrendingUp : AlertTriangle,
         title: displayTitle,
         context: displayContext,
-        quote: null,
-        action: "Review",
-        source_review_ids: item.source_review_ids || [],
-        color: isCritical ? "text-[#f43f5e]" : isGrowth ? "text-[#10b981]" : "text-[#f59e0b]",
-        bg: isCritical ? "bg-[#f43f5e]/10" : isGrowth ? "bg-[#10b981]/10" : "bg-[#f59e0b]/10",
-        border: isCritical ? "border-[#f43f5e]/30" : isGrowth ? "border-[#10b981]/30" : "border-[#f59e0b]/30"
+        citations: citations,
+        action: "Trace Sources",
+        source_review_ids: reviewIds,
+        color: priority === 'High' ? "text-red-400" : priority === 'Medium' ? "text-yellow-400" : "text-blue-400",
+        bg: priority === 'High' ? "bg-red-400/10" : priority === 'Medium' ? "bg-yellow-400/10" : "bg-blue-400/10",
+        border: priority === 'High' ? "border-red-400/30" : priority === 'Medium' ? "border-yellow-400/30" : "border-blue-400/30",
+        priority: priority
       }
     });
   }
 
   return (
-    <div className="space-y-4 w-full max-w-[1000px]">
+    <div className="space-y-6 w-full max-w-[1200px]">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[#1e293b]">
         <div>
           <h2 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
-            <Lightbulb className="w-5 h-5 text-[#f59e0b]" />
+            <Lightbulb className="w-5 h-5 text-[#a855f7]" />
             Actionable Recommendations
           </h2>
           <p className="text-[11px] text-[#64748b] mt-1">
@@ -51,36 +53,47 @@ export default function Recommendations({ insights, reviews = [] }: any) {
         </div>
       </div>
 
-      <div className="space-y-3 pt-2">
+      <div className="space-y-4 pt-2">
         {recommendations.length > 0 ? recommendations.map((rec, idx) => (
-          <div key={idx} className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4 rounded-none transition-colors hover:bg-[#1e293b]/10">
-            <div className="flex gap-4 items-start">
-              <div className={`p-2 rounded-none ${rec.bg} ${rec.border} border flex-shrink-0`}>
-                <rec.icon className={`w-5 h-5 ${rec.color}`} />
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${rec.color}`}>
-                    {rec.type}
+          <div key={idx} className="bg-[#0c0516] border border-[#1e293b] p-5 flex flex-col rounded-sm shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all hover:border-[#a855f7]/40 hover:bg-[#1e293b]/20">
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2 text-[11px] font-bold text-white uppercase tracking-widest">
+                  <span className={`px-2 py-0.5 rounded-sm border ${rec.bg} ${rec.border} ${rec.color}`}>
+                    {rec.priority} Priority
                   </span>
-                  <span className="text-sm font-semibold text-white">{rec.title}</span>
+                  <span className="text-[#64748b]">{rec.type}</span>
+                  <span className="text-[#e2e8f0] flex items-center gap-1.5"><rec.icon className={`w-3.5 h-3.5 ${rec.color}`} /> {rec.title}</span>
                 </div>
-                <p className="text-[10px] text-[#94a3b8]">{rec.context}</p>
-                {rec.quote && (
-                  <p className="text-[10px] text-[#64748b] italic border-l-2 border-[#334155] pl-2 mt-2">
-                    {rec.quote}
-                  </p>
+                <p className="text-[12px] text-[#cbd5e1] leading-relaxed mb-4">
+                  {rec.context}
+                </p>
+
+                {rec.citations.length > 0 && (
+                  <div className="space-y-2 mt-4 pt-4 border-t border-[#1e293b]/50">
+                    {rec.citations.map((cite: any, cidx: number) => (
+                      <div key={cidx} className="bg-[#0f172a] p-3 rounded-sm border border-[#1e293b] relative overflow-hidden group max-w-3xl">
+                        <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#a855f7]/60 group-hover:bg-[#a855f7] transition-colors"></div>
+                        <p className="text-[12px] text-[#94a3b8] italic">"{cite.quote}"</p>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
+              
+              <div className="flex sm:flex-col items-center justify-center sm:pl-6 sm:border-l border-[#1e293b] flex-shrink-0">
+                <button 
+                  onClick={() => setSelectedReviewIds(rec.source_review_ids)}
+                  disabled={rec.source_review_ids.length === 0}
+                  className={`px-4 py-2 border text-[10px] font-bold uppercase tracking-widest flex items-center justify-center w-full gap-2 rounded-sm transition-colors ${rec.border} ${rec.color} hover:${rec.bg} ${rec.source_review_ids.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {rec.action} <ArrowRight className="w-3 h-3" />
+                </button>
+                <p className="text-[9px] text-[#64748b] mt-3 uppercase tracking-widest font-semibold text-center hidden sm:block">
+                  {rec.source_review_ids.length} Source{rec.source_review_ids.length !== 1 ? 's' : ''}
+                </p>
+              </div>
             </div>
-            
-            <button 
-              onClick={() => setSelectedReviewIds(rec.source_review_ids)}
-              disabled={rec.source_review_ids.length === 0}
-              className={`px-4 py-2 border text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 rounded-none transition-colors ${rec.border} ${rec.color} hover:${rec.bg} flex-shrink-0 ${rec.source_review_ids.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {rec.action} <ArrowRight className="w-3 h-3" />
-            </button>
           </div>
         )) : (
           <div className="p-12 text-center border border-[#1e293b] bg-[#0c0516]">

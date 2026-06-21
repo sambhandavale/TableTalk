@@ -183,72 +183,108 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        {/* Top Themes */}
-        <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-none">
-          <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold border-b border-[#1e293b] pb-2 mb-3">Top Themes Found</span>
-          <div className="space-y-3">
-            {themesData.length > 0 ? themesData.map((t, idx) => (
-              <div key={idx} className="flex justify-between items-center text-[10px]">
-                <span className="text-white font-semibold truncate pr-2 max-w-[150px]">{t.name}</span>
-                <div className="flex items-center gap-1.5 flex-shrink-0">
-                  <span className={`${t.trend === 'up' ? 'text-[#10b981]' : t.trend === 'down' ? 'text-[#f43f5e]' : 'text-[#64748b]'}`}>
-                    {t.change}
-                  </span>
-                  {t.trend === 'up' ? <TrendingUp className="w-3 h-3 text-[#10b981]" /> : 
-                   t.trend === 'down' ? <TrendingDown className="w-3 h-3 text-[#f43f5e]" /> : 
-                   <span className="w-3 h-3 flex items-center justify-center text-[#64748b]">-</span>}
+        {/* Left Column: Top Themes & Menu Performance */}
+        <div className="col-span-1 flex flex-col gap-4">
+          
+          {/* Top Themes */}
+          <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-none shadow-[0_0_15px_rgba(0,0,0,0.4)] transition-all hover:border-[#334155]">
+            <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold border-b border-[#1e293b] pb-2 mb-3">Top Themes Found</span>
+            <div className="space-y-3">
+              {themesData.length > 0 ? themesData.map((t, idx) => (
+                <div key={idx} className="flex justify-between items-start text-[10px] gap-2">
+                  <span className="text-[#e2e8f0] font-semibold pr-2 break-words leading-snug">{t.name}</span>
+                  <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
+                    <span className={`${t.trend === 'up' ? 'text-[#10b981]' : t.trend === 'down' ? 'text-[#f43f5e]' : 'text-[#64748b]'}`}>
+                      {t.change}
+                    </span>
+                    {t.trend === 'up' ? <TrendingUp className="w-3 h-3 text-[#10b981]" /> : 
+                     t.trend === 'down' ? <TrendingDown className="w-3 h-3 text-[#f43f5e]" /> : 
+                     <span className="w-3 h-3 flex items-center justify-center text-[#64748b]">-</span>}
+                  </div>
                 </div>
-              </div>
-            )) : (
-              <span className="text-[10px] text-[#64748b]">No themes detected yet.</span>
-            )}
+              )) : (
+                <span className="text-[10px] text-[#64748b]">No themes detected yet.</span>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Best / Worst Dishes */}
-        <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-none justify-between">
-          <div>
+          {/* Best / Worst Dishes */}
+          <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-none shadow-[0_0_15px_rgba(0,0,0,0.4)] transition-all hover:border-[#334155]">
             <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold border-b border-[#1e293b] pb-2 mb-3 block">Menu Performance</span>
             
             <div className="mb-4">
               <div className="flex items-center gap-1.5 mb-1 text-[9px] text-[#10b981] uppercase tracking-widest font-bold">
                 <ThumbsUp className="w-3 h-3" /> Best Reviewed
               </div>
-              <span className="text-xs font-semibold text-white truncate max-w-full block">{bestDish}</span>
+              <span className="text-xs font-semibold text-white break-words leading-snug block">{bestDish}</span>
             </div>
             
             <div>
               <div className="flex items-center gap-1.5 mb-1 text-[9px] text-[#f43f5e] uppercase tracking-widest font-bold">
                 <ThumbsDown className="w-3 h-3" /> Worst Reviewed
               </div>
-              <span className="text-xs font-semibold text-white truncate max-w-full block">{worstDishName}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Operational Intelligence */}
-        <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-none justify-between">
-          <div>
-            <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold border-b border-[#1e293b] pb-2 mb-3 block">Actionable AI Suggestions</span>
-            
-            <div className="space-y-2 mt-2">
-              {actionItems.map((action: any, idx: number) => (
-                <div key={idx} className="p-2 bg-[#1e293b]/20 border border-[#1e293b]">
-                  <div className="flex items-center gap-1.5 text-[9px] font-bold text-white uppercase tracking-widest mb-1.5">
-                    <AlertTriangle className="w-3 h-3 text-[#f59e0b]" /> {action.title || "Recommendation"}
-                  </div>
-                  <p className="text-[10px] text-[#94a3b8] leading-snug">
-                    {typeof action === 'string' ? action : action.description}
-                  </p>
-                </div>
-              ))}
+              <span className="text-xs font-semibold text-white break-words leading-snug block">{worstDishName}</span>
             </div>
           </div>
           
-          <div className="mt-4 pt-3 border-t border-[#1e293b]">
+        </div>
+
+        {/* Right Column: Operational Intelligence (Spans 2 columns) */}
+        <div className="col-span-1 md:col-span-2 bg-[#0c0516] border border-[#1e293b] p-5 flex flex-col rounded-none shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+          <div>
+            <div className="flex items-center justify-between border-b border-[#1e293b] pb-2 mb-4">
+              <span className="text-[11px] uppercase tracking-widest text-[#a855f7] font-bold">Actionable AI Suggestions</span>
+              <span className="text-[9px] uppercase tracking-widest text-[#64748b]">Prioritized</span>
+            </div>
+            
+            <div className="space-y-4">
+              {actionItems.map((action: any, idx: number) => {
+                const priorityColor = action.priority === 'High' ? 'text-red-400 bg-red-400/10 border-red-400/30' : 
+                                     action.priority === 'Medium' ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30' : 
+                                     action.priority === 'Low' ? 'text-blue-400 bg-blue-400/10 border-blue-400/30' :
+                                     'text-[#94a3b8] bg-[#1e293b]/50 border-[#1e293b]';
+                
+                return (
+                  <div key={idx} className="p-4 bg-[#1e293b]/20 border border-[#1e293b] rounded-sm transition-all hover:border-[#a855f7]/40 hover:bg-[#1e293b]/40">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+                      <div className="flex items-center gap-2 text-[11px] font-bold text-white uppercase tracking-widest">
+                        <AlertTriangle className="w-4 h-4 text-[#f59e0b]" /> {action.title || "Recommendation"}
+                      </div>
+                      {action.priority && (
+                        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm border ${priorityColor} w-max`}>
+                          {action.priority} Priority
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[12px] text-[#cbd5e1] leading-relaxed mb-3">
+                      {typeof action === 'string' ? action : action.description}
+                    </p>
+                    
+                    {/* Citations */}
+                    {action.citations && action.citations.length > 0 && (
+                      <div className="space-y-2 mt-4 pt-3 border-t border-[#1e293b]/50">
+                        {action.citations.map((cite: any, cidx: number) => (
+                          <div key={cidx} className="bg-[#0f172a] p-3 rounded-sm border border-[#1e293b] relative overflow-hidden group">
+                            <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#a855f7]/60 group-hover:bg-[#a855f7] transition-colors"></div>
+                            <p className="text-[12px] text-[#94a3b8] italic">"{cite.quote}"</p>
+                            <div className="mt-2 text-[9px] text-[#475569] uppercase tracking-widest font-semibold flex items-center justify-between">
+                              <span>Source Review Citation</span>
+                              <span className="font-mono bg-[#1e293b] px-1.5 py-0.5 rounded">ID: {cite.review_id.slice(0, 8)}...</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          <div className="mt-6 pt-3 border-t border-[#1e293b]">
             <div className="flex items-start gap-1.5">
-              <Clock className="w-3 h-3 text-[#64748b] mt-0.5" />
-              <p className="text-[9px] text-[#64748b] italic">
+              <Clock className="w-3.5 h-3.5 text-[#64748b] mt-0.5" />
+              <p className="text-[10px] text-[#64748b] italic">
                 {temporalTrends}
               </p>
             </div>

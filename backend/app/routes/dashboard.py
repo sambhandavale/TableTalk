@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from datetime import datetime, timezone, timedelta
+import asyncio
 from app.database import db
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
@@ -22,6 +24,28 @@ async def track_qr_scan(business_id: str):
         {"$inc": {"qr_scan_count": 1}}
     )
     return {"status": "success", "message": "Scan tracked"}
+
+@router.get("/{business_id}/stream")
+async def stream_dashboard_status(business_id: str):
+    async def event_generator():
+        last_status = False
+        while True:
+            # Check business audit_completed status
+            business = await db.find_one("businesses", {"id": business_id})
+            if not business:
+                business = await db.find_one("businesses", {"slug": business_id})
+                
+            if business:
+                current_status = business.get("audit_completed", False)
+                if current_status and not last_status:
+                    yield f"data: reload\n\n"
+                    last_status = current_status
+            
+            await asyncio.sleep(2)
+            # Send keep-alive
+            yield f": keep-alive\n\n"
+            
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @router.get("/{business_id}")
 async def get_dashboard_data(business_id: str):
