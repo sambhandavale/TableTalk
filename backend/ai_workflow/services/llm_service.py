@@ -48,7 +48,14 @@ class GeminiLLMService:
                             response_schema=response_schema
                         )
                     )
-                    return response_schema.model_validate_json(response.text)
+                    raw_text = response.text.strip()
+                    if raw_text.startswith("```json"):
+                        raw_text = raw_text[7:]
+                    if raw_text.startswith("```"):
+                        raw_text = raw_text[3:]
+                    if raw_text.endswith("```"):
+                        raw_text = raw_text[:-3]
+                    return response_schema.model_validate_json(raw_text.strip())
 
                 loop = asyncio.get_running_loop()
                 result = await loop.run_in_executor(None, run_gemini)

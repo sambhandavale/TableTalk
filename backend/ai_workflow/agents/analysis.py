@@ -1,8 +1,11 @@
 import logging
 from typing import Dict, Any, List
+from datetime import datetime, timezone
 from app.database import db
 import json
 from ai_workflow.services.llm_service import llm_service
+from ai_workflow.services.cache_service import cache_service
+from ai_workflow.services.embedding_service import embedding_service
 from ai_workflow.schemas.analysis import AIInsightsOutput
 from ai_workflow.prompts.analysis_prompts import ANALYSIS_SYSTEM_PROMPT
 
@@ -19,7 +22,15 @@ class PatternAnalysisAgent:
         
         if not restaurant_reviews:
             logger.warning(f"No reviews found to analyze for {business_id}")
-            return {}
+            return {
+                "business_id": business_id,
+                "generated_date": datetime.now(timezone.utc).isoformat(),
+                "health_trend": [],
+                "sentiment": {"positive": 0, "neutral": 0, "negative": 0},
+                "themes": {"praised": [], "complaints": [], "temporal_trends": ""},
+                "health_score": 0,
+                "action_items": []
+            }
 
         # Delta Logic: Fetch previous insights
         insights_collection = await db.get_collection("insights")
@@ -30,10 +41,46 @@ class PatternAnalysisAgent:
 
         # Filter for new reviews
         if latest_insight and latest_insight.get("generated_date"):
-            last_date = latest_insight["generated_date"]
-            new_reviews = [r for r in restaurant_reviews if r.get("timestamp", "") > last_date]
+            last_date_str = latest_insight["generated_date"]
+            try:
+                last_date = datetime.fromisoformat(last_date_str.replace("Z", "+00:00"))
+                new_reviews = []
+                for r in restaurant_reviews:
+                    r_time_str = r.get("timestamp", "")
+                    try:
+                        r_time = datetime.fromisoformat(r_time_str.replace("Z", "+00:00"))
+                        if r_time > last_date:
+                            new_reviews.append(r)
+                    except ValueError:
+                        pass
+            except ValueError:
+                new_reviews = restaurant_reviews
         else:
             new_reviews = restaurant_reviews
+
+        # Instead of strict truncation, we will use Semantic Clustering to extract exemplars.
+        # But first, check Semantic Cache to save tokens!
+        cache_data = {
+            "business_id": business_id,
+            "reviews_count": len(new_reviews),
+            "last_review_date": new_reviews[0].get("timestamp", "") if new_reviews else ""
+        }
+        cached_result = await cache_service.get_cached_insight("analysis", cache_data)
+        if cached_result:
+            return cached_result
+
+        # Clustering to extract exemplars if there are many reviews
+        if len(new_reviews) > 20:
+            logger.info(f"Clustering {len(new_reviews)} reviews to extract 20 diverse exemplars...")
+            texts = [r.get("text", "No text") for r in new_reviews]
+            embeddings = await embedding_service.generate_embeddings(texts)
+            if embeddings:
+                new_reviews = embedding_service.extract_exemplars(new_reviews, embeddings, max_clusters=20)
+            else:
+                # Fallback to simple truncation
+                new_reviews = sorted(new_reviews, key=lambda x: x.get("timestamp", ""), reverse=True)[:20]
+        else:
+            new_reviews = sorted(new_reviews, key=lambda x: x.get("timestamp", ""), reverse=True)
 
         if not new_reviews and latest_insight:
             logger.info(f"No new reviews for {business_id} since last report. Returning cached insights to save LLM tokens.")
@@ -69,7 +116,6 @@ class PatternAnalysisAgent:
         )
 
         # Pass summarized reviews + old report to LLM
-        from datetime import datetime, timezone
         current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
         prompt = f"Analyze for Business ID: {business_id}\n\n"
@@ -107,6 +153,9 @@ class PatternAnalysisAgent:
             {"id": business_id},
             {"$set": {"health_score": health_score}}
         )
+
+        # Set semantic cache
+        await cache_service.set_cached_insight("analysis", cache_data, insights_record, expire_seconds=86400)
 
         logger.info(f"Successfully generated analytical insights & weekly priority actions for {business_id}")
         return insights_record

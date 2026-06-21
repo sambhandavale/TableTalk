@@ -5,6 +5,14 @@ from app.database import db
 from ai_workflow.services.llm_service import llm_service
 from ai_workflow.prompts.triage_prompts import TRIAGE_SYSTEM_PROMPT
 from ai_workflow.schemas.triage import StructuredTriageOutput
+from nltk.sentiment import SentimentIntensityAnalyzer
+import nltk
+
+try:
+    sia = SentimentIntensityAnalyzer()
+except LookupError:
+    nltk.download('vader_lexicon')
+    sia = SentimentIntensityAnalyzer()
 
 logger = logging.getLogger("TableTalk.TriageAgent")
 
@@ -85,13 +93,21 @@ class ReviewTriageAgent:
             apology_draft=None if rating >= 4 else fallback_apology
         )
 
-        # Process structured output via Gemini
-        structured_triage = await llm_service.generate_structured_output(
-            prompt=prompt,
-            system_instruction=TRIAGE_SYSTEM_PROMPT,
-            response_schema=StructuredTriageOutput,
-            fallback_data=fallback_triage
-        )
+        # Traditional NLP Fast-Path (Bypass LLM for clear positives)
+        sentiment_scores = sia.polarity_scores(text) if text else {"compound": 0.0}
+        
+        # If rating is high and VADER confirms positive text, skip LLM to save tokens/money!
+        if rating >= 4 and sentiment_scores["compound"] > 0.3:
+            logger.info(f"Fast-pathing triage using Traditional NLP (NLTK VADER compound: {sentiment_scores['compound']}). Skipping LLM.")
+            structured_triage = fallback_triage
+        else:
+            # Process structured output via Gemini for complex or negative reviews
+            structured_triage = await llm_service.generate_structured_output(
+                prompt=prompt,
+                system_instruction=TRIAGE_SYSTEM_PROMPT,
+                response_schema=StructuredTriageOutput,
+                fallback_data=fallback_triage
+            )
 
         # CRM Update & Milestone Logic
         give_reward = False

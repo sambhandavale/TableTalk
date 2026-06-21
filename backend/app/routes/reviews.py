@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import APIRouter, HTTPException, Body, BackgroundTasks
 from typing import Optional
 from datetime import datetime, timezone
 from app.database import db
@@ -16,7 +16,7 @@ async def extract_voice(request: VoiceExtractRequest):
     return extracted_data.model_dump()
 
 @router.post("")
-async def submit_qr_review(request: QRReviewSubmitRequest):
+async def submit_qr_review(request: QRReviewSubmitRequest, background_tasks: BackgroundTasks):
     # Find business
     business = await db.find_one("businesses", {"slug": request.restaurant_slug})
     if not business:
@@ -44,9 +44,9 @@ async def submit_qr_review(request: QRReviewSubmitRequest):
     saved_review = await db.insert_one("reviews", review_data)
     review_id = saved_review["id"]
     
-    # Run Agent 2 & Agent 5 via Celery in the background!
-    from app.tasks import process_new_review_task
-    process_new_review_task.delay(review_id)
+    # Run Agent 2 & Agent 5 via FastAPI BackgroundTasks instead of Celery!
+    from app.tasks import _process_qr_review_async
+    background_tasks.add_task(_process_qr_review_async, review_id)
     
     return {
         "message": "Review submitted successfully",

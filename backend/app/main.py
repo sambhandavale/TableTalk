@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import db
 from app.core.config import settings
-from app.routes import onboard, reviews, insights, campaigns, dashboard
+from app.routes import onboard, reviews, insights, campaigns, dashboard, search
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -42,6 +42,7 @@ api_router.include_router(reviews.router)
 api_router.include_router(insights.router)
 api_router.include_router(campaigns.router)
 api_router.include_router(dashboard.router)
+api_router.include_router(search.router)
 
 # Mount all under main app
 app.include_router(api_router)

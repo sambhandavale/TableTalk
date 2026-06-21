@@ -89,6 +89,22 @@ async def _process_qr_review_async(review_id: str):
             
             await db.update_one("reviews", {"id": review_id}, {"$set": {"ai_response_draft": draft}})
 
+        # 3. Save to Vector Store for Future RAG
+        from ai_workflow.services.embedding_service import embedding_service
+        from ai_workflow.services.vector_service import vector_service
+        
+        review_text = review.get("text", "")
+        if review_text:
+            embeddings = await embedding_service.generate_embeddings([review_text])
+            if embeddings:
+                metadata = {
+                    "business_id": review.get("business_id"),
+                    "rating": review.get("rating"),
+                    "visitor_type": review.get("visitor_type"),
+                    "timestamp": review.get("timestamp")
+                }
+                vector_service.add_review(review_id, review_text, embeddings[0], metadata)
+
     except Exception as e:
         logger.error(f"Error processing QR review {review_id}: {e}")
 
