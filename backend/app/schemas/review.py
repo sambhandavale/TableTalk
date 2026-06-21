@@ -10,6 +10,7 @@ class QRReviewSubmitRequest(BaseModel):
     diner_name: Optional[str] = "Anonymous"
     diner_phone: Optional[str] = None
     diner_email: Optional[str] = None
+    diner_birthdate: Optional[str] = None
 
 class VoiceExtractRequest(BaseModel):
     transcript: str

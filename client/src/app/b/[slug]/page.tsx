@@ -35,6 +35,7 @@ export default function CustomerReviewPage() {
   const [dinerName, setDinerName] = useState("");
   const [dinerPhone, setDinerPhone] = useState("");
   const [dinerEmail, setDinerEmail] = useState("");
+  const [dinerBirthdate, setDinerBirthdate] = useState("");
   const [dishInput, setDishInput] = useState("");
   const [orderedItems, setOrderedItems] = useState<string[]>([]);
   
@@ -193,7 +194,8 @@ export default function CustomerReviewPage() {
         visitor_type: visitorType,
         diner_name: dinerName || "Anonymous",
         diner_phone: dinerPhone || null,
-        diner_email: dinerEmail || null
+        diner_email: dinerEmail || null,
+        diner_birthdate: dinerBirthdate || null
       };
 
       const resp = await fetch("http://localhost:8000/api/reviews", {
@@ -439,8 +441,8 @@ export default function CustomerReviewPage() {
                 </div>
               </div>
 
-              {/* Email & Phone Contact */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {/* Email, Phone & Birthday Contact */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="space-y-1">
                   <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Phone Number (For rewards)</label>
                   <input
@@ -459,6 +461,15 @@ export default function CustomerReviewPage() {
                     value={dinerEmail}
                     onChange={(e) => setDinerEmail(e.target.value)}
                     className="w-full bg-[#0c0516] border border-[#1e293b] p-2 text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none transition-colors"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Date of Birth (Optional)</label>
+                  <input
+                    type="date"
+                    value={dinerBirthdate}
+                    onChange={(e) => setDinerBirthdate(e.target.value)}
+                    className="w-full bg-[#0c0516] border border-[#1e293b] p-2 text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none transition-colors custom-date-input"
                   />
                 </div>
               </div>

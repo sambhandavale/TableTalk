@@ -35,6 +35,7 @@ async def submit_qr_review(request: QRReviewSubmitRequest, background_tasks: Bac
         "diner_name": request.diner_name,
         "diner_phone": request.diner_phone,
         "diner_email": request.diner_email,
+        "diner_birthdate": request.diner_birthdate,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "owner_alerted": False,
         "ai_apology_draft": None,

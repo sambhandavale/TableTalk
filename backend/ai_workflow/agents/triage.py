@@ -24,6 +24,7 @@ class ReviewTriageAgent:
         items = review_data.get("ordered_items", [])
         phone = review_data.get("diner_phone", "")
         name = review_data.get("diner_name", "Valued Guest")
+        birthdate = review_data.get("diner_birthdate", None)
         business_id = review_data.get("business_id")
         visitor_type = review_data.get("visitor_type", "first-time")
         
@@ -122,11 +123,15 @@ class ReviewTriageAgent:
                 new_bad = existing_cust.get("bad_reviews_count", 0) + inc_bad
                 new_total = existing_cust.get("total_reviews_count", 0) + 1
                 
+                set_fields = {"segment": structured_triage.segment, "last_visit": datetime.now(timezone.utc).isoformat()}
+                if birthdate:
+                    set_fields["birthdate"] = birthdate
+                    
                 await db.update_one(
                     "customers",
                     {"phone": phone, "business_id": business_id},
                     {
-                        "$set": {"segment": structured_triage.segment, "last_visit": datetime.now(timezone.utc).isoformat()},
+                        "$set": set_fields,
                         "$inc": {
                             "visit_count": 1,
                             "good_reviews_count": inc_good,
@@ -153,6 +158,9 @@ class ReviewTriageAgent:
                     "bad_reviews_count": inc_bad,
                     "total_reviews_count": 1
                 }
+                if birthdate:
+                    new_cust["birthdate"] = birthdate
+                    
                 await db.insert_one("customers", new_cust)
                 give_reward = True  # First review gets a reward!
         else:
