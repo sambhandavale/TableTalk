@@ -9,6 +9,10 @@ from app.routes import onboard, reviews, insights, campaigns, dashboard, search
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Asynchronous context manager for managing application startup and shutdown events.
+    Connects to the database on startup and closes the connection on shutdown.
+    """
     # Connect to MongoDB or JSON fallback on startup
     await db.connect()
     
