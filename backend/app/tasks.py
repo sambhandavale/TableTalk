@@ -1,3 +1,15 @@
+import sys
+import os
+
+# Ensure the backend directory is in the path for absolute imports when Celery loads this module
+BACKEND_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BACKEND_ROOT not in sys.path:
+    sys.path.insert(0, BACKEND_ROOT)
+
+WORKSPACE_ROOT = os.path.dirname(BACKEND_ROOT)
+if WORKSPACE_ROOT not in sys.path:
+    sys.path.insert(0, WORKSPACE_ROOT)
+
 import asyncio
 import logging
 from datetime import datetime, timezone

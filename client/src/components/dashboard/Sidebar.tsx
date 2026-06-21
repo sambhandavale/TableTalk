@@ -229,7 +229,7 @@ export default function Sidebar({
       </div>
 
       {/* Footer / User Profile */}
-      <div className={`p-4 border-t border-[#1e293b] flex flex-col gap-3 ${isEffectivelyCollapsed ? 'items-center' : ''}`}>
+      <div className={`p-4 pb-12 border-t border-[#1e293b] flex flex-col gap-3 ${isEffectivelyCollapsed ? 'items-center' : ''}`}>
         {!isEffectivelyCollapsed && (
           <div className="px-2 flex flex-col truncate">
             <span className="text-xs text-[var(--foreground)] font-medium truncate">Manager Access</span>

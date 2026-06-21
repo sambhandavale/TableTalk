@@ -3,6 +3,17 @@ from celery import Celery
 import os
 import logging
 import sys
+import os
+
+# Ensure the backend directory is in the path for absolute imports
+BACKEND_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BACKEND_ROOT not in sys.path:
+    sys.path.append(BACKEND_ROOT)
+
+# Ensure workspace root is in path so 'ai_workflow' package can load
+WORKSPACE_ROOT = os.path.dirname(BACKEND_ROOT)
+if WORKSPACE_ROOT not in sys.path:
+    sys.path.append(WORKSPACE_ROOT)
 
 logger = logging.getLogger(__name__)
 

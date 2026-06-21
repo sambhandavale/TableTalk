@@ -135,9 +135,9 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
           <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Top Dish (7 days)</span>
           {insights ? (
             <>
-              <div className="flex items-center gap-2 mt-1">
-                <TrendingUp className="w-4 h-4 text-[#10b981]" />
-                <span className="text-xs font-semibold text-[var(--foreground)] leading-none mt-1 truncate max-w-[120px]">
+              <div className="flex items-start gap-2 mt-2">
+                <TrendingUp className="w-4 h-4 text-[#10b981] mt-0.5 flex-shrink-0" />
+                <span className="text-xs font-semibold text-[var(--foreground)] leading-snug line-clamp-2 pr-2">
                   {topDish}
                 </span>
               </div>
@@ -157,13 +157,19 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
           <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none flex-1 flex flex-col space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-[#1e293b]">
               <span className="text-xs font-semibold text-[var(--foreground)]">Review Volume Trends</span>
-              <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Last 30 Days</span>
+              <span className="text-[9px] uppercase tracking-widest text-[#94a3b8] font-bold">Last 30 Days</span>
             </div>
             <div className="flex-1 min-h-[160px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
+                <AreaChart data={chartData.map((d: any) => ({
+                  ...d,
+                  name: d.name === 'W1' ? '3 Weeks Ago' : 
+                        d.name === 'W2' ? '2 Weeks Ago' : 
+                        d.name === 'W3' ? 'Last Week' : 
+                        d.name === 'W4' ? 'This Week' : d.name
+                }))} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#64748b' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#64748b' }} />
+                  <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#64748b' }} />
                   <CartesianGrid vertical={false} stroke="#1e293b" strokeDasharray="3 3" />
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '0px', fontSize: '10px' }}

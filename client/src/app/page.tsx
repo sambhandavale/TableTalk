@@ -69,7 +69,8 @@ export default function TableTalkLandingPage() {
       <div className="absolute bottom-[5%] left-[20%] w-[500px] h-[500px] bg-purple-950/20 rounded-full blur-[140px] pointer-events-none" />
 
       <header className="w-full max-w-7xl mx-auto px-6 md:px-12 py-6 flex justify-between items-center border-b border-[var(--brand-border-subtle)] relative z-50 transition-colors duration-300">
-        <div className="flex items-center">
+        {/* Left Side: Logo */}
+        <div className="flex items-center relative z-20">
           <img 
             src={theme === "dark" ? "/assets/logos/logo_dark.svg" : "/assets/logos/logo_light.svg"} 
             alt="TableTalk" 
@@ -77,129 +78,36 @@ export default function TableTalkLandingPage() {
           />
         </div>
 
+        {/* Center Links (Desktop Only) */}
+        <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2 z-10">
+          <a href="#triage-simulator" className="text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] font-bold transition-colors">Platform</a>
+          <a href="#growth-suite" className="text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] font-bold transition-colors">Growth Suite</a>
+          <a href="#testimonials" className="text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] font-bold transition-colors">Customer Stories</a>
+        </div>
+
         {/* Navigation Buttons Container */}
-        <div className="flex items-center gap-3 relative">
+        <div className="flex items-center gap-3 relative z-20">
           
-          {/* BUTTON 1: Explore Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setExploreDropdownOpen(!exploreDropdownOpen);
-                setAuthDropdownOpen(false); // Close auth menu if open
-              }}
-              className="h-10 px-5 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center gap-2.5 text-xs font-bold text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
-            >
-              <span className="text-[var(--text-muted)] font-medium">Explore</span>
-              <ChevronDown className={`w-3.5 h-3.5 text-[var(--text-dim)] transition-transform duration-300 ${exploreDropdownOpen ? "rotate-180" : ""}`} />
-            </button>
-
-            {exploreDropdownOpen && (
-              <>
-                <div 
-                  className="fixed inset-0 z-40 cursor-default" 
-                  onClick={() => setExploreDropdownOpen(false)} 
-                />
-                <div className="absolute right-0 mt-2.5 w-64 rounded-2xl bg-[var(--brand-card)] border border-[var(--brand-border)] p-2 shadow-2xl backdrop-blur-xl z-50 animate-fadeIn text-left space-y-1.5">
-                  
-                  {/* Platform Core Suites */}
-                  <div className="py-1 border-b border-[var(--brand-border-subtle)]">
-                    <span className="px-2.5 text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block mb-1">Product Suites</span>
-                    <a 
-                      href="#insights-suite" 
-                      onClick={() => setExploreDropdownOpen(false)}
-                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
-                    >
-                      <LayoutDashboard className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
-                      <span className="font-bold block leading-none">Multi-Unit Insights</span>
-                    </a>
-                    <a 
-                      href="#triage-simulator" 
-                      onClick={() => setExploreDropdownOpen(false)}
-                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
-                    >
-                      <ShieldAlert className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
-                      <span className="font-bold block leading-none">Feedback Intercept</span>
-                    </a>
-                    <a 
-                      href="#growth-suite" 
-                      onClick={() => setExploreDropdownOpen(false)}
-                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
-                    >
-                      <Sparkles className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
-                      <span className="font-bold block leading-none">Retention Vouchers</span>
-                    </a>
-                    <a 
-                      href="#agent-orchestration" 
-                      onClick={() => setExploreDropdownOpen(false)}
-                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200"
-                    >
-                      <TrendingUp className="w-3.5 h-3.5 text-[var(--brand-purple-text)] flex-shrink-0" />
-                      <span className="font-bold block leading-none">SEO Map Booster</span>
-                    </a>
-                  </div>
-
-                  {/* Standard Page Anchor Links */}
-                  <div className="py-1 border-b border-[var(--brand-border-subtle)] flex flex-col">
-                    <span className="px-2.5 text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block mb-1">Company & Links</span>
-                    <a 
-                      href="#features" 
-                      onClick={() => setExploreDropdownOpen(false)}
-                      className="px-2.5 py-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all"
-                    >
-                      Features
-                    </a>
-                    <a 
-                      href="#growth-suite" 
-                      onClick={() => setExploreDropdownOpen(false)}
-                      className="px-2.5 py-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all"
-                    >
-                      Growth Suite
-                    </a>
-                    <a 
-                      href="#testimonials" 
-                      onClick={() => setExploreDropdownOpen(false)}
-                      className="px-2.5 py-1 rounded text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all"
-                    >
-                      Customer Stories
-                    </a>
-                  </div>
-
-                  {/* Theme Settings Toggle */}
-                  <div className="pt-1.5">
-                    <button
-                      onClick={() => {
-                        toggleTheme();
-                        setExploreDropdownOpen(false);
-                      }}
-                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-[10px] text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--orb-bg)] transition-all duration-200 cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        {theme === "dark" ? (
-                          <Sun className="w-3.5 h-3.5 text-amber-400" />
-                        ) : (
-                          <Moon className="w-3.5 h-3.5 text-purple-400" />
-                        )}
-                        <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
-                      </div>
-                      <span className="text-[8px] uppercase tracking-wider bg-[var(--brand-border-subtle)] px-2 py-0.5 rounded text-[var(--text-dim)] font-mono font-bold">
-                        Toggle
-                      </span>
-                    </button>
-                  </div>
-
-                </div>
-              </>
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="w-10 h-10 flex-shrink-0 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center justify-center text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
+            title="Toggle Theme"
+          >
+            {theme === "dark" ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-[var(--brand-purple-text)]" />
             )}
-          </div>
+          </button>
 
-          {/* BUTTON 2: Dynamic Authentication Portal */}
+          {/* Dynamic Authentication Portal */}
           <div className="relative">
             <button
               onClick={() => {
                 setAuthDropdownOpen(!authDropdownOpen);
-                setExploreDropdownOpen(false); // Close explore menu if open
               }}
-              className="h-10 px-5 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center gap-2.5 text-xs font-bold text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
+              className="h-10 px-5 flex-shrink-0 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center gap-2.5 text-xs font-bold text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
             >
               <span className="text-[var(--text-muted)] font-medium">
                 {isLoggedIn ? "Account Hub" : "Sign In"}
@@ -596,7 +504,7 @@ export default function TableTalkLandingPage() {
             <div className="col-span-1 md:col-span-2 space-y-4 text-left">
               <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">Developer APIs</h5>
               <ul className="space-y-2.5 font-light transition-colors duration-300">
-                <FooterLink href="#api">
+                <FooterLink href="/api-docs">
                   <span className="flex items-center gap-1.5">
                     API Reference
                     <span className="relative flex h-1.5 w-1.5">
@@ -605,9 +513,9 @@ export default function TableTalkLandingPage() {
                     </span>
                   </span>
                 </FooterLink>
-                <FooterLink href="#docs">Developer Docs</FooterLink>
-                <FooterLink href="#status">System Status</FooterLink>
-                <FooterLink href="#integrations">Webhook Portal</FooterLink>
+                <FooterLink href="/developer">Developer Docs</FooterLink>
+                <FooterLink href="/status">System Status</FooterLink>
+                <FooterLink href="/webhooks">Webhook Portal</FooterLink>
               </ul>
             </div>
 
@@ -615,9 +523,9 @@ export default function TableTalkLandingPage() {
             <div className="col-span-1 md:col-span-2 space-y-4 text-left">
               <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">Company & Trust</h5>
               <ul className="space-y-2.5 font-light transition-colors duration-300">
-                <FooterLink href="#about">About TableTalk</FooterLink>
-                <FooterLink href="#security">Security Standards</FooterLink>
-                <FooterLink href="#contact">Contact Success</FooterLink>
+                <FooterLink href="/about">About TableTalk</FooterLink>
+                <FooterLink href="/security">Security Standards</FooterLink>
+                <FooterLink href="mailto:hello@tabletalk.com">Contact Success</FooterLink>
               </ul>
             </div>
 
@@ -635,10 +543,10 @@ export default function TableTalkLandingPage() {
             </div>
 
             <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-[var(--text-dim)] transition-colors duration-300">
-              <a href="#privacy" className="hover:text-[var(--foreground)] transition-colors">Privacy Policy</a>
-              <a href="#terms" className="hover:text-[var(--foreground)] transition-colors">Terms of Service</a>
-              <a href="#security" className="hover:text-[var(--foreground)] transition-colors">Security Standards</a>
-              <a href="#cookies" className="hover:text-[var(--foreground)] transition-colors">Cookie Policy</a>
+              <a href="/privacy" className="hover:text-[var(--foreground)] transition-colors">Privacy Policy</a>
+              <a href="/terms" className="hover:text-[var(--foreground)] transition-colors">Terms of Service</a>
+              <a href="/security" className="hover:text-[var(--foreground)] transition-colors">Security Standards</a>
+              <a href="/cookies" className="hover:text-[var(--foreground)] transition-colors">Cookie Policy</a>
             </div>
           </div>
 
