@@ -29,13 +29,25 @@ export default function FaqAccordion() {
   ];
 
   return (
-    <section id="faq" className="py-24 max-w-5xl mx-auto px-6 md:px-12 relative z-10 border-t border-white/[0.04]">
-      <div className="text-left space-y-4 mb-16">
-        <span className="text-xs font-bold text-[#c77dff] uppercase tracking-widest block">Operational FAQ</span>
-        <h3 className="text-3xl sm:text-4xl text-white font-extrabold tracking-tight leading-tight max-w-2xl">
-          We help solve some of offline brands' biggest reputation & retention challenges
-        </h3>
-      </div>
+    <div
+      className="relative w-full"
+      style={{
+        backgroundImage: 'url("/assets/background/tables4.jpg")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      <div className="absolute inset-0 bg-[#05010a]/50 backdrop-blur-[12px] z-0 pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#05010a] to-transparent pointer-events-none z-0" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#05010a] to-transparent pointer-events-none z-0" />
+      <section id="faq" className="py-24 max-w-4xl mx-auto px-6 md:px-12 relative z-10">
+        <div className="text-center flex flex-col items-center space-y-4 mb-16">
+          <span className="text-xs font-bold text-[#c77dff] uppercase tracking-widest block">Operational FAQ</span>
+          <h3 className="text-3xl sm:text-4xl text-white font-extrabold tracking-tight leading-tight max-w-2xl text-center">
+            We help solve some of offline brands' biggest reputation & retention challenges
+          </h3>
+        </div>
 
       {/* Stateful Accordion List */}
       <div className="border-t border-white/[0.06] divide-y divide-white/[0.06] text-left">
@@ -74,7 +86,8 @@ export default function FaqAccordion() {
             </div>
           );
         })}
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   );
 }

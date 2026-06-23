@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Megaphone, Plus, MessageSquare, Send, CheckCircle, Smartphone } from "lucide-react";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 export default function RetentionCampaigns({ campaigns: initialCampaigns = [], business, setActiveTab }: any) {
   const [campaigns, setCampaigns] = useState(initialCampaigns);
@@ -73,7 +74,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
         {!isCreating && (
           <button 
             onClick={() => setIsCreating(true)}
-            className="px-4 py-2 bg-[#a855f7]/10 border border-[#a855f7] text-[#a855f7] hover:bg-[#a855f7] hover:text-black text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 rounded-none transition-colors"
+            className="px-4 py-2 bg-[#a855f7]/10 border border-[#a855f7] text-[#a855f7] hover:bg-[#a855f7] hover:text-black text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 rounded-xl transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             New Campaign
@@ -82,7 +83,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
       </div>
 
       {isCreating ? (
-        <div className="bg-[#0c0516] border border-[#a855f7] p-5 rounded-none flex flex-col space-y-6 animate-fadeIn">
+        <div className="bg-[#0c0516] border border-[#a855f7] p-5 rounded-xl flex flex-col space-y-6 animate-fadeIn">
           <div className="flex justify-between items-center border-b border-[#1e293b] pb-3">
             <h3 className="text-sm font-semibold text-white uppercase tracking-widest">Create Campaign</h3>
             <button 
@@ -97,15 +98,16 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
             <div className="space-y-5">
               <div className="space-y-1.5">
                 <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Target AI Segment</label>
-                <select 
+                <CustomSelect 
                   value={targetSegment}
-                  onChange={(e) => setTargetSegment(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
-                >
-                  <option>At Risk (Avg rating &lt; 3)</option>
-                  <option>Lost (No visit &gt; 90 days)</option>
-                  <option>Happy Regulars (Visits &gt; 3, Rating &gt; 4)</option>
-                </select>
+                  onChange={setTargetSegment}
+                  options={[
+                    "At Risk (Avg rating < 3)",
+                    "Lost (No visit > 90 days)",
+                    "Happy Regulars (Visits > 3, Rating > 4)"
+                  ]}
+                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
+                />
                 <span className="text-[9px] text-[#10b981] font-semibold mt-1 block">142 Diners match this segment</span>
               </div>
 
@@ -133,63 +135,61 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
                   <textarea 
                     value={messageTemplate}
                     onChange={(e) => setMessageTemplate(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none min-h-[100px] resize-none"
+                    className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl min-h-[100px] resize-none"
                   />
                 </div>
               ) : (
                 <div className="space-y-1.5">
                   <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Email Template</label>
-                  <select 
+                  <CustomSelect 
                     value={emailTemplateId}
-                    onChange={(e) => setEmailTemplateId(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
-                  >
-                    {emailTemplates.map(t => (
-                      <option key={t.id} value={t.id}>{t.name}</option>
-                    ))}
-                  </select>
+                    onChange={setEmailTemplateId}
+                    options={emailTemplates.map(t => ({ label: t.name, value: t.id }))}
+                    className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
+                  />
                 </div>
               )}
 
               <div className="space-y-1.5">
                 <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Scheduling</label>
-                <select 
+                <CustomSelect 
                   value={scheduleType}
-                  onChange={(e) => setScheduleType(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none appearance-none mb-2"
-                >
-                  <option value="now">Send Right Now</option>
-                  <option value="daily">Every day at specific time</option>
-                  <option value="specific">At a specific date and time</option>
-                </select>
+                  onChange={setScheduleType}
+                  options={[
+                    { label: "Send Right Now", value: "now" },
+                    { label: "Every day at specific time", value: "daily" },
+                    { label: "At a specific date and time", value: "specific" }
+                  ]}
+                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl mb-2"
+                />
                 
                 {scheduleType === "daily" && (
-                  <input type="time" value={scheduleTime} onChange={(e) => setScheduleTime(e.target.value)} className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none font-mono" />
+                  <input type="time" value={scheduleTime} onChange={(e) => setScheduleTime(e.target.value)} className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl font-mono" />
                 )}
                 
                 {scheduleType === "specific" && (
-                  <input type="datetime-local" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none font-mono" />
+                  <input type="datetime-local" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl font-mono" />
                 )}
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Attach Incentive (Optional)</label>
-                <select 
+                <CustomSelect 
                   value={selectedCouponCode}
-                  onChange={(e) => setSelectedCouponCode(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none appearance-none"
-                >
-                  <option value="">No Incentive</option>
-                  {coupons.map((c: any, idx: number) => {
-                    const q = c.quantity;
-                    const stock = (q === undefined || q === null || q === "") ? "Unlimited" : parseInt(q);
-                    return (
-                      <option key={idx} value={c.coupon_code}>
-                        {c.discount_amount} (Code: {c.coupon_code}) - Stock: {stock}
-                      </option>
-                    )
-                  })}
-                </select>
+                  onChange={setSelectedCouponCode}
+                  options={[
+                    { label: "No Incentive", value: "" },
+                    ...coupons.map((c: any) => {
+                      const q = c.quantity;
+                      const stock = (q === undefined || q === null || q === "") ? "Unlimited" : parseInt(q);
+                      return {
+                        label: `${c.discount_amount} (Code: ${c.coupon_code}) - Stock: ${stock}`,
+                        value: c.coupon_code
+                      };
+                    })
+                  ]}
+                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
+                />
                 
                 {selectedCouponCode && (
                   (() => {
@@ -251,7 +251,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
                     </div>
                   </div>
                 ) : (
-                  <div className="w-full max-w-[320px] h-[340px] border border-[#1e293b] bg-white rounded-md flex flex-col overflow-hidden shadow-2xl">
+                  <div className="w-full max-w-[600px] h-[340px] border border-[#1e293b] bg-white rounded-md flex flex-col overflow-hidden shadow-2xl">
                     <div className="bg-[#f1f5f9] border-b border-[#e2e8f0] p-2 flex items-center gap-2">
                       <div className="flex gap-1">
                         <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
@@ -272,7 +272,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
           </div>
         </div>
       ) : campaigns.length === 0 && !isCreating ? (
-        <div className="flex flex-col items-center justify-center py-20 border border-[#1e293b] bg-[#0c0516] rounded-none">
+        <div className="flex flex-col items-center justify-center py-20 border border-[#1e293b] bg-[#0c0516] rounded-xl">
           <Megaphone className="w-10 h-10 text-[#64748b] mb-4 opacity-50" />
           <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold">No Active Campaigns</span>
           <p className="text-[10px] text-[#475569] mt-2 text-center max-w-sm">You haven't scheduled any SMS retention campaigns yet. Create one to automatically engage with your diners.</p>
@@ -282,7 +282,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
           <h3 className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold">Active Automated Campaigns</h3>
           <div className="grid grid-cols-1 gap-4">
             {campaigns.map((camp: any, idx: number) => (
-              <div key={idx} className="bg-[#0c0516] border border-[#1e293b] p-5 rounded-none flex flex-col gap-4">
+              <div key={idx} className="bg-[#0c0516] border border-[#1e293b] p-5 rounded-xl flex flex-col gap-4">
                 <div className="flex justify-between items-start border-b border-[#1e293b] pb-3">
                   <div>
                     <span className="text-sm font-semibold text-white block">{camp.target_segment || camp.segment || "Campaign"}</span>

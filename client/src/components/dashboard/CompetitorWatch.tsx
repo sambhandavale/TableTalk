@@ -29,11 +29,11 @@ export default function CompetitorWatch({ competitors = [] }: any) {
 
         {/* Competitor Rows */}
         {competitors.length > 0 ? competitors.map((comp: any, idx: number) => (
-          <div key={idx} className="bg-[#0c0516] border border-[#1e293b] p-4 md:px-4 md:py-5 rounded-none flex flex-col md:grid md:grid-cols-12 gap-4 items-center hover:bg-[#1e293b]/10 transition-colors">
+          <div key={idx} className="bg-[#0c0516] border border-[#1e293b] p-4 md:px-4 md:py-5 rounded-xl flex flex-col md:grid md:grid-cols-12 gap-4 items-center hover:bg-[#1e293b]/10 transition-colors">
             
             {/* Name & Distance */}
             <div className="col-span-3 w-full flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#1e293b]/30 border border-[#1e293b] flex items-center justify-center rounded-none flex-shrink-0">
+              <div className="w-10 h-10 bg-[#1e293b]/30 border border-[#1e293b] flex items-center justify-center rounded-xl flex-shrink-0">
                 <Map className="w-4 h-4 text-[#64748b]" />
               </div>
               <div>
@@ -66,7 +66,7 @@ export default function CompetitorWatch({ competitors = [] }: any) {
 
             {/* AI Insight */}
             <div className="col-span-5 w-full">
-              <div className="bg-[#1e293b]/20 border border-[#1e293b] p-3 flex gap-2 rounded-none">
+              <div className="bg-[#1e293b]/20 border border-[#1e293b] p-3 flex gap-2 rounded-xl">
                 <Zap className="w-3.5 h-3.5 text-[#f59e0b] flex-shrink-0 mt-0.5" />
                 <p className="text-[10px] text-[#cbd5e1] leading-snug">
                   <span className="font-semibold text-white">Focus:</span> {comp.insight || "Collecting data..."}

@@ -56,7 +56,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
             </button>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center py-20 border border-[#1e293b] bg-[#0c0516] rounded-none">
+        <div className="flex flex-col items-center justify-center py-20 border border-[#1e293b] bg-[#0c0516] rounded-xl">
           <BrainCircuit className="w-10 h-10 text-[#64748b] mb-4 opacity-50" />
           <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold">Data Not Available</span>
           <p className="text-[10px] text-[#475569] mt-2 text-center max-w-sm">We don't have enough review data to generate an AI Intelligence Report yet. Connect your Google Maps profile or collect more TableTalk QR feedback.</p>
@@ -130,7 +130,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
         
         {/* Main Chart */}
-        <div className="lg:col-span-8 bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col space-y-4 rounded-none">
+        <div className="lg:col-span-8 bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col space-y-4 rounded-xl">
           <div className="flex justify-between items-center pb-2 border-b border-[#1e293b]">
             <span className="text-xs font-semibold text-[var(--foreground)]">Health Score Trend</span>
             <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">8 Weeks</span>
@@ -153,7 +153,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
         </div>
 
         {/* Sentiment Pie */}
-        <div className="lg:col-span-4 bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-none">
+        <div className="lg:col-span-4 bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-xl">
           <div className="pb-2 border-b border-[#1e293b] mb-4">
             <span className="text-xs font-semibold text-[var(--foreground)]">Sentiment Breakdown</span>
           </div>
@@ -187,7 +187,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
         <div className="col-span-1 flex flex-col gap-4">
           
           {/* Top Themes */}
-          <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-none shadow-[0_0_15px_rgba(0,0,0,0.4)] transition-all hover:border-[#334155]">
+          <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.4)] transition-all hover:border-[#334155]">
             <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold border-b border-[#1e293b] pb-2 mb-3">Top Themes Found</span>
             <div className="space-y-3">
               {themesData.length > 0 ? themesData.map((t, idx) => (
@@ -209,7 +209,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
           </div>
 
           {/* Best / Worst Dishes */}
-          <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-none shadow-[0_0_15px_rgba(0,0,0,0.4)] transition-all hover:border-[#334155]">
+          <div className="bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.4)] transition-all hover:border-[#334155]">
             <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold border-b border-[#1e293b] pb-2 mb-3 block">Menu Performance</span>
             
             <div className="mb-4">
@@ -230,7 +230,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
         </div>
 
         {/* Right Column: Operational Intelligence (Spans 2 columns) */}
-        <div className="col-span-1 md:col-span-2 bg-[#0c0516] border border-[#1e293b] p-5 flex flex-col rounded-none shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+        <div className="col-span-1 md:col-span-2 bg-[#0c0516] border border-[#1e293b] p-5 flex flex-col rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.5)]">
           <div>
             <div className="flex items-center justify-between border-b border-[#1e293b] pb-2 mb-4">
               <span className="text-[11px] uppercase tracking-widest text-[#a855f7] font-bold">Actionable AI Suggestions</span>

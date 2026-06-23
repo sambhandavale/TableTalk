@@ -71,7 +71,7 @@ export default function QRDisplay({ url, restaurantName, qrStats }: QRDisplayPro
   };
 
   return (
-    <div className="bg-[#0c0516] border border-[#1e293b] p-5 rounded-none flex flex-col justify-between h-full">
+    <div className="bg-[#0c0516] border border-[#1e293b] p-5 rounded-xl flex flex-col justify-between h-full">
       <div className="space-y-3">
         <div className="flex items-center justify-between border-b border-[#1e293b] pb-3">
           <div className="flex items-center gap-2">
@@ -82,7 +82,7 @@ export default function QRDisplay({ url, restaurantName, qrStats }: QRDisplayPro
           </div>
           <button 
             onClick={handleDownload}
-            className="px-2 py-1 border border-[#a855f7] bg-[#a855f7]/10 text-[#a855f7] hover:bg-[#a855f7] hover:text-black text-[9px] font-bold uppercase tracking-widest rounded-none transition-colors flex items-center gap-1.5"
+            className="px-2 py-1 border border-[#a855f7] bg-[#a855f7]/10 text-[#a855f7] hover:bg-[#a855f7] hover:text-black text-[9px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center gap-1.5"
           >
             <Download className="w-3 h-3" />
             Print Kit
@@ -92,11 +92,11 @@ export default function QRDisplay({ url, restaurantName, qrStats }: QRDisplayPro
 
       <div className="my-6 flex justify-center">
         {qrDataUrl ? (
-          <div className="p-2 bg-white rounded-none border border-white">
-            <img src={qrDataUrl} alt="TableTalk Review QR" className="w-24 h-24 rounded-none" />
+          <div className="p-2 bg-white rounded-xl border border-white">
+            <img src={qrDataUrl} alt="TableTalk Review QR" className="w-24 h-24 rounded-xl" />
           </div>
         ) : (
-          <div className="w-24 h-24 bg-[#1e293b]/20 border border-[#1e293b] flex items-center justify-center rounded-none">
+          <div className="w-24 h-24 bg-[#1e293b]/20 border border-[#1e293b] flex items-center justify-center rounded-xl">
             <QrCode className="w-6 h-6 text-[#64748b] animate-pulse" />
           </div>
         )}

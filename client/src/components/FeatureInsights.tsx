@@ -5,7 +5,18 @@ import { TrendingUp, Sparkles, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function FeatureInsights() {
   return (
-    <section id="insights-suite" className="py-24 bg-white/[0.01] border-y border-white/[0.04] relative z-10 px-6">
+    <div 
+      className="relative w-full"
+      style={{
+        backgroundImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 35%, transparent 60%), url("/assets/background/tables3.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#05010a] to-transparent pointer-events-none z-0" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#05010a] to-transparent pointer-events-none z-0" />
+      <section id="insights-suite" className="py-24 relative z-10 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
         
         {/* Left Side: Overlapping Analytics Mockups */}
@@ -57,8 +68,8 @@ export default function FeatureInsights() {
 
         </div>
 
-        {/* Right Side: Insights Details */}
-        <div className="lg:col-span-6 text-left space-y-6">
+        {/* Right Side: Copy & Details */}
+        <div className="lg:col-span-6 text-left space-y-6 bg-black/40 border border-white/10 p-8 rounded-3xl backdrop-blur-md">
           <span className="text-xs font-bold text-brand-purple-text uppercase tracking-widest block">TableTalk Insights Suite</span>
           <h3 className="text-3xl sm:text-4xl text-[var(--foreground)] font-extrabold tracking-tight leading-tight transition-colors duration-300">
             Customer intelligence insights across all your business tables
@@ -123,5 +134,6 @@ export default function FeatureInsights() {
 
       </div>
     </section>
+    </div>
   );
 }

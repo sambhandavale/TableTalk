@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import CustomSelect from "@/components/ui/CustomSelect";
 import { 
   ArrowLeft,
   Save, 
@@ -360,18 +361,18 @@ export default function ProfilePage() {
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">POS System Integration</label>
                       <div className="relative flex items-center">
-                        <select 
-                          name="pos_system"
+                        <CustomSelect 
                           value={formData.pos_system}
-                          onChange={handleInputChange}
+                          onChange={(val) => setFormData(prev => ({ ...prev, pos_system: val }))}
+                          options={[
+                            { label: "Excel / Manual Upload", value: "Excel/Manual" },
+                            { label: "Petpooja (India)", value: "Petpooja" },
+                            { label: "POSist / Prime", value: "POSist" },
+                            { label: "Toast POS", value: "Toast" },
+                            { label: "Square Business", value: "Square" }
+                          ]}
                           className="w-full px-3.5 py-3 rounded-xl bg-[var(--brand-card)] border border-[var(--orb-border)] text-xs text-[var(--foreground)] focus:outline-none focus:border-[var(--brand-purple-text)] transition-all duration-300"
-                        >
-                          <option value="Excel/Manual">Excel / Manual Upload</option>
-                          <option value="Petpooja">Petpooja (India)</option>
-                          <option value="POSist">POSist / Prime</option>
-                          <option value="Toast">Toast POS</option>
-                          <option value="Square">Square Business</option>
-                        </select>
+                        />
                       </div>
                     </div>
                   </div>

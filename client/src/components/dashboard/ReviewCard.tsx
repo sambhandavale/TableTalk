@@ -40,21 +40,21 @@ export default function ReviewCard({ rev, onApprove }: any) {
   };
 
   return (
-    <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none flex flex-col gap-3">
+    <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl flex flex-col gap-3">
       {/* Top Diner details & Stars */}
       <div className="flex justify-between items-start gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-xs text-[var(--foreground)]">{rev.diner_name || "Guest"}</span>
-            <span className="text-[9px] text-[#64748b] capitalize px-1 border border-[#1e293b] rounded-none">{rev.visitor_type || "unknown"}</span>
+            <span className="text-[9px] text-[#64748b] capitalize px-1 border border-[#1e293b] rounded-xl">{rev.visitor_type || "unknown"}</span>
             
             {rev.source === "google" ? (
-              <span className="text-[9px] text-[#a855f7] font-semibold flex items-center gap-1 border border-[#a855f7]/30 px-1 rounded-none bg-[#a855f7]/10">
+              <span className="text-[9px] text-[#a855f7] font-semibold flex items-center gap-1 border border-[#a855f7]/30 px-1 rounded-xl bg-[#a855f7]/10">
                 <Globe className="w-2.5 h-2.5" />
                 Google
               </span>
             ) : (
-              <span className="text-[9px] text-[#10b981] font-semibold flex items-center gap-1 border border-[#10b981]/30 px-1 rounded-none bg-[#10b981]/10">
+              <span className="text-[9px] text-[#10b981] font-semibold flex items-center gap-1 border border-[#10b981]/30 px-1 rounded-xl bg-[#10b981]/10">
                 <QrCode className="w-2.5 h-2.5" />
                 QR
               </span>
@@ -91,7 +91,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
       </div>
 
       {/* Interactive Reply Terminal Panel */}
-      <div className="bg-[#1e293b]/20 border border-[#1e293b] p-3 rounded-none space-y-2 mt-1">
+      <div className="bg-[#1e293b]/20 border border-[#1e293b] p-3 rounded-xl space-y-2 mt-1">
         <div className="flex items-center justify-between text-[10px]">
           <div className="flex items-center gap-1.5">
             <CornerDownRight className="w-3 h-3 text-[#a855f7]" />
@@ -125,18 +125,18 @@ export default function ReviewCard({ rev, onApprove }: any) {
             <textarea
               value={customDraft}
               onChange={(e) => setCustomDraft(e.target.value)}
-              className="w-full p-2 bg-[#0c0516] border border-[#a855f7] text-[10px] text-[var(--foreground)] placeholder-[#64748b] focus:outline-none min-h-[50px] leading-snug resize-none rounded-none"
+              className="w-full p-2 bg-[#0c0516] border border-[#a855f7] text-[10px] text-[var(--foreground)] placeholder-[#64748b] focus:outline-none min-h-[50px] leading-snug resize-none rounded-xl"
             />
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-2 py-1 text-[9px] font-semibold text-[#94a3b8] hover:text-white border border-[#1e293b] rounded-none hover:bg-[#1e293b]/50 transition-colors"
+                className="px-2 py-1 text-[9px] font-semibold text-[#94a3b8] hover:text-white border border-[#1e293b] rounded-xl hover:bg-[#1e293b]/50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveDraft}
-                className="px-2 py-1 bg-[#a855f7]/20 border border-[#a855f7] text-[9px] font-semibold text-[#a855f7] hover:text-white hover:bg-[#a855f7] rounded-none transition-colors"
+                className="px-2 py-1 bg-[#a855f7]/20 border border-[#a855f7] text-[9px] font-semibold text-[#a855f7] hover:text-white hover:bg-[#a855f7] rounded-xl transition-colors"
               >
                 Save
               </button>
@@ -152,7 +152,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
         {!isEditing && (
           <div className="flex justify-end pt-1 mt-1">
             {isApproved ? (
-              <div className="flex items-center gap-1 text-[#10b981] font-semibold text-[9px] border border-[#10b981]/20 bg-[#10b981]/5 px-2 py-1 rounded-none">
+              <div className="flex items-center gap-1 text-[#10b981] font-semibold text-[9px] border border-[#10b981]/20 bg-[#10b981]/5 px-2 py-1 rounded-xl">
                 <Check className="w-3 h-3" />
                 Dispatched
               </div>
@@ -160,7 +160,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
               <button
                 onClick={handleApprove}
                 disabled={isSubmitting}
-                className={`px-2 py-1 text-[9px] font-semibold flex items-center gap-1 rounded-none border transition-colors ${
+                className={`px-2 py-1 text-[9px] font-semibold flex items-center gap-1 rounded-xl border transition-colors ${
                   isSubmitting
                     ? "bg-[#1e293b]/50 border-[#1e293b] text-[#64748b] cursor-not-allowed"
                     : "bg-[#0c0516] text-[#a855f7] border-[#a855f7] hover:bg-[#a855f7] hover:text-black"
@@ -168,7 +168,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
               >
                 {isSubmitting ? (
                   <>
-                    <div className="w-2.5 h-2.5 border-2 border-[#64748b]/20 border-t-[#64748b] rounded-none animate-spin" />
+                    <div className="w-2.5 h-2.5 border-2 border-[#64748b]/20 border-t-[#64748b] rounded-xl animate-spin" />
                     Posting...
                   </>
                 ) : (

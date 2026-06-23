@@ -107,7 +107,7 @@ export default function Recommendations({ insights, reviews = [] }: any) {
       {/* Traceability Modal */}
       {selectedReviewIds && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-          <div className="bg-[#0c0516] border border-[#1e293b] w-full max-w-[800px] max-h-[80vh] flex flex-col rounded-none shadow-2xl">
+          <div className="bg-[#0c0516] border border-[#1e293b] w-full max-w-[800px] max-h-[80vh] flex flex-col rounded-xl shadow-2xl">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-4 border-b border-[#1e293b]">
               <div>

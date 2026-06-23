@@ -15,6 +15,7 @@ import {
   Hash,
   Target
 } from "lucide-react";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 export default function SettingsPanel({ businessId }: { businessId: string }) {
   const [activeTab, setActiveTab] = useState("outlet");
@@ -129,7 +130,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-3">
-        <div className="w-8 h-8 border-2 border-[#1e293b] border-t-[#a855f7] rounded-none animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#1e293b] border-t-[#a855f7] rounded-xl animate-spin" />
         <span className="text-[10px] text-[#64748b]">Loading configuration...</span>
       </div>
     );
@@ -149,7 +150,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
       </div>
 
       {message.text && (
-        <div className={`p-3 border flex items-center gap-2 text-[10px] font-semibold rounded-none ${
+        <div className={`p-3 border flex items-center gap-2 text-[10px] font-semibold rounded-xl ${
           message.type === "success" 
             ? "bg-[#10b981]/10 border-[#10b981]/20 text-[#10b981]" 
             : "bg-[#f43f5e]/10 border-[#f43f5e]/20 text-[#f43f5e]"
@@ -187,7 +188,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-[#0c0516] border border-[#1e293b] p-6 rounded-none space-y-6">
+      <form onSubmit={handleSubmit} className="bg-[#0c0516] border border-[#1e293b] p-6 rounded-xl space-y-6">
         
         {activeTab === "outlet" && (
           <div className="space-y-5">
@@ -199,7 +200,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                   <input 
                     type="text" name="business_hours" value={formData.business_hours} onChange={handleInputChange}
                     placeholder="12:00 PM - 11:30 PM" required
-                    className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
+                    className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
                   />
                 </div>
               </div>
@@ -210,7 +211,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                   <DollarSign className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                   <input 
                     type="number" name="cost_for_two" value={formData.cost_for_two} onChange={handleInputChange}
-                    required className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
+                    required className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
                   />
                 </div>
               </div>
@@ -223,7 +224,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                   <Users className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                   <input 
                     type="number" name="seating_capacity" value={formData.seating_capacity} onChange={handleInputChange}
-                    required className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
+                    required className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
                   />
                 </div>
               </div>
@@ -234,7 +235,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                   <Clock className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                   <input 
                     type="number" name="dining_duration_mins" value={formData.dining_duration_mins} onChange={handleInputChange}
-                    required className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
+                    required className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
                   />
                 </div>
               </div>
@@ -247,29 +248,31 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                   <Phone className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                   <input 
                     type="tel" name="contact_phone" value={formData.contact_phone} onChange={handleInputChange}
-                    className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
+                    className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">POS System</label>
-                <select 
-                  name="pos_system" value={formData.pos_system} onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
-                >
-                  <option value="Excel/Manual">Excel / Manual Upload</option>
-                  <option value="Petpooja">Petpooja (India)</option>
-                  <option value="POSist">POSist / Prime</option>
-                  <option value="Toast">Toast POS</option>
-                  <option value="Square">Square Business</option>
-                </select>
+                <CustomSelect 
+                  value={formData.pos_system}
+                  onChange={(val) => setFormData(prev => ({ ...prev, pos_system: val }))}
+                  options={[
+                    { label: "Excel / Manual Upload", value: "Excel/Manual" },
+                    { label: "Petpooja (India)", value: "Petpooja" },
+                    { label: "POSist / Prime", value: "POSist" },
+                    { label: "Toast POS", value: "Toast" },
+                    { label: "Square Business", value: "Square" }
+                  ]}
+                  className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
+                />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
               <button type="button" onClick={() => handleCheckboxChange("is_pure_veg", !formData.is_pure_veg)}
-                className={`p-3 border text-left flex items-center justify-between transition-colors rounded-none ${
+                className={`p-3 border text-left flex items-center justify-between transition-colors rounded-xl ${
                   formData.is_pure_veg ? "bg-[#a855f7]/10 border-[#a855f7]" : "bg-[#1e293b]/10 border-[#1e293b]"
                 }`}
               >
@@ -277,13 +280,13 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                   <span className="text-[10px] font-semibold text-white block">Pure Vegetarian</span>
                   <span className="text-[8px] uppercase tracking-wider text-[#64748b] block mt-0.5">No meat</span>
                 </div>
-                <div className={`w-3 h-3 border rounded-none transition-colors ${
+                <div className={`w-3 h-3 border rounded-xl transition-colors ${
                   formData.is_pure_veg ? "bg-[#a855f7] border-[#a855f7]" : "bg-transparent border-[#64748b]"
                 }`} />
               </button>
 
               <button type="button" onClick={() => handleCheckboxChange("valet_parking", !formData.valet_parking)}
-                className={`p-3 border text-left flex items-center justify-between transition-colors rounded-none ${
+                className={`p-3 border text-left flex items-center justify-between transition-colors rounded-xl ${
                   formData.valet_parking ? "bg-[#a855f7]/10 border-[#a855f7]" : "bg-[#1e293b]/10 border-[#1e293b]"
                 }`}
               >
@@ -291,7 +294,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                   <span className="text-[10px] font-semibold text-white block">Valet Parking</span>
                   <span className="text-[8px] uppercase tracking-wider text-[#64748b] block mt-0.5">Complimentary</span>
                 </div>
-                <div className={`w-3 h-3 border rounded-none transition-colors ${
+                <div className={`w-3 h-3 border rounded-xl transition-colors ${
                   formData.valet_parking ? "bg-[#a855f7] border-[#a855f7]" : "bg-transparent border-[#64748b]"
                 }`} />
               </button>
@@ -307,7 +310,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                 <Globe className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                 <input 
                   type="text" name="instagram_handle" value={formData.instagram_handle} onChange={handleInputChange}
-                  className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
+                  className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
                 />
               </div>
             </div>
@@ -318,7 +321,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                 <Globe className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                 <input 
                   type="url" name="website_url" value={formData.website_url} onChange={handleInputChange}
-                  className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none"
+                  className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
                 />
               </div>
             </div>
@@ -329,7 +332,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                 <Compass className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                 <input 
                   type="url" value={formData.maps_url} disabled
-                  className="w-full pl-9 pr-3 py-2 bg-[#0c0516] border border-[#1e293b] text-xs text-[#64748b] cursor-not-allowed rounded-none"
+                  className="w-full pl-9 pr-3 py-2 bg-[#0c0516] border border-[#1e293b] text-xs text-[#64748b] cursor-not-allowed rounded-xl"
                 />
               </div>
             </div>
@@ -347,7 +350,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
               <button type="button" onClick={() => handleCheckboxChange("has_incentives", !formData.has_incentives)}
-                className={`p-3 border text-left flex items-center justify-between transition-colors rounded-none ${
+                className={`p-3 border text-left flex items-center justify-between transition-colors rounded-xl ${
                   formData.has_incentives ? "bg-[#a855f7]/10 border-[#a855f7]" : "bg-[#1e293b]/10 border-[#1e293b]"
                 }`}
               >
@@ -355,7 +358,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                   <span className="text-[10px] font-semibold text-white block">Enable CRM Incentives</span>
                   <span className="text-[8px] uppercase tracking-wider text-[#64748b] block mt-0.5">Automated Rewards</span>
                 </div>
-                <div className={`w-3 h-3 border rounded-none transition-colors ${
+                <div className={`w-3 h-3 border rounded-xl transition-colors ${
                   formData.has_incentives ? "bg-[#a855f7] border-[#a855f7]" : "bg-transparent border-[#64748b]"
                 }`} />
               </button>
@@ -391,7 +394,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                             setFormData(prev => ({ ...prev, coupons: newCoupons }));
                           }}
                           placeholder="e.g. 15% OFF, Free Dessert"
-                          className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none disabled:opacity-50"
+                          className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl disabled:opacity-50"
                           disabled={!formData.has_incentives}
                         />
                       </div>
@@ -410,7 +413,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                             setFormData(prev => ({ ...prev, coupons: newCoupons }));
                           }}
                           placeholder="e.g. DELICIOUS15"
-                          className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white uppercase focus:outline-none focus:border-[#a855f7] rounded-none disabled:opacity-50 font-mono"
+                          className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white uppercase focus:outline-none focus:border-[#a855f7] rounded-xl disabled:opacity-50 font-mono"
                           disabled={!formData.has_incentives}
                         />
                       </div>
@@ -429,7 +432,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                             setFormData(prev => ({ ...prev, coupons: newCoupons }));
                           }}
                           placeholder="Unlimited"
-                          className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none disabled:opacity-50 font-mono"
+                          className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl disabled:opacity-50 font-mono"
                           disabled={!formData.has_incentives}
                         />
                       </div>
@@ -439,20 +442,21 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                       <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Target Rule</label>
                       <div className="relative flex items-center">
                         <Target className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
-                        <select 
+                        <CustomSelect 
                           value={coupon.target_sentiment || "all"} 
-                          onChange={(e) => {
+                          onChange={(val) => {
                             const newCoupons = [...formData.coupons];
-                            newCoupons[idx].target_sentiment = e.target.value;
+                            newCoupons[idx].target_sentiment = val;
                             setFormData(prev => ({ ...prev, coupons: newCoupons }));
                           }}
-                          className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none disabled:opacity-50 appearance-none"
+                          options={[
+                            { label: "Any Review", value: "all" },
+                            { label: "Critical Only (< 3 Stars)", value: "negative" },
+                            { label: "Happy Only (≥ 4 Stars)", value: "positive" }
+                          ]}
                           disabled={!formData.has_incentives}
-                        >
-                          <option value="all">Any Review</option>
-                          <option value="positive">Positive Reviews Only (4-5★)</option>
-                          <option value="negative">Negative Reviews Only (1-3★)</option>
-                        </select>
+                          className="w-full pl-9 pr-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
+                        />
                       </div>
                     </div>
                   </div>
@@ -468,7 +472,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                   }));
                 }}
                 disabled={!formData.has_incentives}
-                className="mt-2 px-4 py-2 border border-[#a855f7] bg-transparent text-[#a855f7] hover:bg-[#a855f7]/10 text-[10px] font-bold rounded-none flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                className="mt-2 px-4 py-2 border border-[#a855f7] bg-transparent text-[#a855f7] hover:bg-[#a855f7]/10 text-[10px] font-bold rounded-xl flex items-center gap-1.5 transition-colors disabled:opacity-50"
               >
                 <Plus className="w-3.5 h-3.5" /> Add New Coupon
               </button>
@@ -479,12 +483,12 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
         <div className="flex justify-end pt-4 border-t border-[#1e293b]">
           <button
             type="submit" disabled={isSaving}
-            className={`px-4 py-2 border border-[#a855f7] bg-[#a855f7]/10 text-[#a855f7] hover:bg-[#a855f7] hover:text-black text-[10px] font-bold rounded-none flex items-center gap-1.5 transition-colors ${
+            className={`px-4 py-2 border border-[#a855f7] bg-[#a855f7]/10 text-[#a855f7] hover:bg-[#a855f7] hover:text-black text-[10px] font-bold rounded-xl flex items-center gap-1.5 transition-colors ${
               isSaving ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
             {isSaving ? (
-              <><div className="w-3 h-3 border-2 border-current border-t-transparent rounded-none animate-spin" /> Saving...</>
+              <><div className="w-3 h-3 border-2 border-current border-t-transparent rounded-xl animate-spin" /> Saving...</>
             ) : (
               <><Save className="w-3 h-3" /> Save Changes</>
             )}

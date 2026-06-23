@@ -33,7 +33,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
         
         {/* Left Side: Score & Core Metrics */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="bg-[#0c0516] border border-[#1e293b] p-6 rounded-none flex items-center gap-8 shadow-[0_0_15px_rgba(0,0,0,0.4)]">
+          <div className="bg-[#0c0516] border border-[#1e293b] p-6 rounded-xl flex items-center gap-8 shadow-[0_0_15px_rgba(0,0,0,0.4)]">
             <div className="w-[140px] h-[140px] relative flex-shrink-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -61,14 +61,14 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
                   Data Not Available. You must run a full AI SEO Audit to populate this score.
                 </p>
               )}
-              <button className="px-4 py-2 mt-3 bg-[#3b82f6]/10 border border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6] hover:text-black text-[9px] font-bold uppercase tracking-widest transition-colors rounded-none">
+              <button className="px-4 py-2 mt-3 bg-[#3b82f6]/10 border border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6] hover:text-black text-[9px] font-bold uppercase tracking-widest transition-colors rounded-xl">
                 Run Full Audit
               </button>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none space-y-3">
+            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl space-y-3">
               <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Response Rate</span>
               <div className="flex justify-between items-end">
                 <span className="text-2xl font-semibold text-[#10b981]">{seoStats?.response_rate || 0}%</span>
@@ -81,7 +81,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
               </div>
             </div>
 
-            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none space-y-3">
+            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl space-y-3">
               <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Review Velocity</span>
               <div className="flex justify-between items-end">
                 <span className="text-2xl font-semibold text-[#f43f5e]">{seoStats?.review_velocity || 0} <span className="text-sm text-[#64748b] font-normal">/ 30d</span></span>
@@ -94,7 +94,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
               </div>
             </div>
 
-            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none space-y-3">
+            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl space-y-3">
               <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Average Rating</span>
               <div className="flex justify-between items-end">
                 <span className="text-2xl font-semibold text-white">{seoStats?.average_rating || "0.0"} <span className="text-sm text-[#f59e0b] font-normal">★</span></span>
@@ -106,7 +106,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
               </div>
             </div>
 
-            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none space-y-3">
+            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl space-y-3">
               <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Profile Completeness</span>
               <div className="flex justify-between items-end">
                 <span className="text-2xl font-semibold text-[#f59e0b]">{seoStats?.profile_completeness || 0}%</span>
@@ -122,7 +122,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
 
         {/* Right Side: Keywords */}
         <div className="lg:col-span-4">
-          <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none h-full">
+          <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl h-full">
             <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold flex items-center gap-1.5 border-b border-[#1e293b] pb-3 mb-4">
               <Search className="w-3.5 h-3.5 text-[#3b82f6]" /> Keyword Appearances
             </span>
@@ -132,7 +132,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
             
             <div className="space-y-3">
               {keywords.length > 0 ? keywords.map((kw: any, idx: number) => (
-                <div key={idx} className="flex items-center justify-between p-2 border border-[#1e293b] bg-[#1e293b]/10 rounded-none">
+                <div key={idx} className="flex items-center justify-between p-2 border border-[#1e293b] bg-[#1e293b]/10 rounded-xl">
                   <span className="text-xs font-semibold text-white">"{kw.word}"</span>
                   <div className="flex items-center gap-2 text-[10px]">
                     <span className="text-[#64748b]">{kw.count}x</span>

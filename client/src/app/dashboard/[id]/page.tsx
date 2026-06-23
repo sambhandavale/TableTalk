@@ -27,6 +27,13 @@ export default function DashboardPage() {
   const [activeTab, setActiveTabState] = useState(tabParam);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserEmail(localStorage.getItem("tabletalk_user_email") || "");
+    }
+  }, []);
 
   const setActiveTab = (tab: string) => {
     setActiveTabState(tab);
@@ -254,7 +261,7 @@ export default function DashboardPage() {
           setIsMobileOpen(false); // Auto-close on mobile
         }} 
         restaurantName={business.name}
-        userEmail={business.owner_email || "manager@mumbaimasala.in"}
+        userEmail={userEmail || business.owner_email || "manager@mumbaimasala.in"}
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
         isMobileOpen={isMobileOpen}
@@ -294,7 +301,7 @@ export default function DashboardPage() {
         <div className="w-full mx-auto p-4 md:p-8 relative z-20">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
-              <div className="w-8 h-8 border-2 border-[#1e293b] border-t-[#a855f7] rounded-none animate-spin" />
+              <div className="w-8 h-8 border-2 border-[#1e293b] border-t-[#a855f7] rounded-full animate-spin" />
               <span className="text-[10px] text-[#64748b]">Loading workspace...</span>
             </div>
           ) : (

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ReviewCard from "./ReviewCard";
 import { AlertTriangle, MessageSquare, Search, Filter } from "lucide-react";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 interface ReviewPanelProps {
   reviews: any[];
@@ -70,41 +71,43 @@ export default function ReviewPanel({
             </p>
           </div>
 
-          <div className="px-2 py-1 border border-[#1e293b] text-[10px] font-semibold text-[#94a3b8] flex items-center gap-1 rounded-none bg-[#0c0516]">
+          <div className="px-2 py-1 border border-[#1e293b] text-[10px] font-semibold text-[#94a3b8] flex items-center gap-1 rounded-xl bg-[#0c0516]">
             <MessageSquare className="w-3 h-3" />
             {filteredReviews.length - unansweredCount} / {filteredReviews.length} Replied
           </div>
         </div>
 
         {/* Filters & Search Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0c0516] p-2 border border-[#1e293b] rounded-none">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0c0516] p-2 border border-[#1e293b] rounded-xl">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 bg-[#1e293b]/20 px-2 py-1 border border-[#1e293b]">
               <Filter className="w-3 h-3 text-[#64748b]" />
-              <select 
+              <CustomSelect 
                 value={statusFilter} 
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-transparent text-[10px] font-semibold text-white focus:outline-none uppercase tracking-widest cursor-pointer"
-              >
-                <option value="All">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Dispatched">Dispatched</option>
-              </select>
+                onChange={setStatusFilter}
+                options={[
+                  { label: "All Status", value: "All" },
+                  { label: "Pending", value: "Pending" },
+                  { label: "Dispatched", value: "Dispatched" }
+                ]}
+                className="bg-transparent text-[10px] font-semibold text-white focus:outline-none uppercase tracking-widest cursor-pointer min-w-[120px]"
+              />
             </div>
             
             <div className="flex items-center gap-1 bg-[#1e293b]/20 px-2 py-1 border border-[#1e293b]">
-              <select 
+              <CustomSelect 
                 value={starFilter} 
-                onChange={(e) => setStarFilter(e.target.value)}
-                className="bg-transparent text-[10px] font-semibold text-white focus:outline-none uppercase tracking-widest cursor-pointer"
-              >
-                <option value="All">All Stars</option>
-                <option value="5">5 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="2">2 Stars</option>
-                <option value="1">1 Star</option>
-              </select>
+                onChange={setStarFilter}
+                options={[
+                  { label: "All Stars", value: "All" },
+                  { label: "5 Stars", value: "5" },
+                  { label: "4 Stars", value: "4" },
+                  { label: "3 Stars", value: "3" },
+                  { label: "2 Stars", value: "2" },
+                  { label: "1 Star", value: "1" }
+                ]}
+                className="bg-transparent text-[10px] font-semibold text-white focus:outline-none uppercase tracking-widest cursor-pointer min-w-[100px]"
+              />
             </div>
           </div>
 
@@ -115,14 +118,14 @@ export default function ReviewPanel({
               placeholder="Search keywords..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-7 pr-3 py-1 bg-[#1e293b]/20 border border-[#1e293b] text-[10px] text-white focus:outline-none focus:border-[#a855f7] rounded-none placeholder-[#64748b]"
+              className="w-full pl-7 pr-3 py-1 bg-[#1e293b]/20 border border-[#1e293b] text-[10px] text-white focus:outline-none focus:border-[#a855f7] rounded-xl placeholder-[#64748b]"
             />
           </div>
         </div>
 
         {/* Review List */}
         {filteredReviews.length === 0 ? (
-          <div className="p-8 border border-[#1e293b] border-dashed rounded-none text-center space-y-2 mt-2 bg-[#1e293b]/10">
+          <div className="p-8 border border-[#1e293b] border-dashed rounded-xl text-center space-y-2 mt-2 bg-[#1e293b]/10">
             <AlertTriangle className="mx-auto w-6 h-6 text-[#64748b]" />
             <h4 className="text-xs font-semibold text-[var(--foreground)]">No reviews match filters</h4>
             <p className="text-[10px] text-[#64748b] max-w-sm mx-auto">

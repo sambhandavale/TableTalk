@@ -69,11 +69,11 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
         
         {/* Quick Actions */}
         <div className="flex gap-2">
-          <button className="px-3 py-1.5 bg-[#f43f5e]/10 border border-[#f43f5e]/30 text-[#f43f5e] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 rounded-none hover:bg-[#f43f5e]/20 transition-colors">
+          <button className="px-3 py-1.5 bg-[#f43f5e]/10 border border-[#f43f5e]/30 text-[#f43f5e] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 rounded-xl hover:bg-[#f43f5e]/20 transition-colors">
             <AlertTriangle className="w-3.5 h-3.5" />
             1 Critical Complaint
           </button>
-          <button className="px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 text-[#a855f7] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 rounded-none hover:bg-[#a855f7]/20 transition-colors">
+          <button className="px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 text-[#a855f7] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 rounded-xl hover:bg-[#a855f7]/20 transition-colors">
             <MessageSquare className="w-3.5 h-3.5" />
             {unansweredCount} Replies Needed
           </button>
@@ -83,7 +83,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
       {/* KPI STATS GRID (WITH WoW & SPARKLINES) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Health Score */}
-        <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-none relative flex justify-between">
+        <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-xl relative flex justify-between">
           <div>
             <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Health Score</span>
             <div className="flex items-baseline gap-2 mt-1">
@@ -105,7 +105,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
         </div>
 
         {/* Total Reviews */}
-        <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-none relative">
+        <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-xl relative">
           <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Review Velocity</span>
           <div className="flex items-baseline gap-2 mt-1">
             <span className="text-xl font-semibold text-[var(--foreground)] leading-none">
@@ -118,7 +118,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
         </div>
 
         {/* Unanswered */}
-        <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-none relative">
+        <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-xl relative">
           <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Unanswered Queue</span>
           <div className="flex items-baseline gap-2 mt-1">
             <span className={`text-xl font-semibold leading-none ${unansweredCount > 0 ? "text-[#f43f5e]" : "text-[#10b981]"}`}>
@@ -131,7 +131,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
         </div>
 
         {/* Top Dish */}
-        <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-none relative">
+        <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-xl relative">
           <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Top Dish (7 days)</span>
           {insights ? (
             <>
@@ -154,7 +154,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
         {/* Left Side: Graphs & Breakdown */}
         <div className="lg:col-span-8 flex flex-col gap-4">
           
-          <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none flex-1 flex flex-col space-y-4">
+          <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl flex-1 flex flex-col space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-[#1e293b]">
               <span className="text-xs font-semibold text-[var(--foreground)]">Review Volume Trends</span>
               <span className="text-[9px] uppercase tracking-widest text-[#94a3b8] font-bold">Last 30 Days</span>
@@ -184,7 +184,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Source Breakdown */}
-            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none h-[140px] flex items-center">
+            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl h-[140px] flex items-center">
               <div className="w-1/3 h-full relative">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -201,7 +201,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
                 {sourceData.map((s, idx) => (
                   <div key={idx} className="flex justify-between items-center text-[9px] uppercase tracking-widest font-bold">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 rounded-none" style={{backgroundColor: s.color}} />
+                      <div className="w-1.5 h-1.5 rounded-xl" style={{backgroundColor: s.color}} />
                       <span className="text-[#64748b]">{s.name}</span>
                     </div>
                     <span className="text-white">{s.value}%</span>
@@ -211,7 +211,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
             </div>
 
             {/* Worst Dish */}
-            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-none h-[140px] flex flex-col justify-center gap-1">
+            <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl h-[140px] flex flex-col justify-center gap-1">
               <span className="text-[9px] uppercase tracking-widest text-[#f43f5e] font-semibold block">Worst Component (7 days)</span>
               {insights ? (
                 <>
@@ -229,7 +229,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
         </div>
 
         {/* Right Side: Activity Feed */}
-        <div className="lg:col-span-4 bg-[#0c0516] border border-[#1e293b] flex flex-col rounded-none">
+        <div className="lg:col-span-4 bg-[#0c0516] border border-[#1e293b] flex flex-col rounded-xl">
           <div className="p-3 pb-2 border-b border-[#1e293b] bg-[#1e293b]/20">
             <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold">Recent Activity Feed</span>
           </div>
@@ -237,7 +237,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
             {activityFeed.length > 0 ? activityFeed.map((item, idx) => (
               <div key={idx} className="flex gap-2">
                 <div className="flex flex-col items-center pt-0.5">
-                  <div className={`w-1.5 h-1.5 rounded-none ${item.rating >= 4 ? 'bg-[#10b981]' : item.rating <= 2 ? 'bg-[#f43f5e]' : 'bg-[#f59e0b]'}`} />
+                  <div className={`w-1.5 h-1.5 rounded-xl ${item.rating >= 4 ? 'bg-[#10b981]' : item.rating <= 2 ? 'bg-[#f43f5e]' : 'bg-[#f59e0b]'}`} />
                   {idx !== activityFeed.length -1 && <div className="w-px h-full bg-[#1e293b] mt-1" />}
                 </div>
                 <div className="flex-1 pb-2">

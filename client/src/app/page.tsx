@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ArrowUpRight, Sun, Moon, ChevronDown, LayoutDashboard, ShieldAlert, Sparkles, TrendingUp } from "lucide-react";
+import {
+  ArrowUpRight,
+  Sun,
+  Moon,
+  ChevronDown,
+  LayoutDashboard,
+  ShieldAlert,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react";
 
 // Import modular sub-components
 import HeroSection from "../components/HeroSection";
@@ -12,11 +21,17 @@ import TriageSimulator from "../components/TriageSimulator";
 import FaqAccordion from "../components/FaqAccordion";
 
 // Helper component for interactive footer navigation links with sliding dot animation
-function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+function FooterLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return (
     <li>
-      <a 
-        href={href} 
+      <a
+        href={href}
         className="group flex items-center gap-1.5 text-[var(--text-muted)] hover:text-[var(--foreground)] transition-all duration-300 hover:pl-2"
       >
         <span className="w-1 h-1 rounded-full bg-[var(--brand-purple-text)] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 flex-shrink-0" />
@@ -34,11 +49,21 @@ export default function TableTalkLandingPage() {
   const [userEmail, setUserEmail] = useState("");
   const [exploreDropdownOpen, setExploreDropdownOpen] = useState(false);
   const [authDropdownOpen, setAuthDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedSlug = localStorage.getItem("tabletalk_restaurant_slug") || 
-                         localStorage.getItem("tabletalk_restaurant_id");
+      const storedSlug =
+        localStorage.getItem("tabletalk_restaurant_slug") ||
+        localStorage.getItem("tabletalk_restaurant_id");
       const storedEmail = localStorage.getItem("tabletalk_user_email");
       if (storedSlug && storedEmail) {
         setIsLoggedIn(true);
@@ -62,131 +87,167 @@ export default function TableTalkLandingPage() {
 
   return (
     <div className="relative min-h-screen bg-[var(--background)] text-[var(--foreground)] overflow-hidden flex flex-col font-sans select-none dot-grid transition-colors duration-300">
-      
       {/* Background Liquid Purple Glows */}
       <div className="absolute top-[5%] left-[-10%] w-[500px] h-[500px] bg-purple-950/30 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[160px] pointer-events-none" />
       <div className="absolute bottom-[5%] left-[20%] w-[500px] h-[500px] bg-purple-950/20 rounded-full blur-[140px] pointer-events-none" />
 
-      <header className="w-full max-w-7xl mx-auto px-6 md:px-12 py-6 flex justify-between items-center border-b border-[var(--brand-border-subtle)] relative z-50 transition-colors duration-300">
-        {/* Left Side: Logo */}
-        <div className="flex items-center relative z-20">
-          <img 
-            src={theme === "dark" ? "/assets/logos/logo_dark.svg" : "/assets/logos/logo_light.svg"} 
-            alt="TableTalk" 
-            className="h-7 w-auto object-contain transition-all duration-300"
-          />
-        </div>
+      {/* Invisible placeholder to prevent layout shift */}
+      <div
+        className="w-full max-w-7xl mx-auto px-6 md:px-12 py-6 border-b border-transparent invisible pointer-events-none"
+        aria-hidden="true"
+      >
+        <div className="h-7" />
+      </div>
 
-        {/* Center Links (Desktop Only) */}
-        <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2 z-10">
-          <a href="#triage-simulator" className="text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] font-bold transition-colors">Platform</a>
-          <a href="#growth-suite" className="text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] font-bold transition-colors">Growth Suite</a>
-          <a href="#testimonials" className="text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] font-bold transition-colors">Customer Stories</a>
-        </div>
-
-        {/* Navigation Buttons Container */}
-        <div className="flex items-center gap-3 relative z-20">
-          
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="w-10 h-10 flex-shrink-0 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center justify-center text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
-            title="Toggle Theme"
-          >
-            {theme === "dark" ? (
-              <Sun className="w-4 h-4 text-amber-400" />
-            ) : (
-              <Moon className="w-4 h-4 text-[var(--brand-purple-text)]" />
-            )}
-          </button>
-
-          {/* Dynamic Authentication Portal */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setAuthDropdownOpen(!authDropdownOpen);
-              }}
-              className="h-10 px-5 flex-shrink-0 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center gap-2.5 text-xs font-bold text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
-            >
-              <span className="text-[var(--text-muted)] font-medium">
-                {isLoggedIn ? "Account Hub" : "Sign In"}
-              </span>
-              <ChevronDown className={`w-3.5 h-3.5 text-[var(--text-dim)] transition-transform duration-300 ${authDropdownOpen ? "rotate-180" : ""}`} />
-            </button>
-
-            {authDropdownOpen && (
-              <>
-                <div 
-                  className="fixed inset-0 z-40 cursor-default" 
-                  onClick={() => setAuthDropdownOpen(false)} 
-                />
-                <div className="absolute right-0 mt-2.5 w-68 rounded-2xl bg-[var(--brand-card)] border border-[var(--brand-border)] p-2 shadow-2xl backdrop-blur-xl z-50 animate-fadeIn text-left">
-                  
-                  <div className="p-3 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] rounded-xl space-y-2.5">
-                    {isLoggedIn ? (
-                      <>
-                        <div className="space-y-0.5">
-                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">General Manager</span>
-                          <span className="text-xs font-extrabold text-[var(--foreground)] block truncate">{userEmail}</span>
-                        </div>
-                        <a 
-                          href={`/dashboard/${userSlug}`}
-                          onClick={() => setAuthDropdownOpen(false)}
-                          className="w-full py-2 bg-gradient-to-r from-[#c77dff] to-[#9d4edd] text-black hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-purple-300/10"
-                        >
-                          Go to Dashboard
-                          <ArrowUpRight className="w-3 h-3 text-black" />
-                        </a>
-                        <button
-                          onClick={() => {
-                            setAuthDropdownOpen(false);
-                            if (typeof window !== "undefined") {
-                              localStorage.removeItem("tabletalk_restaurant_id");
-                              localStorage.removeItem("tabletalk_restaurant_slug");
-                              localStorage.removeItem("tabletalk_user_email");
-                              window.location.reload();
-                            }
-                          }}
-                          className="w-full text-center text-[9px] text-red-400 hover:underline pt-0.5 block cursor-pointer"
-                        >
-                          Sign Out of Session
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <div className="space-y-0.5">
-                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">GM Control Hub</span>
-                          <span className="text-[10px] text-[var(--text-muted)] font-light block leading-tight">Access review scraper audits & campaigns</span>
-                        </div>
-                        <div className="space-y-1.5 pt-1">
-                          <a 
-                            href="/onboard"
-                            onClick={() => setAuthDropdownOpen(false)}
-                            className="w-full py-2 bg-gradient-to-r from-[var(--brand-purple-text)] to-[#9d4edd] text-white hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-white/5"
-                          >
-                            Get started
-                            <ArrowUpRight className="w-3 h-3 text-white" />
-                          </a>
-                          <a 
-                            href="/signin"
-                            onClick={() => setAuthDropdownOpen(false)}
-                            className="w-full py-2 bg-transparent text-[var(--foreground)] hover:bg-[var(--orb-bg)] border border-[var(--brand-border)] rounded-lg text-[10px] font-bold transition-all duration-300 flex items-center justify-center cursor-pointer"
-                          >
-                            Sign In to Account
-                          </a>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                </div>
-              </>
-            )}
+      {/* Floating Header Container */}
+      <div
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out flex justify-center pointer-events-none ${
+          isScrolled ? "pt-4 px-4" : "pt-0 px-0"
+        }`}
+      >
+        <header
+          className={`relative w-full max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center transition-all duration-500 ease-out pointer-events-auto ${
+            isScrolled
+              ? "py-3 bg-[var(--background)]/70 backdrop-blur-xl border border-[var(--brand-border)] rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
+              : "py-6 bg-transparent border-b border-[var(--brand-border-subtle)] rounded-none shadow-none"
+          }`}
+        >
+          {/* Left Side: Logo */}
+          <div className="flex items-center relative z-20">
+            <img
+              src={
+                theme === "dark"
+                  ? "/assets/logos/logo_dark.svg"
+                  : "/assets/logos/logo_light.svg"
+              }
+              alt="TableTalk"
+              className="h-7 w-auto object-contain transition-all duration-300"
+            />
           </div>
 
-        </div>
-      </header>
+          {/* Center Links (Desktop Only) */}
+          <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2 z-10">
+            <a
+              href="#triage-simulator"
+              className="text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] font-bold transition-colors"
+            >
+              Platform
+            </a>
+            <a
+              href="#growth-suite"
+              className="text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] font-bold transition-colors"
+            >
+              Growth Suite
+            </a>
+            <a
+              href="#testimonials"
+              className="text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] font-bold transition-colors"
+            >
+              Customer Stories
+            </a>
+          </div>
+
+          {/* Navigation Buttons Container */}
+          <div className="flex items-center gap-3 relative z-20">
+            {/* Dynamic Authentication Portal */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setAuthDropdownOpen(!authDropdownOpen);
+                }}
+                className="h-10 px-5 flex-shrink-0 rounded-full border border-[var(--orb-border)] bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] hover:border-[var(--text-muted)] flex items-center gap-2.5 text-xs font-bold text-[var(--foreground)] cursor-pointer transition-all duration-300 shadow-sm outline-none"
+              >
+                <span className="text-[var(--text-muted)] font-medium">
+                  {isLoggedIn ? "Account Hub" : "Sign In"}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-[var(--text-dim)] transition-transform duration-300 ${authDropdownOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {authDropdownOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40 cursor-default"
+                    onClick={() => setAuthDropdownOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-2.5 w-68 rounded-2xl bg-[var(--brand-card)] border border-[var(--brand-border)] p-2 shadow-2xl backdrop-blur-xl z-50 animate-fadeIn text-left">
+                    <div className="p-3 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] rounded-xl space-y-2.5">
+                      {isLoggedIn ? (
+                        <>
+                          <div className="space-y-0.5">
+                            <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">
+                              General Manager
+                            </span>
+                            <span className="text-xs font-extrabold text-[var(--foreground)] block truncate">
+                              {userEmail}
+                            </span>
+                          </div>
+                          <a
+                            href={`/dashboard/${userSlug}`}
+                            onClick={() => setAuthDropdownOpen(false)}
+                            className="w-full py-2 bg-gradient-to-r from-[#c77dff] to-[#9d4edd] text-black hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-purple-300/10"
+                          >
+                            Go to Dashboard
+                            <ArrowUpRight className="w-3 h-3 text-black" />
+                          </a>
+                          <button
+                            onClick={() => {
+                              setAuthDropdownOpen(false);
+                              if (typeof window !== "undefined") {
+                                localStorage.removeItem(
+                                  "tabletalk_restaurant_id",
+                                );
+                                localStorage.removeItem(
+                                  "tabletalk_restaurant_slug",
+                                );
+                                localStorage.removeItem("tabletalk_user_email");
+                                window.location.reload();
+                              }
+                            }}
+                            className="w-full text-center text-[9px] text-red-400 hover:underline pt-0.5 block cursor-pointer"
+                          >
+                            Sign Out of Session
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-0.5">
+                            <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">
+                              GM Control Hub
+                            </span>
+                            <span className="text-[10px] text-[var(--text-muted)] font-light block leading-tight">
+                              Access review scraper audits & campaigns
+                            </span>
+                          </div>
+                          <div className="space-y-1.5 pt-1">
+                            <a
+                              href="/onboard"
+                              onClick={() => setAuthDropdownOpen(false)}
+                              className="w-full py-2 bg-gradient-to-r from-[var(--brand-purple-text)] to-[#9d4edd] text-white hover:opacity-95 rounded-lg text-[10px] font-bold transition-all duration-300 shadow-sm flex items-center justify-center gap-1 cursor-pointer border border-white/5"
+                            >
+                              Get started
+                              <ArrowUpRight className="w-3 h-3 text-white" />
+                            </a>
+                            <a
+                              href="/signin"
+                              onClick={() => setAuthDropdownOpen(false)}
+                              className="w-full py-2 bg-transparent text-[var(--foreground)] hover:bg-[var(--orb-bg)] border border-[var(--brand-border)] rounded-lg text-[10px] font-bold transition-all duration-300 flex items-center justify-center cursor-pointer"
+                            >
+                              Sign In to Account
+                            </a>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </header>
+      </div>
 
       {/* HERO PREVIEW BLOCK */}
       <HeroSection />
@@ -195,9 +256,11 @@ export default function TableTalkLandingPage() {
       <section className="py-16 border-y border-[var(--brand-border)] bg-[var(--brand-card)] relative z-10 flex flex-col items-center justify-center overflow-hidden transition-colors duration-300">
         <div className="max-w-4xl px-6 text-center space-y-6">
           <p className="text-lg md:text-xl text-[var(--foreground)]/80 leading-relaxed font-light max-w-2xl mx-auto transition-colors duration-300">
-            TableTalk gives you powerful intelligence tools to intercept negative feedback privately and run automated campaigns that retrieve lost diners.
+            TableTalk gives you powerful intelligence tools to intercept
+            negative feedback privately and run automated campaigns that
+            retrieve lost diners.
           </p>
-          
+
           <div className="relative flex items-center justify-center w-28 h-28 mx-auto">
             <div className="absolute w-full h-full animate-[spin_12s_linear_infinite] select-none text-[7px] font-mono tracking-widest text-[var(--color-brand-purple)]">
               <svg className="w-full h-full" viewBox="0 0 100 100">
@@ -213,11 +276,12 @@ export default function TableTalkLandingPage() {
                 </text>
               </svg>
             </div>
-            <a 
+            <a
               href="/onboard"
               className="w-16 h-16 rounded-full bg-[var(--orb-bg)] hover:bg-[var(--orb-border)] flex items-center justify-center transition-all duration-300 transform active:scale-95 border border-[var(--orb-border)] backdrop-blur-md relative overflow-hidden group/orb shadow-2xl"
               style={{
-                boxShadow: "inset 0 4px 12px rgba(255, 255, 255, 0.05), inset 0 -4px 12px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(199, 125, 255, 0.15)"
+                boxShadow:
+                  "inset 0 4px 12px rgba(255, 255, 255, 0.05), inset 0 -4px 12px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(199, 125, 255, 0.15)",
               }}
             >
               {/* Glass Highlight Arc */}
@@ -239,10 +303,15 @@ export default function TableTalkLandingPage() {
       <TriageSimulator />
 
       {/* CUSTOMER TESTIMONIAL STORIES */}
-      <section id="testimonials" className="py-24 bg-white/[0.01] border-t border-white/[0.04] relative z-10">
+      <section
+        id="testimonials"
+        className="py-24 bg-white/[0.01] border-t border-white/[0.04] relative z-10"
+      >
         <div className="max-w-7xl mx-auto px-6 md:px-12 mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div className="space-y-3 text-left">
-            <span className="text-xs font-bold text-brand-purple-text uppercase tracking-widest block">Customer Stories</span>
+            <span className="text-xs font-bold text-brand-purple-text uppercase tracking-widest block">
+              Customer Stories
+            </span>
             <h3 className="text-3xl sm:text-4xl text-[var(--foreground)] font-extrabold tracking-tight font-sans transition-colors duration-300">
               What our customers say about TableTalk
             </h3>
@@ -278,162 +347,179 @@ export default function TableTalkLandingPage() {
           {/* Fading Glassmorphic Gradients on Edges */}
           <div className="absolute top-0 bottom-0 left-0 w-20 sm:w-32 bg-gradient-to-r from-[var(--background)] to-transparent z-20 pointer-events-none" />
           <div className="absolute top-0 bottom-0 right-0 w-20 sm:w-32 bg-gradient-to-l from-[var(--background)] to-transparent z-20 pointer-events-none" />
-          
+
           {/* Seamless marquee using margin right on items for exact mathematically seamless wrap */}
           <div className="animate-marquee flex">
             {(() => {
-              const list = activeTab === "mumbai" 
-                ? [
-                    {
-                      id: "SK",
-                      name: "SkinGlow Clinic",
-                      brand: "SkinGlow",
-                      location: "Bandra West, Mumbai",
-                      quote: "TableTalk intercepted three critical 1-star complaints regarding wait times on our first busy Friday weekend. The patients left happy and our public Google Maps rating soared by +0.3 in weeks!",
-                      metrics: [
-                        { value: "+45%", label: "Google reviews" },
-                        { value: "98%", label: "Patients Retained" }
-                      ]
-                    },
-                    {
-                      id: "ST",
-                      name: "Style Threads Boutique",
-                      brand: "Style Threads",
-                      location: "Chembur, Mumbai",
-                      quote: "Our weekend walk-in conversions were collapsing due to poor fitting room management. TableTalk flagged the delay pattern. We altered staffing and saw average ticket values climb by +18%!",
-                      metrics: [
-                        { value: "+18%", label: "Ticket Values" },
-                        { value: "-55%", label: "Fitting room delays" }
-                      ]
-                    },
-                    {
-                      id: "SS",
-                      name: "Serenity Spa",
-                      brand: "Serenity Spa",
-                      location: "Bandra, Mumbai",
-                      quote: "TableTalk's retention campaigns recovered 42 at-risk regular VIP clients via SMS apology coupons last month alone. Dynamic apology dispatches are absolute game-changers.",
-                      metrics: [
-                        { value: "42 VIPs", label: "Clients Recovered" },
-                        { value: "+30%", label: "Loyalty Returns" }
-                      ]
-                    },
-                    {
-                      id: "BC",
-                      name: "The Bombay Canteen",
-                      brand: "Bombay Canteen",
-                      location: "Lower Parel, Mumbai",
-                      quote: "TableTalk isolated a critical service bottleneck at our peak Sunday brunch. We streamlined the kitchen handoffs and customer satisfaction scores reached an all-time high.",
-                      metrics: [
-                        { value: "+52%", label: "Reservation Rate" },
-                        { value: "95%", label: "Loyalty Score" }
-                      ]
-                    },
-                    {
-                      id: "ML",
-                      name: "Mahesh Lunch Home",
-                      brand: "Mahesh Lunch",
-                      location: "Juhu, Mumbai",
-                      quote: "Negative feedback about seafood wait times used to go public. Now, TableTalk routes complaints privately, letting us salvage diners before they even leave the table.",
-                      metrics: [
-                        { value: "+48%", label: "Google Ratings" },
-                        { value: "96%", label: "Retention" }
-                      ]
-                    },
-                    {
-                      id: "TG",
-                      name: "The Golden Spoon",
-                      brand: "Golden Spoon",
-                      location: "Pali Hill, Bandra",
-                      quote: "TableTalk's custom WhatsApp engagement brought back over 80 at-risk regulars who hadn't visited in 30 days. The ROI on our retention campaign was immediate and spectacular.",
-                      metrics: [
-                        { value: "+62%", label: "Customers Retained" },
-                        { value: "94%", label: "NPS Score" }
-                      ]
-                    }
-                  ]
-                : [
-                    {
-                      id: "UC",
-                      name: "Urban Chai Co.",
-                      brand: "Urban Chai Co",
-                      location: "Colaba, Mumbai",
-                      quote: "The weekly recommendation agent isolated that our cold bun-maska was causing a rating drop at Table 4. We adjusted waiter paths instantly and our overall health score hit 94%!",
-                      metrics: [
-                        { value: "+88%", label: "Customer NPS" },
-                        { value: "92/100", label: "Health Score" }
-                      ]
-                    },
-                    {
-                      id: "CR",
-                      name: "Café Royal",
-                      brand: "Café Royal",
-                      location: "Colaba, Mumbai",
-                      quote: "Auto-replying to Google reviews manually took hours of daily effort. TableTalk drafts GMB responses instantly. Posting GMB replies within 2 hours boosted our Maps SEO ranking by 3 slots!",
-                      metrics: [
-                        { value: "99.2%", label: "Auto-Drafted" },
-                        { value: "+3 Slots", label: "Maps Ranking" }
-                      ]
-                    },
-                    {
-                      id: "BR",
-                      name: "Britannia & Co.",
-                      brand: "Britannia & Co",
-                      location: "Fort, Mumbai",
-                      quote: "Retaining our heritage guests while attracting a younger crowd was a challenge. TableTalk's custom SMS campaigns brought back 120+ legacy patrons in a single month!",
-                      metrics: [
-                        { value: "+35%", label: "Special Orders" },
-                        { value: "97%", label: "Happy Customers" }
-                      ]
-                    },
-                    {
-                      id: "LC",
-                      name: "Leopold Cafe",
-                      brand: "Leopold Cafe",
-                      location: "Colaba, Mumbai",
-                      quote: "Handling hundreds of walk-ins meant review management fell behind. TableTalk's agent drafts hyper-personalized responses instantly, boosting our local SEO visibility.",
-                      metrics: [
-                        { value: "+60%", label: "Return Rate" },
-                        { value: "99%", label: "Auto-Drafts" }
-                      ]
-                    },
-                    {
-                      id: "PB",
-                      name: "Pizza By The Bay",
-                      brand: "Pizza By The Bay",
-                      location: "Marine Lines, Mumbai",
-                      quote: "TableTalk's real-time alert system allowed us to address a customer's undercooked crust before they left the table. They ended up leaving a 5-star review!",
-                      metrics: [
-                        { value: "+40%", label: "Live Feedback" },
-                        { value: "98%", label: "Resolution" }
-                      ]
-                    },
-                    {
-                      id: "TC",
-                      name: "The Chai Lounge",
-                      brand: "Chai Lounge",
-                      location: "Kemps Corner, Mumbai",
-                      quote: "We used to struggle with slow weekday afternoons. TableTalk automatically targeted our loyal cafe workforce with high-conversion vouchers, boosting tea-time visits by 40%.",
-                      metrics: [
-                        { value: "+45%", label: "Afternoon Sales" },
-                        { value: "96%", label: "Happy Guests" }
-                      ]
-                    }
-                  ];
-              
+              const list =
+                activeTab === "mumbai"
+                  ? [
+                      {
+                        id: "SK",
+                        name: "SkinGlow Clinic",
+                        brand: "SkinGlow",
+                        location: "Bandra West, Mumbai",
+                        quote:
+                          "TableTalk intercepted three critical 1-star complaints regarding wait times on our first busy Friday weekend. The patients left happy and our public Google Maps rating soared by +0.3 in weeks!",
+                        metrics: [
+                          { value: "+45%", label: "Google reviews" },
+                          { value: "98%", label: "Patients Retained" },
+                        ],
+                      },
+                      {
+                        id: "ST",
+                        name: "Style Threads Boutique",
+                        brand: "Style Threads",
+                        location: "Chembur, Mumbai",
+                        quote:
+                          "Our weekend walk-in conversions were collapsing due to poor fitting room management. TableTalk flagged the delay pattern. We altered staffing and saw average ticket values climb by +18%!",
+                        metrics: [
+                          { value: "+18%", label: "Ticket Values" },
+                          { value: "-55%", label: "Fitting room delays" },
+                        ],
+                      },
+                      {
+                        id: "SS",
+                        name: "Serenity Spa",
+                        brand: "Serenity Spa",
+                        location: "Bandra, Mumbai",
+                        quote:
+                          "TableTalk's retention campaigns recovered 42 at-risk regular VIP clients via SMS apology coupons last month alone. Dynamic apology dispatches are absolute game-changers.",
+                        metrics: [
+                          { value: "42 VIPs", label: "Clients Recovered" },
+                          { value: "+30%", label: "Loyalty Returns" },
+                        ],
+                      },
+                      {
+                        id: "BC",
+                        name: "The Bombay Canteen",
+                        brand: "Bombay Canteen",
+                        location: "Lower Parel, Mumbai",
+                        quote:
+                          "TableTalk isolated a critical service bottleneck at our peak Sunday brunch. We streamlined the kitchen handoffs and customer satisfaction scores reached an all-time high.",
+                        metrics: [
+                          { value: "+52%", label: "Reservation Rate" },
+                          { value: "95%", label: "Loyalty Score" },
+                        ],
+                      },
+                      {
+                        id: "ML",
+                        name: "Mahesh Lunch Home",
+                        brand: "Mahesh Lunch",
+                        location: "Juhu, Mumbai",
+                        quote:
+                          "Negative feedback about seafood wait times used to go public. Now, TableTalk routes complaints privately, letting us salvage diners before they even leave the table.",
+                        metrics: [
+                          { value: "+48%", label: "Google Ratings" },
+                          { value: "96%", label: "Retention" },
+                        ],
+                      },
+                      {
+                        id: "TG",
+                        name: "The Golden Spoon",
+                        brand: "Golden Spoon",
+                        location: "Pali Hill, Bandra",
+                        quote:
+                          "TableTalk's custom WhatsApp engagement brought back over 80 at-risk regulars who hadn't visited in 30 days. The ROI on our retention campaign was immediate and spectacular.",
+                        metrics: [
+                          { value: "+62%", label: "Customers Retained" },
+                          { value: "94%", label: "NPS Score" },
+                        ],
+                      },
+                    ]
+                  : [
+                      {
+                        id: "UC",
+                        name: "Urban Chai Co.",
+                        brand: "Urban Chai Co",
+                        location: "Colaba, Mumbai",
+                        quote:
+                          "The weekly recommendation agent isolated that our cold bun-maska was causing a rating drop at Table 4. We adjusted waiter paths instantly and our overall health score hit 94%!",
+                        metrics: [
+                          { value: "+88%", label: "Customer NPS" },
+                          { value: "92/100", label: "Health Score" },
+                        ],
+                      },
+                      {
+                        id: "CR",
+                        name: "Café Royal",
+                        brand: "Café Royal",
+                        location: "Colaba, Mumbai",
+                        quote:
+                          "Auto-replying to Google reviews manually took hours of daily effort. TableTalk drafts GMB responses instantly. Posting GMB replies within 2 hours boosted our Maps SEO ranking by 3 slots!",
+                        metrics: [
+                          { value: "99.2%", label: "Auto-Drafted" },
+                          { value: "+3 Slots", label: "Maps Ranking" },
+                        ],
+                      },
+                      {
+                        id: "BR",
+                        name: "Britannia & Co.",
+                        brand: "Britannia & Co",
+                        location: "Fort, Mumbai",
+                        quote:
+                          "Retaining our heritage guests while attracting a younger crowd was a challenge. TableTalk's custom SMS campaigns brought back 120+ legacy patrons in a single month!",
+                        metrics: [
+                          { value: "+35%", label: "Special Orders" },
+                          { value: "97%", label: "Happy Customers" },
+                        ],
+                      },
+                      {
+                        id: "LC",
+                        name: "Leopold Cafe",
+                        brand: "Leopold Cafe",
+                        location: "Colaba, Mumbai",
+                        quote:
+                          "Handling hundreds of walk-ins meant review management fell behind. TableTalk's agent drafts hyper-personalized responses instantly, boosting our local SEO visibility.",
+                        metrics: [
+                          { value: "+60%", label: "Return Rate" },
+                          { value: "99%", label: "Auto-Drafts" },
+                        ],
+                      },
+                      {
+                        id: "PB",
+                        name: "Pizza By The Bay",
+                        brand: "Pizza By The Bay",
+                        location: "Marine Lines, Mumbai",
+                        quote:
+                          "TableTalk's real-time alert system allowed us to address a customer's undercooked crust before they left the table. They ended up leaving a 5-star review!",
+                        metrics: [
+                          { value: "+40%", label: "Live Feedback" },
+                          { value: "98%", label: "Resolution" },
+                        ],
+                      },
+                      {
+                        id: "TC",
+                        name: "The Chai Lounge",
+                        brand: "Chai Lounge",
+                        location: "Kemps Corner, Mumbai",
+                        quote:
+                          "We used to struggle with slow weekday afternoons. TableTalk automatically targeted our loyal cafe workforce with high-conversion vouchers, boosting tea-time visits by 40%.",
+                        metrics: [
+                          { value: "+45%", label: "Afternoon Sales" },
+                          { value: "96%", label: "Happy Guests" },
+                        ],
+                      },
+                    ];
+
               return list.concat(list).map((item, idx) => (
-                <div 
-                  key={`${item.id}-${idx}`} 
+                <div
+                  key={`${item.id}-${idx}`}
                   className="w-[420px] mr-6 flex-shrink-0 bg-[var(--brand-card)] border border-[var(--brand-border)] rounded-2xl p-6 flex gap-5 items-center text-left relative overflow-hidden backdrop-blur-md hover:border-[var(--orb-border)] transition-all duration-300"
                 >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-purple-950/20 rounded-full blur-[30px] pointer-events-none" />
-                  
+
                   {/* Left Side: Mock Business Image Frame */}
                   <div className="w-[110px] h-[140px] bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] rounded-xl flex flex-col items-center justify-center text-center p-3 flex-shrink-0 relative overflow-hidden transition-colors duration-300">
                     <div className="w-10 h-10 rounded-full bg-[var(--foreground)] text-[var(--background)] flex items-center justify-center font-bold text-sm mb-1.5 relative z-20 transition-colors duration-300">
                       {item.id}
                     </div>
-                    <h5 className="text-[9px] font-bold text-[var(--foreground)] relative z-20 leading-tight truncate w-full transition-colors duration-300">{item.name}</h5>
-                    <span className="text-[7.5px] text-[var(--text-muted)] relative z-20 block truncate w-full transition-colors duration-300">{item.location}</span>
+                    <h5 className="text-[9px] font-bold text-[var(--foreground)] relative z-20 leading-tight truncate w-full transition-colors duration-300">
+                      {item.name}
+                    </h5>
+                    <span className="text-[7.5px] text-[var(--text-muted)] relative z-20 block truncate w-full transition-colors duration-300">
+                      {item.location}
+                    </span>
                   </div>
 
                   {/* Right Side: Quote, logo, metrics */}
@@ -449,8 +535,12 @@ export default function TableTalkLandingPage() {
                     <div className="grid grid-cols-2 gap-3 pt-2.5 border-t border-[var(--brand-border)] transition-colors duration-300">
                       {item.metrics.map((metric, i) => (
                         <div key={i}>
-                          <span className="text-xs font-bold text-[var(--foreground)] block leading-none transition-colors duration-300">{metric.value}</span>
-                          <span className="text-[8px] text-[var(--text-dim)] uppercase block mt-1 leading-none transition-colors duration-300">{metric.label}</span>
+                          <span className="text-xs font-bold text-[var(--foreground)] block leading-none transition-colors duration-300">
+                            {metric.value}
+                          </span>
+                          <span className="text-[8px] text-[var(--text-dim)] uppercase block mt-1 leading-none transition-colors duration-300">
+                            {metric.label}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -469,40 +559,54 @@ export default function TableTalkLandingPage() {
       <footer className="mt-auto bg-[var(--background)] border-t border-[var(--brand-border)] pt-20 pb-12 px-6 md:px-12 text-xs text-[var(--text-dim)] z-10 relative overflow-hidden transition-colors duration-300">
         {/* Soft centered background glow */}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-[var(--glow-color)] opacity-20 blur-[100px] pointer-events-none rounded-full transition-colors duration-300" />
-        
+
         <div className="max-w-7xl mx-auto space-y-16 relative z-20">
-          
           {/* Top Footer Columns Grid */}
           <div className="grid grid-cols-2 md:grid-cols-12 gap-10 md:gap-8">
-            
             {/* Col 1: Brand details (6 cols) */}
             <div className="col-span-2 md:col-span-6 space-y-5 text-left">
               <div className="flex items-center">
-                <img 
-                  src={theme === "dark" ? "/assets/logos/logo_dark.svg" : "/assets/logos/logo_light.svg"} 
-                  alt="TableTalk" 
+                <img
+                  src={
+                    theme === "dark"
+                      ? "/assets/logos/logo_dark.svg"
+                      : "/assets/logos/logo_light.svg"
+                  }
+                  alt="TableTalk"
                   className="h-7 w-auto object-contain transition-all duration-300"
                 />
               </div>
               <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed max-w-sm transition-colors duration-300">
-                Making offline business operations profitable using autonomous AI customer intelligence, private triage loops, and automated retention marketing.
+                Making offline business operations profitable using autonomous
+                AI customer intelligence, private triage loops, and automated
+                retention marketing.
               </p>
             </div>
 
             {/* Col 2: Product Suites (2 cols) */}
             <div className="col-span-1 md:col-span-2 space-y-4 text-left">
-              <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">Product Suites</h5>
+              <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">
+                Product Suites
+              </h5>
               <ul className="space-y-2.5 font-light transition-colors duration-300">
-                <FooterLink href="#insights-suite">Multi-Unit Insights</FooterLink>
-                <FooterLink href="#triage-simulator">Feedback Intercept</FooterLink>
+                <FooterLink href="#insights-suite">
+                  Multi-Unit Insights
+                </FooterLink>
+                <FooterLink href="#triage-simulator">
+                  Feedback Intercept
+                </FooterLink>
                 <FooterLink href="#growth-suite">Retention Vouchers</FooterLink>
-                <FooterLink href="#agent-orchestration">SEO Map Booster</FooterLink>
+                <FooterLink href="#agent-orchestration">
+                  SEO Map Booster
+                </FooterLink>
               </ul>
             </div>
 
             {/* Col 3: Developer APIs (2 cols) */}
             <div className="col-span-1 md:col-span-2 space-y-4 text-left">
-              <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">Developer APIs</h5>
+              <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">
+                Developer APIs
+              </h5>
               <ul className="space-y-2.5 font-light transition-colors duration-300">
                 <FooterLink href="/api-docs">
                   <span className="flex items-center gap-1.5">
@@ -521,21 +625,25 @@ export default function TableTalkLandingPage() {
 
             {/* Col 4: Company & Trust (2 cols) */}
             <div className="col-span-1 md:col-span-2 space-y-4 text-left">
-              <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">Company & Trust</h5>
+              <h5 className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider transition-colors duration-300">
+                Company & Trust
+              </h5>
               <ul className="space-y-2.5 font-light transition-colors duration-300">
                 <FooterLink href="/about">About TableTalk</FooterLink>
                 <FooterLink href="/security">Security Standards</FooterLink>
-                <FooterLink href="mailto:hello@tabletalk.com">Contact Success</FooterLink>
+                <FooterLink href="mailto:hello@tabletalk.com">
+                  Contact Success
+                </FooterLink>
               </ul>
             </div>
-
           </div>
 
           {/* Bottom Footer Section */}
           <div className="border-t border-[var(--brand-border)] pt-8 flex flex-col md:flex-row justify-between items-center gap-6 transition-colors duration-300">
             <div className="flex flex-col gap-1 items-center md:items-start text-center md:text-left">
               <p className="font-sans text-[var(--text-muted)] transition-colors duration-300">
-                &copy; {new Date().getFullYear()} TableTalk AI. Built with care for offline businesses in India.
+                &copy; {new Date().getFullYear()} TableTalk AI. Built with care
+                for offline businesses in India.
               </p>
               <p className="text-[10px] text-[var(--text-dim)] leading-none mt-0.5 transition-colors duration-300">
                 Proudly engineered in Bengaluru & Mumbai 🇮🇳
@@ -543,16 +651,34 @@ export default function TableTalkLandingPage() {
             </div>
 
             <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-[var(--text-dim)] transition-colors duration-300">
-              <a href="/privacy" className="hover:text-[var(--foreground)] transition-colors">Privacy Policy</a>
-              <a href="/terms" className="hover:text-[var(--foreground)] transition-colors">Terms of Service</a>
-              <a href="/security" className="hover:text-[var(--foreground)] transition-colors">Security Standards</a>
-              <a href="/cookies" className="hover:text-[var(--foreground)] transition-colors">Cookie Policy</a>
+              <a
+                href="/privacy"
+                className="hover:text-[var(--foreground)] transition-colors"
+              >
+                Privacy Policy
+              </a>
+              <a
+                href="/terms"
+                className="hover:text-[var(--foreground)] transition-colors"
+              >
+                Terms of Service
+              </a>
+              <a
+                href="/security"
+                className="hover:text-[var(--foreground)] transition-colors"
+              >
+                Security Standards
+              </a>
+              <a
+                href="/cookies"
+                className="hover:text-[var(--foreground)] transition-colors"
+              >
+                Cookie Policy
+              </a>
             </div>
           </div>
-
         </div>
       </footer>
-
     </div>
   );
 }
