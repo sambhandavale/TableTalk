@@ -110,7 +110,8 @@ async def _do_background_audit(business_id: str, maps_url: str):
 @router.post("")
 async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: BackgroundTasks):
     # 1. Check if the business account email already exists
-    existing_user = await db.find_one("users", {"email": request.email})
+    clean_email = request.email.strip().lower()
+    existing_user = await db.find_one("users", {"email": clean_email})
     if existing_user:
         raise HTTPException(
             status_code=400,
@@ -144,8 +145,9 @@ async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: 
     business_id = saved_restaurant["id"]
     
     # 3. Create secure business user account document
+    clean_email = request.email.strip().lower()
     new_user = {
-        "email": request.email,
+        "email": clean_email,
         "password_hash": hash_password(request.password),
         "business_id": business_id,
         "owner_contact": request.owner_contact,
@@ -169,8 +171,9 @@ async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: 
 
 @router.post("/login")
 async def login_user(request: UserLoginRequest):
-    # 1. Look up user by email
-    user = await db.find_one("users", {"email": request.email})
+    # 1. Clean email and look up user
+    email = request.email.strip().lower()
+    user = await db.find_one("users", {"email": email})
     if not user:
         raise HTTPException(
             status_code=401,

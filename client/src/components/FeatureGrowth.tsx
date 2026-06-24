@@ -5,29 +5,37 @@ import { QrCode, Send, Check, ArrowRight } from "lucide-react";
 
 export default function FeatureGrowth() {
   return (
-    <section id="growth-suite" className="py-24 max-w-7xl mx-auto px-6 md:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-      
-      {/* Left Side: Growth Suite Details */}
-      <div className="lg:col-span-6 text-left space-y-6">
-        <span className="text-xs font-bold text-brand-purple-text uppercase tracking-widest block">TableTalk Growth Suite</span>
+    <section
+      id="growth-suite"
+      className="py-24 max-w-7xl mx-auto px-6 md:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center"
+    >
+      {/* Right Side: Growth Suite Details */}
+      <div className="lg:col-span-6 text-left space-y-6 order-first lg:order-last">
+        <span className="text-xs font-bold text-brand-purple-text uppercase tracking-widest block">
+          TableTalk Growth Suite
+        </span>
         <h3 className="text-3xl sm:text-4xl text-[var(--foreground)] font-extrabold tracking-tight leading-tight transition-colors duration-300">
           Achieve better review scores and loyalty response rates
         </h3>
         <p className="text-xs text-[var(--text-muted)] font-sans max-w-md font-light transition-colors duration-300">
-          Construct dynamic marketing campaigns on a single, easy-to-use platform. Intercept negative feedback before it goes public, and boost local SEO.
+          Construct dynamic marketing campaigns on a single, easy-to-use
+          platform. Intercept negative feedback before it goes public, and boost
+          local SEO.
         </p>
 
         <div className="space-y-6 pt-4">
-          
           {/* Bullet 1 */}
           <div className="flex items-start gap-4">
             <div className="w-8 h-8 rounded-lg bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] flex items-center justify-center flex-shrink-0 text-[#c77dff] transition-colors duration-300">
               <QrCode className="w-4 h-4" />
             </div>
             <div>
-              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Smart QR & Private Feedback</h5>
+              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">
+                Smart QR & Private Feedback
+              </h5>
               <p className="text-xs text-[var(--text-muted)] font-light mt-1 max-w-sm transition-colors duration-300">
-                Generate print-ready unique QR stands and stickers. Customers scan and review in under 30 seconds before leaving the premises.
+                Generate print-ready unique QR stands and stickers. Customers
+                scan and review in under 30 seconds before leaving the premises.
               </p>
             </div>
           </div>
@@ -38,9 +46,13 @@ export default function FeatureGrowth() {
               <Send className="w-4 h-4" />
             </div>
             <div>
-              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Dynamic AI Rewards & Triage</h5>
+              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">
+                Dynamic AI Rewards & Triage
+              </h5>
               <p className="text-xs text-[var(--text-muted)] font-light mt-1 max-w-sm transition-colors duration-300">
-                Smart sentiment routing pushes 4-5 stars to Google Maps. Negative feedback triggers private alerts and dispatches stock-managed apology coupons automatically.
+                Smart sentiment routing pushes 4-5 stars to Google Maps.
+                Negative feedback triggers private alerts and dispatches
+                stock-managed apology coupons automatically.
               </p>
             </div>
           </div>
@@ -51,17 +63,20 @@ export default function FeatureGrowth() {
               <Check className="w-4 h-4" />
             </div>
             <div>
-              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">Targeted Retention Campaigns</h5>
+              <h5 className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">
+                Targeted Retention Campaigns
+              </h5>
               <p className="text-xs text-[var(--text-muted)] font-light mt-1 max-w-sm transition-colors duration-300">
-                Our CRM tracks customers by phone to segment them (Regulars, At-Risk, Lost). Launch scheduled SMS campaigns with attached incentives in seconds.
+                Our CRM tracks customers by phone to segment them (Regulars,
+                At-Risk, Lost). Launch scheduled SMS campaigns with attached
+                incentives in seconds.
               </p>
             </div>
           </div>
-
         </div>
 
         <div className="pt-4">
-          <a 
+          <a
             href="/onboard"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#c77dff] hover:bg-[var(--foreground)] hover:text-[var(--background)] text-[#070210] text-xs font-bold rounded-xl transition-all duration-300 transform active:scale-95 cursor-pointer shadow-lg shadow-[#c77dff]/10"
           >
@@ -71,68 +86,36 @@ export default function FeatureGrowth() {
         </div>
       </div>
 
-      {/* Right Side: Layered Dashboard Mockups */}
-      <div className="lg:col-span-6 relative flex items-center justify-center min-h-[420px]">
-        
-        {/* Main frame background: Campaign Manager */}
-        <div className="w-[85%] bg-[var(--brand-card)] border border-[var(--brand-border)] rounded-2xl p-6 shadow-2xl relative overflow-hidden backdrop-blur-xl z-10 transition-colors duration-300">
-          <div className="flex justify-between items-center border-b border-[var(--brand-border)] pb-4 mb-4 text-xs text-[var(--text-dim)] transition-colors duration-300">
-            <span className="font-mono">TABLETALK RETENTION BUILDER</span>
-            <span className="font-bold text-brand-purple-text">CAMPAIGNS</span>
-          </div>
+      {/* Left Side: Orbiting Rings and Skewed Mockup */}
+      <div className="lg:col-span-6 relative flex items-center justify-center min-h-[600px] w-full order-last lg:order-first">
+        <div className="relative w-full max-w-[600px] aspect-square flex items-center justify-center mx-auto lg:mr-auto lg:ml-0">
+          {/* Orbital Rings Background */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[750px] aspect-square border border-white/[0.04] rounded-full pointer-events-none" />
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[550px] aspect-square border border-white/[0.08] rounded-full border-dashed animate-spin-slow pointer-events-none"
+            style={{ animationDuration: "50s" }}
+          />
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[350px] aspect-square border border-[var(--brand-purple-text)]/10 rounded-full animate-spin-slow pointer-events-none"
+            style={{ animationDirection: "reverse", animationDuration: "40s" }}
+          />
 
-          <div className="space-y-4 text-left">
-            <div className="space-y-1.5">
-              <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-semibold block transition-colors duration-300">Segment Selector</span>
-              <div className="flex gap-2">
-                <span className="px-2.5 py-1 rounded bg-brand-purple-text/10 border border-brand-purple-text/20 text-[9px] text-brand-purple-text font-bold">
-                  At-Risk Customers
-                </span>
-                <span className="px-2.5 py-1 rounded bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] text-[9px] text-[var(--text-muted)] font-medium transition-colors duration-300">
-                  Lost Regulars
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-semibold block transition-colors duration-300">Campaign Message</span>
-              <div className="bg-[var(--background)] border border-[var(--brand-border)] p-3 rounded-xl text-xs text-[var(--foreground)]/80 font-light leading-normal transition-colors duration-300">
-                "We miss you! It's been 21 days since your last visit. Here is 15% off your next purchase on us. Show coupon at checkout."
-              </div>
-            </div>
-
-            <div className="bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] p-3 rounded-xl flex justify-between items-center transition-colors duration-300">
-              <div>
-                <span className="text-[8px] text-[var(--text-dim)] block transition-colors duration-300">Estimated Reach</span>
-                <span className="text-sm font-bold text-[var(--foreground)] transition-colors duration-300">42 Customers</span>
-              </div>
-              <button className="px-3.5 py-1.5 bg-[var(--foreground)] text-[var(--background)] font-bold text-[9px] rounded-lg transition-colors duration-300">
-                Launch Campaign
-              </button>
+          {/* Central Dashboard Image */}
+          <div
+            className="absolute top-1/2 left-1/2 z-10 w-[120%] sm:w-[130%] max-w-[580px]"
+            style={{
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <div className="" style={{ animationDuration: "6s" }}>
+              <img
+                src="/assets/mockup.png"
+                alt="TableTalk Growth Mockup"
+                className="w-full h-auto object-contain p-1"
+              />
             </div>
           </div>
         </div>
-
-        {/* Overlapping Performance Graph Mockup */}
-        <div className="absolute bottom-[-15px] right-[10px] z-20 bg-[var(--brand-card)] border border-[var(--brand-border)] rounded-2xl p-4 w-[230px] shadow-2xl text-left space-y-3 transition-colors duration-300">
-          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-semibold block transition-colors duration-300">Voucher Redemptions</span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-[var(--foreground)] transition-colors duration-300">18 Vouchers</span>
-            <span className="text-[9px] text-green-400 font-bold font-mono">42.8% Conversion</span>
-          </div>
-          
-          <div className="flex items-end justify-between h-10 gap-1.5 pt-2">
-            {[30, 45, 60, 40, 80, 50, 95].map((height, i) => (
-              <div key={i} className="flex-1 bg-[var(--brand-border-subtle)] rounded-t h-full relative overflow-hidden transition-colors duration-300">
-                <div 
-                  className="bg-[#c77dff] absolute bottom-0 left-0 right-0 rounded-t" 
-                  style={{ height: `${height}%` }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
       </div>
     </section>
   );
