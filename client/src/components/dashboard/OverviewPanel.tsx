@@ -27,31 +27,93 @@ import {
   Cell
 } from "recharts";
 
-export default function OverviewPanel({ business, reviews = [], insights, auditStatus, chartData = [], healthSparkline = [] }: any) {
+export default function OverviewPanel({ business, reviews = [], insights, auditStatus, chartData = [], healthSparkline = [], mode }: any) {
+  const modeConfig: Record<string, any> = {
+    daily: { velocityUnit: "/today", chartLabel: "Last 7 Days", dishLabel: "Today", worstLabel: "Today", deltaLabel: "vs Yesterday" },
+    weekly: { velocityUnit: "/this week", chartLabel: "Last 30 Days", dishLabel: "This Week", worstLabel: "This Week", deltaLabel: "vs Last Week" },
+    monthly: { velocityUnit: "/this month", chartLabel: "Last 6 Months", dishLabel: "This Month", worstLabel: "This Month", deltaLabel: "vs Last Month" },
+    all: { velocityUnit: "/total", chartLabel: "All Time", dishLabel: "All Time", worstLabel: "All Time", deltaLabel: "" }
+  };
+  const mc = modeConfig[mode] || modeConfig.all;
+
   const unansweredCount = reviews.filter((r: any) => !r.owner_approved_reply && !r.final_reply_content).length;
 
-  const googleCount = reviews.filter((r: any) => r.source === 'google').length;
-  const qrCount = reviews.filter((r: any) => r.source === 'tabletalk' || r.source === 'qr').length;
-  const otherCount = reviews.length - googleCount - qrCount;
+  const now = new Date();
+  const windowedReviews = reviews.filter((r: any) => {
+    if (mode === "all") return true;
+    const rTime = new Date(r.timestamp || r.created_at || 0);
+    const diffDays = (now.getTime() - rTime.getTime()) / (1000 * 60 * 60 * 24);
+    if (mode === "daily") return diffDays <= 1;
+    if (mode === "weekly") return diffDays <= 7;
+    if (mode === "monthly") return diffDays <= 30;
+    return true;
+  });
+
+  const googleCount = windowedReviews.filter((r: any) => r.source === 'google').length;
+  const qrCount = windowedReviews.filter((r: any) => r.source === 'tabletalk' || r.source === 'qr').length;
+  const otherCount = windowedReviews.length - googleCount - qrCount;
   
-  const sourceData = reviews.length > 0 ? [
-    { name: 'Google', value: Math.round((googleCount/reviews.length)*100), color: '#a855f7' },
-    { name: 'TableTalk QR', value: Math.round((qrCount/reviews.length)*100), color: '#10b981' },
-    { name: 'Yelp/Other', value: Math.round((otherCount/reviews.length)*100), color: '#f59e0b' }
+  const sourceData = windowedReviews.length > 0 ? [
+    { name: 'Google', value: Math.round((googleCount/windowedReviews.length)*100), color: '#a855f7' },
+    { name: 'TableTalk QR', value: Math.round((qrCount/windowedReviews.length)*100), color: '#10b981' },
+    { name: 'Yelp/Other', value: Math.round((otherCount/windowedReviews.length)*100), color: '#f59e0b' }
   ] : [
     { name: 'No Data', value: 100, color: '#334155' }
   ];
 
-  // Derive Activity Feed from real reviews
-  const activityFeed = [...reviews].sort((a, b) => new Date(b.timestamp || b.created_at || 0).getTime() - new Date(a.timestamp || a.created_at || 0).getTime()).slice(0, 5).map(r => ({
+  // Derive Activity Feed from windowed reviews
+  const activityFeed = [...windowedReviews].sort((a, b) => new Date(b.timestamp || b.created_at || 0).getTime() - new Date(a.timestamp || a.created_at || 0).getTime()).slice(0, 5).map(r => ({
     user: r.diner_name || "Guest",
     rating: r.rating || 5,
     time: r.timestamp || r.created_at ? new Date(r.timestamp || r.created_at).toLocaleDateString() : "Just now",
     text: r.text || "Left a rating."
   }));
 
-  const topDish = insights?.themes?.praised?.[0] || "N/A";
-  const worstDish = insights?.themes?.complaints?.[0] || "N/A";
+  let topDish = "N/A";
+  let worstDish = "N/A";
+  let topIsTheme = false;
+  let worstIsTheme = false;
+
+  if (mode === "all" || windowedReviews.length === 0) {
+    topDish = insights?.themes?.praised?.[0] || "N/A";
+    topIsTheme = true;
+    const w = insights?.themes?.complaints?.[0];
+    worstDish = typeof w === 'string' ? w : (w?.issue || "N/A");
+    worstIsTheme = true;
+  } else {
+    const itemScores: Record<string, { pos: number, neg: number }> = {};
+    windowedReviews.forEach((r: any) => {
+      const items = r.ordered_items || [];
+      items.forEach((item: string) => {
+        if (!itemScores[item]) itemScores[item] = { pos: 0, neg: 0 };
+        if (r.rating >= 4) itemScores[item].pos += 1;
+        if (r.rating <= 3) itemScores[item].neg += 1;
+      });
+    });
+
+    let maxPos = 0;
+    let maxNeg = 0;
+    for (const [item, scores] of Object.entries(itemScores)) {
+      if (scores.pos > maxPos) {
+        maxPos = scores.pos;
+        topDish = item;
+      }
+      if (scores.neg > maxNeg) {
+        maxNeg = scores.neg;
+        worstDish = item;
+      }
+    }
+
+    if (topDish === "N/A") {
+      topDish = insights?.themes?.praised?.[0] || "N/A";
+      topIsTheme = true;
+    }
+    if (worstDish === "N/A") {
+      const w = insights?.themes?.complaints?.[0];
+      worstDish = typeof w === 'string' ? w : (w?.issue || "N/A");
+      worstIsTheme = true;
+    }
+  }
 
   return (
     <div className="space-y-4 w-full max-w-[1400px]">
@@ -90,9 +152,11 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
               <span className="text-xl font-semibold text-[var(--foreground)] leading-none">
                 {business.health_score || 88}%
               </span>
-              <span className="text-[9px] text-[#10b981] font-semibold flex items-center">
-                <ArrowUpRight className="w-2.5 h-2.5" /> 4% WoW
-              </span>
+              {mode !== "all" && (
+                <span className="text-[9px] text-[#10b981] font-semibold flex items-center">
+                  <ArrowUpRight className="w-2.5 h-2.5" /> 4% {mc.deltaLabel}
+                </span>
+              )}
             </div>
           </div>
           <div className="w-16 h-8 mt-2 opacity-80">
@@ -109,11 +173,13 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
           <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Review Velocity</span>
           <div className="flex items-baseline gap-2 mt-1">
             <span className="text-xl font-semibold text-[var(--foreground)] leading-none">
-              {reviews.length} <span className="text-[10px] text-[#64748b] font-normal">/mo</span>
+              {windowedReviews.length} <span className="text-[10px] text-[#64748b] font-normal">{mc.velocityUnit}</span>
             </span>
-            <span className="text-[9px] text-[#10b981] font-semibold flex items-center">
-              <ArrowUpRight className="w-2.5 h-2.5" /> 12% WoW
-            </span>
+            {mode !== "all" && (
+              <span className="text-[9px] text-[#10b981] font-semibold flex items-center">
+                <ArrowUpRight className="w-2.5 h-2.5" /> 12% {mc.deltaLabel}
+              </span>
+            )}
           </div>
         </div>
 
@@ -132,8 +198,8 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
 
         {/* Top Dish */}
         <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-xl relative">
-          <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Top Dish (7 days)</span>
-          {insights ? (
+          <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Top Dish ({mc.dishLabel})</span>
+          {insights || windowedReviews.length > 0 ? (
             <>
               <div className="flex items-start gap-2 mt-2">
                 <TrendingUp className="w-4 h-4 text-[#10b981] mt-0.5 flex-shrink-0" />
@@ -141,7 +207,9 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
                   {topDish}
                 </span>
               </div>
-              <span className="text-[8px] text-[#64748b] uppercase tracking-wider block mt-1">Identified by AI</span>
+              <span className="text-[8px] text-[#64748b] uppercase tracking-wider block mt-1">
+                {topIsTheme ? "Identified by AI" : "Based on recent reviews"}
+              </span>
             </>
           ) : (
             <span className="text-xs font-semibold text-[#64748b] mt-2 block">Data not available</span>
@@ -157,16 +225,18 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
           <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl flex-1 flex flex-col space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-[#1e293b]">
               <span className="text-xs font-semibold text-[var(--foreground)]">Review Volume Trends</span>
-              <span className="text-[9px] uppercase tracking-widest text-[#94a3b8] font-bold">Last 30 Days</span>
+              <span className="text-[9px] uppercase tracking-widest text-[#94a3b8] font-bold">{mc.chartLabel}</span>
             </div>
             <div className="flex-1 min-h-[160px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData.map((d: any) => ({
                   ...d,
-                  name: d.name === 'W1' ? '3 Weeks Ago' : 
-                        d.name === 'W2' ? '2 Weeks Ago' : 
-                        d.name === 'W3' ? 'Last Week' : 
-                        d.name === 'W4' ? 'This Week' : d.name
+                  name: mode === 'weekly' ? (
+                    d.name === 'W1' ? '3 Weeks Ago' : 
+                    d.name === 'W2' ? '2 Weeks Ago' : 
+                    d.name === 'W3' ? 'Last Week' : 
+                    d.name === 'W4' ? 'This Week' : d.name
+                  ) : d.name
                 }))} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#64748b' }} dy={10} />
                   <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#64748b' }} />
@@ -212,14 +282,18 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
 
             {/* Worst Dish */}
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl h-[140px] flex flex-col justify-center gap-1">
-              <span className="text-[9px] uppercase tracking-widest text-[#f43f5e] font-semibold block">Worst Component (7 days)</span>
-              {insights ? (
+              <span className="text-[9px] uppercase tracking-widest text-[#f43f5e] font-semibold block">Worst Component ({mc.worstLabel})</span>
+              {insights || windowedReviews.length > 0 ? (
                 <>
                   <span className="text-sm font-semibold text-[var(--foreground)] mt-1 truncate">{worstDish}</span>
-                  <span className="text-[9px] text-[#64748b] leading-snug block mt-1 line-clamp-2">Identified by AI Analysis as a primary negative driver.</span>
-                  <button className="text-[#a855f7] hover:text-white text-[9px] font-bold tracking-widest uppercase text-left mt-2 transition-colors flex items-center gap-1">
-                    View Reports <ArrowUpRight className="w-3 h-3" />
-                  </button>
+                  <span className="text-[9px] text-[#64748b] leading-snug block mt-1 line-clamp-2">
+                    {worstIsTheme ? "Identified by AI Analysis as a primary negative driver." : "Identified from recent low-rated reviews."}
+                  </span>
+                  {worstIsTheme && (
+                    <button className="text-[#a855f7] hover:text-white text-[9px] font-bold tracking-widest uppercase text-left mt-2 transition-colors flex items-center gap-1">
+                      View Reports <ArrowUpRight className="w-3 h-3" />
+                    </button>
+                  )}
                 </>
               ) : (
                 <span className="text-[10px] text-[#64748b] mt-2 block">Data not available yet. Waiting for reviews.</span>

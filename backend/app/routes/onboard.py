@@ -60,6 +60,7 @@ async def _do_background_audit(business_id: str, maps_url: str):
         )
         
         # 5. Save reviews collection records to MongoDB (Business / DB logic)
+        from ai_workflow.services.embedding_service import embedding_service
         saved_reviews = []
         for r in raw_reviews:
             r["business_id"] = business_id
@@ -78,6 +79,13 @@ async def _do_background_audit(business_id: str, maps_url: str):
                             r["final_reply_content"] = real_r["final_reply_content"]
                         break
             
+            # Generate and attach embedding
+            r_text = r.get("text", "")
+            if r_text:
+                embeddings = await embedding_service.generate_embeddings([r_text])
+                if embeddings and len(embeddings) > 0:
+                    r["embedding"] = embeddings[0]
+
             saved = await db.insert_one("reviews", r)
             saved_reviews.append(saved)
         

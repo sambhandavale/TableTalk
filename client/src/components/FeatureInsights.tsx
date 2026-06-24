@@ -5,22 +5,23 @@ import { TrendingUp, Sparkles, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function FeatureInsights() {
   return (
-    <div
-      className="relative w-full"
-      style={{
-        backgroundImage:
-          'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 35%, transparent 60%), url("/assets/background/tables3.jpg")',
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
-    >
+    <div className="relative w-full overflow-hidden">
+      <div
+        className="absolute inset-0 pointer-events-none z-0 blur-[8px] transform scale-110"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 35%, transparent 60%), url("/assets/background/tables3.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+        }}
+      />
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#05010a] to-transparent pointer-events-none z-0" />
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#05010a] to-transparent pointer-events-none z-0" />
       <section id="insights-suite" className="py-24 relative z-10 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-          {/* Left Side: Orbiting Rings and Skewed Mockup */}
-          <div className="lg:col-span-6 relative flex items-center justify-center min-h-[600px] order-last lg:order-first w-full">
+          {/* Right Side: Orbiting Rings and Skewed Mockup */}
+          <div className="lg:col-span-6 relative flex items-center justify-center min-h-[600px] order-last lg:order-last w-full">
             <div className="relative w-full max-w-[600px] aspect-square flex items-center justify-center mx-auto lg:mr-auto lg:ml-0">
               {/* Orbital Rings Background */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[750px] aspect-square border border-white/[0.04] rounded-full pointer-events-none" />
@@ -41,7 +42,7 @@ export default function FeatureInsights() {
                 className="absolute top-1/2 left-1/2 z-10 w-[120%] sm:w-[130%] max-w-[550px]"
                 style={{
                   transform:
-                    "translate(-50%, -50%) perspective(1200px) rotateX(15deg) rotateY(25deg) rotateZ(-4deg)",
+                    "translate(-50%, -50%) perspective(1200px) rotateX(15deg) rotateY(-25deg) rotateZ(4deg)",
                   transformStyle: "preserve-3d",
                 }}
               >
@@ -57,9 +58,9 @@ export default function FeatureInsights() {
                 </div>
               </div>
 
-              {/* Floating Card 2: Google response rates */}
+              {/* Floating Card 1: Google response rates */}
               <div
-                className="absolute top-1/2 left-1/2 z-20"
+                className="absolute top-1/2 right-150 z-20"
                 style={{
                   transform:
                     "translate(-50%, -50%) translateX(240px) translateY(180px)",
@@ -87,8 +88,8 @@ export default function FeatureInsights() {
             </div>
           </div>
 
-          {/* Right Side: Copy & Details */}
-          <div className="lg:col-span-6 text-left space-y-6 bg-black/40 border border-white/10 p-8 rounded-3xl backdrop-blur-md">
+          {/* Left Side: Copy & Details */}
+          <div className="lg:col-span-6 text-left space-y-6 order-first lg:order-first">
             <span className="text-xs font-bold text-brand-purple-text uppercase tracking-widest block">
               TableTalk Insights Suite
             </span>

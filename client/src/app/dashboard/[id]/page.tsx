@@ -15,6 +15,7 @@ import CompetitorWatch from "@/components/dashboard/CompetitorWatch";
 import CustomerDatabase from "@/components/dashboard/CustomerDatabase";
 import RetentionCampaigns from "@/components/dashboard/RetentionCampaigns";
 import SEOHealth from "@/components/dashboard/SEOHealth";
+import ModeSelector from "@/components/dashboard/ModeSelector";
 
 export default function DashboardPage() {
   const params = useParams();
@@ -25,6 +26,7 @@ export default function DashboardPage() {
 
   const tabParam = searchParams.get("tab") || "overview";
   const [activeTab, setActiveTabState] = useState(tabParam);
+  const [managerMode, setManagerMode] = useState("all");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [userEmail, setUserEmail] = useState("");
@@ -66,7 +68,7 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     setIsLoading(true);
     try {
-      const resp = await fetch(`http://localhost:8000/api/dashboard/${id}`);
+      const resp = await fetch(`http://localhost:8000/api/dashboard/${id}?mode=${managerMode}`);
       if (!resp.ok) throw new Error("Failed to fetch dashboard");
       const data = await resp.json();
       
@@ -98,7 +100,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (id) fetchDashboardData();
-  }, [id]);
+  }, [id, managerMode]);
 
   // Real-time SSE listener for background processing updates
   useEffect(() => {
@@ -145,7 +147,7 @@ export default function DashboardPage() {
     if (!business?.slug) return;
     setIsRefreshingInsights(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/insights/${business.slug}/trigger`, {
+      const response = await fetch(`http://localhost:8000/api/insights/${business.slug}/trigger?mode=${managerMode}`, {
         method: "POST",
       });
       if (!response.ok) {
@@ -174,6 +176,7 @@ export default function DashboardPage() {
             auditStatus={auditStatus} 
             chartData={chartData}
             healthSparkline={healthSparkline}
+            mode={managerMode}
           />
         );
       
@@ -220,10 +223,10 @@ export default function DashboardPage() {
         );
         
       case "ai_insights":
-        return <AIInsights insights={insights} onRefresh={handleRefreshInsights} isRefreshing={isRefreshingInsights} />;
+        return <AIInsights insights={insights} onRefresh={handleRefreshInsights} isRefreshing={isRefreshingInsights} mode={managerMode} />;
         
       case "recommendations":
-        return <Recommendations insights={insights} reviews={reviews} />;
+        return <Recommendations insights={insights} reviews={reviews} mode={managerMode} />;
         
       case "competitor_watch":
         return <CompetitorWatch competitors={competitors} />;
@@ -306,6 +309,9 @@ export default function DashboardPage() {
             </div>
           ) : (
             <>
+              {["overview", "ai_insights", "recommendations"].includes(activeTab) && (
+                <ModeSelector activeMode={managerMode} onModeChange={setManagerMode} />
+              )}
               {renderActiveTab()}
             </>
           )}

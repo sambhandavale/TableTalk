@@ -191,5 +191,16 @@ class ResilientDB:
             self._save_fallback_data()
         return deleted
 
+    async def aggregate(self, collection_name: str, pipeline: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        if self.is_mongodb_connected and self.db is not None:
+            cursor = self.db[collection_name].aggregate(pipeline)
+            docs = await cursor.to_list(length=1000)
+            for doc in docs:
+                if "_id" in doc:
+                    doc["_id"] = str(doc["_id"])
+            return docs
+        # Local JSON fallback does not natively support aggregation pipelines
+        return []
+
 # Global database instance
 db = ResilientDB()

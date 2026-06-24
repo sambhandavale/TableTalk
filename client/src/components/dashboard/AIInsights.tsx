@@ -24,7 +24,15 @@ import {
   Cell
 } from "recharts";
 
-export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
+export default function AIInsights({ insights, onRefresh, isRefreshing, mode }: any) {
+  const titleMap: Record<string, string> = {
+    daily: "Daily Intelligence Report",
+    weekly: "Weekly Intelligence Report",
+    monthly: "Monthly Intelligence Report",
+    all: "All-Time Intelligence Report"
+  };
+  const reportTitle = titleMap[mode] || titleMap.all;
+  const trendLabel = mode === "daily" ? "7 Days" : mode === "weekly" ? "8 Weeks" : mode === "monthly" ? "6 Months" : "All Time";
   
   if (!insights) {
     return (
@@ -33,7 +41,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
           <div>
             <h2 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
               <BrainCircuit className="w-5 h-5 text-[#a855f7]" />
-              Weekly Intelligence Report
+              {reportTitle}
             </h2>
             <p className="text-[11px] text-[#64748b] mt-1">
               AI-driven NLP analysis across all imported reviews and private intercepts.
@@ -103,7 +111,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
         <div>
           <h2 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
             <BrainCircuit className="w-5 h-5 text-[#a855f7]" />
-            Weekly Intelligence Report
+            {reportTitle}
           </h2>
           <p className="text-[11px] text-[#64748b] mt-1">
             AI-driven NLP analysis across all imported reviews and private intercepts.
@@ -133,7 +141,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing }: any) {
         <div className="lg:col-span-8 bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col space-y-4 rounded-xl">
           <div className="flex justify-between items-center pb-2 border-b border-[#1e293b]">
             <span className="text-xs font-semibold text-[var(--foreground)]">Health Score Trend</span>
-            <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">8 Weeks</span>
+            <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">{trendLabel}</span>
           </div>
           <div className="flex-1 min-h-[220px] w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">

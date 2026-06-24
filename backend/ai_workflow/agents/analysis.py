@@ -12,9 +12,9 @@ from ai_workflow.prompts.analysis_prompts import ANALYSIS_SYSTEM_PROMPT
 logger = logging.getLogger("TableTalk.AnalysisAgent")
 
 class PatternAnalysisAgent:
-    async def generate_restaurant_insights(self, business_id: str) -> Dict[str, Any]:
-        """Runs Agent 3 (Pattern Finder) and Agent 4 (Action Recommendations) in unison."""
-        logger.info(f"Firing Analysis & Recommendation Agents #3 & #4 for Business {business_id}")
+    async def generate_restaurant_insights(self, business_id: str, mode: str = "all") -> Dict[str, Any]:
+        """Runs Agent 3 (Pattern Finder) and Agent 4 (Action Recommendations) in unison using RAG."""
+        logger.info(f"Firing Analysis Agents for Business {business_id} in Mode: {mode}")
         
         # 1. Fetch all reviews for this business
         all_reviews = await db.get_collection("reviews")
@@ -24,6 +24,7 @@ class PatternAnalysisAgent:
             logger.warning(f"No reviews found to analyze for {business_id}")
             return {
                 "business_id": business_id,
+                "mode": mode,
                 "generated_date": datetime.now(timezone.utc).isoformat(),
                 "health_trend": [],
                 "sentiment": {"positive": 0, "neutral": 0, "negative": 0},
@@ -32,81 +33,88 @@ class PatternAnalysisAgent:
                 "action_items": []
             }
 
-        # Delta Logic: Fetch previous insights
-        insights_collection = await db.get_collection("insights")
-        business_insights = [i for i in insights_collection if i.get("business_id") == business_id]
-        latest_insight = None
-        if business_insights:
-            latest_insight = sorted(business_insights, key=lambda x: x.get("generated_date", ""), reverse=True)[0]
+        # Filter reviews based on mode
+        now = datetime.now(timezone.utc)
+        from datetime import timedelta
+        if mode == "daily":
+            window_start = now - timedelta(hours=24)
+        elif mode == "weekly":
+            window_start = now - timedelta(days=7)
+        elif mode == "monthly":
+            window_start = now - timedelta(days=30)
+        else:
+            window_start = None
 
-        # Filter for new reviews
-        if latest_insight and latest_insight.get("generated_date"):
-            last_date_str = latest_insight["generated_date"]
+        new_reviews = []
+        for r in restaurant_reviews:
+            r_time_str = r.get("timestamp", r.get("created_at", ""))
             try:
-                last_date = datetime.fromisoformat(last_date_str.replace("Z", "+00:00"))
-                new_reviews = []
-                for r in restaurant_reviews:
-                    r_time_str = r.get("timestamp", "")
-                    try:
-                        r_time = datetime.fromisoformat(r_time_str.replace("Z", "+00:00"))
-                        if r_time > last_date:
-                            new_reviews.append(r)
-                    except ValueError:
-                        pass
-            except ValueError:
-                new_reviews = restaurant_reviews
-        else:
-            new_reviews = restaurant_reviews
+                t = datetime.fromisoformat(r_time_str.replace("Z", "+00:00"))
+                if t.tzinfo is None:
+                    t = t.replace(tzinfo=timezone.utc)
+                if window_start is None or t >= window_start:
+                    new_reviews.append(r)
+            except (ValueError, TypeError, AttributeError):
+                if window_start is None:
+                    new_reviews.append(r)
+                    
+        if not new_reviews:
+            logger.info(f"No reviews in {mode} window for {business_id}")
+            return None
 
-        # Instead of strict truncation, we will use Semantic Clustering to extract exemplars.
-        # But first, check Semantic Cache to save tokens!
-        cache_data = {
-            "business_id": business_id,
-            "reviews_count": len(new_reviews),
-            "last_review_date": new_reviews[0].get("timestamp", "") if new_reviews else ""
-        }
-        cached_result = await cache_service.get_cached_insight("analysis", cache_data)
-        if cached_result:
-            return cached_result
-
-        # Clustering to extract exemplars if there are many reviews
-        if len(new_reviews) > 20:
-            logger.info(f"Clustering {len(new_reviews)} reviews to extract 20 diverse exemplars...")
-            texts = [r.get("text", "No text") for r in new_reviews]
-            embeddings = await embedding_service.generate_embeddings(texts)
-            if embeddings:
-                new_reviews = embedding_service.extract_exemplars(new_reviews, embeddings, max_clusters=20)
+        # RAG Clustering to extract exemplars for the specific time window
+        if len(new_reviews) > 10:
+            logger.info(f"Clustering {len(new_reviews)} reviews to extract 10 diverse exemplars for {mode} mode...")
+            
+            # Extract pre-stored embeddings
+            embeddings = []
+            texts_to_embed = []
+            indices_to_embed = []
+            for idx, r in enumerate(new_reviews):
+                if "embedding" in r and isinstance(r["embedding"], list) and len(r["embedding"]) > 0:
+                    embeddings.append(r["embedding"])
+                else:
+                    embeddings.append([]) # placeholder
+                    texts_to_embed.append(r.get("text", "No text"))
+                    indices_to_embed.append(idx)
+                    
+            # Generate any missing embeddings on the fly (e.g. for old data)
+            if texts_to_embed:
+                missing_embeddings = await embedding_service.generate_embeddings(texts_to_embed)
+                if missing_embeddings:
+                    for i, idx in enumerate(indices_to_embed):
+                        embeddings[idx] = missing_embeddings[i]
+                        new_reviews[idx]["embedding"] = missing_embeddings[i]
+            
+            # Filter out any that completely failed to embed
+            valid_reviews = []
+            valid_embeddings = []
+            for r, emb in zip(new_reviews, embeddings):
+                if emb and len(emb) > 0:
+                    valid_reviews.append(r)
+                    valid_embeddings.append(emb)
+            
+            if valid_embeddings:
+                n_clusters = min(10, len(valid_reviews))
+                new_reviews = embedding_service.extract_exemplars(valid_reviews, valid_embeddings, max_clusters=n_clusters)
             else:
-                # Fallback to simple truncation
-                new_reviews = sorted(new_reviews, key=lambda x: x.get("timestamp", ""), reverse=True)[:20]
-        else:
-            new_reviews = sorted(new_reviews, key=lambda x: x.get("timestamp", ""), reverse=True)
+                new_reviews = sorted(new_reviews, key=lambda x: x.get("timestamp", ""), reverse=True)[:10]
 
-        if not new_reviews and latest_insight:
-            logger.info(f"No new reviews for {business_id} since last report. Returning cached insights to save LLM tokens.")
-            return latest_insight
+        logger.info(f"Processing {len(new_reviews)} exemplar reviews to generate {mode} insights for {business_id}...")
 
-        logger.info(f"Processing {len(new_reviews)} new reviews to generate insights for {business_id}...")
-
-        # 2. Emulate aggregate analysis calculations for fallback
+        # Base fallback logic in case LLM fails
         total = len(restaurant_reviews)
         ratings = [r["rating"] for r in restaurant_reviews]
         avg_rating = sum(ratings) / total if total > 0 else 0
-        
-        # Base fallback logic in case LLM fails
         health_score = int(avg_rating * 20)
+        
         fallback_action_items = [
             {"priority": "High", "category": "operations", "title": "Audit Service Paths", "description": "Investigate table turnaround times.", "citations": []},
-            {"priority": "Medium", "category": "marketing", "title": "Highlight Signature Dish", "description": "Promote highest rated items on social media.", "citations": []},
-            {"priority": "High", "category": "food", "title": "Menu Review", "description": "Review consistency of frequently complained items.", "citations": []},
-            {"priority": "Low", "category": "service", "title": "Staff Training", "description": "Ensure staff greet returning customers appropriately.", "citations": []}
+            {"priority": "Medium", "category": "marketing", "title": "Highlight Signature Dish", "description": "Promote highest rated items on social media.", "citations": []}
         ]
 
         fallback_insights = AIInsightsOutput(
             health_trend_data=[
-                {"week": "W1", "score": 65}, {"week": "W2", "score": 68}, 
-                {"week": "W3", "score": 70}, {"week": "W4", "score": 72}, 
-                {"week": "W5", "score": 78}, {"week": "W6", "score": 75}, 
                 {"week": "W7", "score": 82}, {"week": "Current", "score": health_score}
             ],
             sentiment_data={"positive": 70, "neutral": 20, "negative": 10},
@@ -116,15 +124,10 @@ class PatternAnalysisAgent:
             seo_insights={"descriptive_text": "Unable to generate dynamic SEO analysis due to low review volume or API error.", "trending_keywords": []}
         )
 
-        # Pass summarized reviews + old report to LLM
         current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        prompt = f"Analyze for Business ID: {business_id}\n\n"
-        
-        if latest_insight:
-            prompt += f"--- PREVIOUS REPORT ---\n{json.dumps(latest_insight, indent=2)}\n\n"
-            
-        prompt += f"--- NEW REVIEWS ({len(new_reviews)} total) ---\n"
+        prompt = f"Analyze for Business ID: {business_id} over the time window: {mode}\n\n"
+        prompt += f"--- {mode.upper()} REVIEWS ({len(new_reviews)} exemplars) ---\n"
         for r in new_reviews:
             prompt += f"- ID: {r.get('id', str(r.get('_id', '')))}, Timestamp: {r.get('timestamp')}, Rating: {r.get('rating')}, Text: {r.get('text', 'No text')}, Items: {r.get('ordered_items', [])}\n"
 
@@ -137,6 +140,7 @@ class PatternAnalysisAgent:
 
         insights_record = {
             "business_id": business_id,
+            "mode": mode,
             "generated_date": current_time,
             "health_trend": [h.model_dump() for h in structured_insights.health_trend_data],
             "sentiment": structured_insights.sentiment_data.model_dump(),
@@ -148,17 +152,15 @@ class PatternAnalysisAgent:
         # Save freshly compiled insights record
         await db.insert_one("insights", insights_record)
         
-        # Update business's cached health score
-        await db.update_one(
-            "businesses",
-            {"id": business_id},
-            {"$set": {"health_score": health_score}}
-        )
+        # Only update business health score globally if it's "all" time
+        if mode == "all":
+            await db.update_one(
+                "businesses",
+                {"id": business_id},
+                {"$set": {"health_score": health_score}}
+            )
 
-        # Set semantic cache
-        await cache_service.set_cached_insight("analysis", cache_data, insights_record, expire_seconds=86400)
-
-        logger.info(f"Successfully generated analytical insights & weekly priority actions for {business_id}")
+        logger.info(f"Successfully generated analytical insights for {business_id} ({mode})")
         return insights_record
 
 # Global agent instance

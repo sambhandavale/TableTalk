@@ -20,16 +20,17 @@ export default function TriageSimulator() {
   const [smsSent, setSmsSent] = useState(false);
 
   return (
-    <div
-      className="relative w-full"
-      style={{
-        backgroundImage:
-          'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 35%, transparent 60%), url("/assets/background/tables2.jpg")',
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
-    >
+    <div className="relative w-full overflow-hidden">
+      <div
+        className="absolute inset-0 pointer-events-none z-0 blur-[8px] transform scale-110"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 35%, transparent 60%), url("/assets/background/tables2.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+        }}
+      />
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#05010a] to-transparent pointer-events-none z-0" />
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#05010a] to-transparent pointer-events-none z-0" />
       <section
@@ -56,7 +57,8 @@ export default function TriageSimulator() {
         {/* Main Interactive Visual split workflow */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative">
           {/* LEFT COLUMN: INTERACTIVE DINER DEVICE (The Input) */}
-          <div className="lg:col-span-4 p-6 flex flex-col justify-between h-full bg-black/40 border border-white/10 backdrop-blur-md rounded-2xl transition-colors duration-300">
+          <div className="lg:col-span-4" style={{ transform: 'perspective(1200px) rotateY(15deg)', transformStyle: 'preserve-3d' }}>
+            <div className="p-6 flex flex-col justify-between h-full bg-black/40 border border-white/10 backdrop-blur-md rounded-2xl transition-colors duration-300">
             <div className="liquid-glass-glow" />
             <div className="relative z-10 space-y-6">
               <div className="flex justify-between items-center pb-3 border-b border-[var(--brand-border)] transition-colors duration-300">
@@ -156,6 +158,7 @@ export default function TriageSimulator() {
                 </span>
               )}
             </div>
+            </div>
           </div>
 
           {/* MIDDLE COLUMN: THE SMART TRIAGE SPLITTER (Google Boost vs Private Capture Node) */}
@@ -227,13 +230,14 @@ export default function TriageSimulator() {
             </div>
 
             {/* PATH B: PRIVATE MANAGEMENT RESCUE LOOP (Intercepts 1-3 Stars) */}
-            <div
-              className={`p-6 flex flex-col justify-between transition-all duration-300 border backdrop-blur-md rounded-2xl ${
-                rating <= 3
-                  ? "border-red-500/60 bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.08)] scale-[1.01]"
-                  : "border-white/10 bg-black/40"
-              }`}
-            >
+            <div style={{ transform: 'perspective(1200px) rotateY(-15deg)', transformStyle: 'preserve-3d' }} className="h-full">
+              <div
+                className={`p-6 flex flex-col justify-between h-full transition-all duration-300 border backdrop-blur-md rounded-2xl ${
+                  rating <= 3
+                    ? "border-red-500/60 bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.08)] scale-[1.01]"
+                    : "border-white/10 bg-black/40"
+                }`}
+              >
               <div className="liquid-glass-glow" />
               <div className="relative z-10 space-y-4">
                 <div className="flex justify-between items-start">
@@ -307,6 +311,7 @@ export default function TriageSimulator() {
 
               <div className="pt-4 border-t border-[var(--brand-border)] text-[9px] text-[var(--text-dim)] font-mono transition-colors duration-300">
                 Alert Dispatched: manager-alarm@tabletalk.in
+              </div>
               </div>
             </div>
           </div>
