@@ -19,6 +19,9 @@ import {
   ChevronDown,
 } from "lucide-react";
 import CustomSelect from "@/components/ui/CustomSelect";
+import AccountSetupStep from "@/components/onboard/AccountSetupStep";
+import BusinessProfileStep from "@/components/onboard/BusinessProfileStep";
+import ReviewPipelineStep from "@/components/onboard/ReviewPipelineStep";
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
@@ -213,7 +216,7 @@ export default function OnboardingPage() {
                   >
                     Create Account
                   </span>
-                  <span className="text-[9px] text-[var(--text-dim)] block mt-0.5">
+                  <span className="text-[12px] text-[var(--text-dim)] block mt-0.5">
                     Secure credential mapping
                   </span>
                 </div>
@@ -237,7 +240,7 @@ export default function OnboardingPage() {
                   >
                     Outlet Settings
                   </span>
-                  <span className="text-[9px] text-[var(--text-dim)] block mt-0.5">
+                  <span className="text-[12px] text-[var(--text-dim)] block mt-0.5">
                     Business details & capacity
                   </span>
                 </div>
@@ -261,7 +264,7 @@ export default function OnboardingPage() {
                   >
                     Google Maps Scan
                   </span>
-                  <span className="text-[9px] text-[var(--text-dim)] block mt-0.5">
+                  <span className="text-[12px] text-[var(--text-dim)] block mt-0.5">
                     Scraper review hook dispatch
                   </span>
                 </div>
@@ -271,7 +274,7 @@ export default function OnboardingPage() {
 
           {/* Miniature Testimonial Card */}
           <div className="p-4 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] rounded-2xl relative z-10">
-            <span className="text-[8px] uppercase tracking-wider text-[var(--brand-purple-text)] font-extrabold block">
+            <span className="text-[12px] uppercase tracking-wider text-[var(--brand-purple-text)] font-extrabold block">
               Spice Garden Bistro
             </span>
             <p className="text-[10px] text-[var(--text-muted)] italic font-light mt-1.5 leading-relaxed">
@@ -280,10 +283,10 @@ export default function OnboardingPage() {
               West. Diners left happy and Google Maps rating climbed!"
             </p>
             <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-[var(--brand-border-subtle)]">
-              <span className="text-[9px] font-bold text-[var(--foreground)]">
+              <span className="text-[12px] font-bold text-[var(--foreground)]">
                 Amit K.
               </span>
-              <span className="text-[8px] text-[var(--text-dim)]">
+              <span className="text-[12px] text-[var(--text-dim)]">
                 • General Manager
               </span>
             </div>
@@ -312,7 +315,7 @@ export default function OnboardingPage() {
               </div>
 
               {/* Fake agent log activity terminal block */}
-              <div className="w-full max-w-md bg-black/60 border border-[var(--brand-border)] rounded-xl p-3 text-left font-mono text-[9px] text-slate-300 space-y-1.5 overflow-hidden h-24">
+              <div className="w-full max-w-md bg-black/60 border border-[var(--brand-border)] rounded-xl p-3 text-left font-mono text-[12px] text-slate-300 space-y-1.5 overflow-hidden h-24">
                 <div className="text-purple-400">
                   &gt; Initializing audit_agent.py on business_id: pending
                 </div>
@@ -349,7 +352,7 @@ export default function OnboardingPage() {
               <div className="p-5 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] rounded-2xl space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-xs">
                   <div>
-                    <span className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">
+                    <span className="text-[12px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">
                       Registered Email
                     </span>
                     <span className="font-bold text-[var(--foreground)] block mt-1 truncate">
@@ -357,7 +360,7 @@ export default function OnboardingPage() {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">
+                    <span className="text-[12px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">
                       Account Role
                     </span>
                     <span className="font-bold text-[var(--foreground)] block mt-1">
@@ -365,7 +368,7 @@ export default function OnboardingPage() {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">
+                    <span className="text-[12px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">
                       Business Name
                     </span>
                     <span className="font-bold text-[var(--foreground)] block mt-1 truncate">
@@ -373,7 +376,7 @@ export default function OnboardingPage() {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">
+                    <span className="text-[12px] text-[var(--text-dim)] uppercase tracking-wider block leading-none">
                       Registered Cuisine
                     </span>
                     <span className="font-bold text-[var(--foreground)] block mt-1">
@@ -386,7 +389,7 @@ export default function OnboardingPage() {
                   <Globe className="w-3.5 h-3.5 text-brand-purple-text flex-shrink-0" />
                   <span className="truncate">
                     Google Review Scraper dispatched:{" "}
-                    <span className="font-mono text-[9px] text-[var(--text-dim)]">
+                    <span className="font-mono text-[12px] text-[var(--text-dim)]">
                       {formData.mapsUrl}
                     </span>
                   </span>
@@ -436,206 +439,29 @@ export default function OnboardingPage() {
 
               {/* STEP 1: Account registration */}
               {step === 1 && (
-                <div className="space-y-4 animate-fadeIn">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">
-                      GM / Owner Full Name
-                    </label>
-                    <div className="relative flex items-center">
-                      <User className="absolute left-3.5 w-4 h-4 text-[var(--text-dim)]" />
-                      <input
-                        type="text"
-                        name="ownerName"
-                        value={formData.ownerName}
-                        onChange={handleInputChange}
-                        placeholder="Amit Kumar"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--orb-bg)] border border-[var(--orb-border)] text-xs text-[var(--foreground)] placeholder-white focus:outline-none focus:border-[var(--brand-purple-text)] focus:ring-1 focus:ring-[var(--brand-purple-text)]/20 transition-all duration-300"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">
-                      Business Email Address
-                    </label>
-                    <div className="relative flex items-center">
-                      <Mail className="absolute left-3.5 w-4 h-4 text-[var(--text-dim)]" />
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="manager@spicegarden.com"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--orb-bg)] border border-[var(--orb-border)] text-xs text-[var(--foreground)] placeholder-white focus:outline-none focus:border-[var(--brand-purple-text)] focus:ring-1 focus:ring-[var(--brand-purple-text)]/20 transition-all duration-300"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">
-                      Security Password
-                    </label>
-                    <div className="relative flex items-center">
-                      <Lock className="absolute left-3.5 w-4 h-4 text-[var(--text-dim)]" />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        placeholder="••••••••"
-                        className="w-full pl-10 pr-10 py-3 rounded-xl bg-[var(--orb-bg)] border border-[var(--orb-border)] text-xs text-[var(--foreground)] placeholder-white focus:outline-none focus:border-[var(--brand-purple-text)] focus:ring-1 focus:ring-[var(--brand-purple-text)]/20 transition-all duration-300"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 text-[var(--text-dim)] hover:text-[var(--foreground)]"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="w-4 h-4" />
-                        ) : (
-                          <Eye className="w-4 h-4" />
-                        )}
-                      </button>
-                    </div>
-                    <span className="text-[9px] text-[var(--text-dim)] block">
-                      Must be at least 6 characters.
-                    </span>
-                  </div>
-                </div>
+                <AccountSetupStep
+                  formData={formData}
+                  handleInputChange={handleInputChange}
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                />
               )}
 
               {/* STEP 2: Business Profile details */}
               {step === 2 && (
-                <div className="space-y-4 animate-fadeIn">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5 text-left">
-                      <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">
-                        Business Name
-                      </label>
-                      <div className="relative flex items-center">
-                        <Utensils className="absolute left-3.5 w-4 h-4 text-[var(--text-dim)]" />
-                        <input
-                          type="text"
-                          name="restaurantName"
-                          value={formData.restaurantName}
-                          onChange={handleInputChange}
-                          placeholder="Spice Garden Bistro"
-                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--orb-bg)] border border-[var(--orb-border)] text-xs text-[var(--foreground)] placeholder-white focus:outline-none focus:border-[var(--brand-purple-text)] focus:ring-1 focus:ring-[var(--brand-purple-text)]/20 transition-all duration-300"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-1.5 text-left">
-                      <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">
-                        Cuisine Concept
-                      </label>
-                      <div className="relative flex items-center">
-                        <CustomSelect
-                          value={formData.cuisine}
-                          onChange={(val) =>
-                            setFormData((prev) => ({ ...prev, cuisine: val }))
-                          }
-                          options={[
-                            "Indian Fusion",
-                            "Multi-Cuisine Cafe",
-                            "Lounge & Grill",
-                            "Coastal Seafood",
-                            "Asian Diner",
-                            "Continental & European",
-                            "Italian Pizzeria",
-                            "Mexican Cantina",
-                            "Fast Food & Burgers",
-                            "Bakery & Desserts",
-                          ]}
-                          className="w-full px-3.5 py-3 rounded-xl bg-[var(--brand-card)] border border-[var(--orb-border)] text-xs text-[var(--foreground)] focus:outline-none focus:border-[var(--brand-purple-text)] transition-all duration-300"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">
-                      Physical Address / City Area
-                    </label>
-                    <div className="relative flex items-center">
-                      <MapPin className="absolute left-3.5 w-4 h-4 text-[var(--text-dim)]" />
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        placeholder="Bandra West, Mumbai"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--orb-bg)] border border-[var(--orb-border)] text-xs text-[var(--foreground)] placeholder-white focus:outline-none focus:border-[var(--brand-purple-text)] focus:ring-1 focus:ring-[var(--brand-purple-text)]/20 transition-all duration-300"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5 text-left">
-                    <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">
-                      Seating Capacity
-                    </label>
-                    <div className="relative flex items-center">
-                      <Users className="absolute left-3.5 w-4 h-4 text-[var(--text-dim)]" />
-                      <input
-                        type="number"
-                        name="seatingCapacity"
-                        value={formData.seatingCapacity}
-                        onChange={handleInputChange}
-                        placeholder="60"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--orb-bg)] border border-[var(--orb-border)] text-xs text-[var(--foreground)] placeholder-white focus:outline-none focus:border-[var(--brand-purple-text)] focus:ring-1 focus:ring-[var(--brand-purple-text)]/20 transition-all duration-300"
-                        min="5"
-                        max="1000"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
+                <BusinessProfileStep
+                  formData={formData}
+                  setFormData={setFormData}
+                  handleInputChange={handleInputChange}
+                />
               )}
 
               {/* STEP 3: Google Maps Audit Link */}
               {step === 3 && (
-                <div className="space-y-4 animate-fadeIn">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider block">
-                      Google Maps Reviews Link
-                    </label>
-                    <div className="relative flex items-center">
-                      <Globe className="absolute left-3.5 w-4 h-4 text-[var(--text-dim)]" />
-                      <input
-                        type="url"
-                        name="mapsUrl"
-                        value={formData.mapsUrl}
-                        onChange={handleInputChange}
-                        placeholder="https://maps.google.com/?cid=12345"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--orb-bg)] border border-[var(--orb-border)] text-xs text-[var(--foreground)] placeholder-white focus:outline-none focus:border-[var(--brand-purple-text)] focus:ring-1 focus:ring-[var(--brand-purple-text)]/20 transition-all duration-300"
-                        required
-                      />
-                    </div>
-                    <span className="text-[9px] text-[var(--text-dim)] block leading-relaxed">
-                      Must be a valid HTTP or HTTPS link. TableTalk AI Scraper
-                      will scan public reviews on this business maps node to
-                      feed your dashboard simulator.
-                    </span>
-                  </div>
-
-                  {/* Trust indicator bullet point */}
-                  <div className="p-4 rounded-2xl bg-brand-purple-text/5 border border-brand-purple-text/10 text-[10px] text-[var(--text-muted)] space-y-1">
-                    <span className="font-bold text-[var(--foreground)] block">
-                      What happens next?
-                    </span>
-                    <p className="font-light leading-relaxed">
-                      TableTalk launches an asynchronous background audit
-                      scraper task immediately upon submission. Within 5
-                      seconds, our review extractor analyzes sentiment logs and
-                      updates your operational score privately.
-                    </p>
-                  </div>
-                </div>
+                <ReviewPipelineStep
+                  formData={formData}
+                  handleInputChange={handleInputChange}
+                />
               )}
 
               {/* Step Navigation controls */}
@@ -675,7 +501,7 @@ export default function OnboardingPage() {
                         : "bg-[var(--orb-bg)] border border-[var(--brand-border-subtle)] text-[var(--text-dim)] cursor-not-allowed"
                     }`}
                   >
-                    Submit & Dispatched Scraper
+                    Submit & Dispatch Scraper
                     <CheckCircle className="w-4 h-4" />
                   </button>
                 )}

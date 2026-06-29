@@ -99,7 +99,7 @@ export default function Header({
                     {isLoggedIn ? (
                       <>
                         <div className="space-y-0.5">
-                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">
+                          <span className="text-[12px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">
                             General Manager
                           </span>
                           <span className="text-xs font-extrabold text-[var(--foreground)] block truncate">
@@ -128,7 +128,7 @@ export default function Header({
                               window.location.reload();
                             }
                           }}
-                          className="w-full text-center text-[9px] text-red-400 hover:underline pt-0.5 block cursor-pointer"
+                          className="w-full text-center text-[12px] text-red-400 hover:underline pt-0.5 block cursor-pointer"
                         >
                           Sign Out of Session
                         </button>
@@ -136,7 +136,7 @@ export default function Header({
                     ) : (
                       <>
                         <div className="space-y-0.5">
-                          <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">
+                          <span className="text-[12px] uppercase tracking-wider text-[var(--text-dim)] font-bold block">
                             GM Control Hub
                           </span>
                           <span className="text-[10px] text-[var(--text-muted)] font-light block leading-tight">

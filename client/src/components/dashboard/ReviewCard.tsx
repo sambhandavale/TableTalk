@@ -46,15 +46,15 @@ export default function ReviewCard({ rev, onApprove }: any) {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-xs text-[var(--foreground)]">{rev.diner_name || "Guest"}</span>
-            <span className="text-[9px] text-[#64748b] capitalize px-1 border border-[#1e293b] rounded-xl">{rev.visitor_type || "unknown"}</span>
+            <span className="text-[12px] text-[#64748b] capitalize px-1 border border-[#1e293b] rounded-xl">{rev.visitor_type || "unknown"}</span>
             
             {rev.source === "google" ? (
-              <span className="text-[9px] text-[#a855f7] font-semibold flex items-center gap-1 border border-[#a855f7]/30 px-1 rounded-xl bg-[#a855f7]/10">
+              <span className="text-[12px] text-[#a855f7] font-semibold flex items-center gap-1 border border-[#a855f7]/30 px-1 rounded-xl bg-[#a855f7]/10">
                 <Globe className="w-2.5 h-2.5" />
                 Google
               </span>
             ) : (
-              <span className="text-[9px] text-[#10b981] font-semibold flex items-center gap-1 border border-[#10b981]/30 px-1 rounded-xl bg-[#10b981]/10">
+              <span className="text-[12px] text-[#10b981] font-semibold flex items-center gap-1 border border-[#10b981]/30 px-1 rounded-xl bg-[#10b981]/10">
                 <QrCode className="w-2.5 h-2.5" />
                 QR
               </span>
@@ -64,7 +64,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
             {rev.text}
           </p>
           {currentOrderedItems && currentOrderedItems.length > 0 && (
-            <div className="flex items-center gap-1 text-[9px] text-[#64748b] pt-0.5">
+            <div className="flex items-center gap-1 text-[12px] text-[#64748b] pt-0.5">
               <span>Items:</span>
               <div className="flex flex-wrap gap-1">
                 {currentOrderedItems.map((item: string, i: number) => (
@@ -84,7 +84,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
               </span>
             ))}
           </div>
-          <span className="text-[9px] text-[#64748b]">
+          <span className="text-[12px] text-[#64748b]">
             {rev.timestamp ? new Date(rev.timestamp).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "Just now"}
           </span>
         </div>
@@ -103,7 +103,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
               <button 
                 onClick={handleRegenerate}
                 disabled={isRegenerating}
-                className="text-[#a855f7] hover:text-white text-[9px] font-semibold flex items-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-[#a855f7] hover:text-white text-[12px] font-semibold flex items-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RotateCw className={`w-2.5 h-2.5 ${isRegenerating ? 'animate-spin' : ''}`} />
                 {isRegenerating ? "Regenerating..." : "Regenerate"}
@@ -111,7 +111,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
 
               <button 
                 onClick={() => setIsEditing(true)}
-                className="text-[#a855f7] hover:text-white text-[9px] font-semibold flex items-center gap-1 transition-colors"
+                className="text-[#a855f7] hover:text-white text-[12px] font-semibold flex items-center gap-1 transition-colors"
               >
                 <Edit2 className="w-2.5 h-2.5" />
                 Edit
@@ -130,13 +130,13 @@ export default function ReviewCard({ rev, onApprove }: any) {
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-2 py-1 text-[9px] font-semibold text-[#94a3b8] hover:text-white border border-[#1e293b] rounded-xl hover:bg-[#1e293b]/50 transition-colors"
+                className="px-2 py-1 text-[12px] font-semibold text-[#94a3b8] hover:text-white border border-[#1e293b] rounded-xl hover:bg-[#1e293b]/50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveDraft}
-                className="px-2 py-1 bg-[#a855f7]/20 border border-[#a855f7] text-[9px] font-semibold text-[#a855f7] hover:text-white hover:bg-[#a855f7] rounded-xl transition-colors"
+                className="px-2 py-1 bg-[#a855f7]/20 border border-[#a855f7] text-[12px] font-semibold text-[#a855f7] hover:text-white hover:bg-[#a855f7] rounded-xl transition-colors"
               >
                 Save
               </button>
@@ -152,7 +152,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
         {!isEditing && (
           <div className="flex justify-end pt-1 mt-1">
             {isApproved ? (
-              <div className="flex items-center gap-1 text-[#10b981] font-semibold text-[9px] border border-[#10b981]/20 bg-[#10b981]/5 px-2 py-1 rounded-xl">
+              <div className="flex items-center gap-1 text-[#10b981] font-semibold text-[12px] border border-[#10b981]/20 bg-[#10b981]/5 px-2 py-1 rounded-xl">
                 <Check className="w-3 h-3" />
                 Dispatched
               </div>
@@ -160,7 +160,7 @@ export default function ReviewCard({ rev, onApprove }: any) {
               <button
                 onClick={handleApprove}
                 disabled={isSubmitting}
-                className={`px-2 py-1 text-[9px] font-semibold flex items-center gap-1 rounded-xl border transition-colors ${
+                className={`px-2 py-1 text-[12px] font-semibold flex items-center gap-1 rounded-xl border transition-colors ${
                   isSubmitting
                     ? "bg-[#1e293b]/50 border-[#1e293b] text-[#64748b] cursor-not-allowed"
                     : "bg-[#0c0516] text-[#a855f7] border-[#a855f7] hover:bg-[#a855f7] hover:text-black"

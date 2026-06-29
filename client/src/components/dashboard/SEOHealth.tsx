@@ -46,7 +46,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-3xl font-bold text-white">{seoScore}</span>
-                <span className="text-[8px] uppercase tracking-widest text-[#64748b]">/ 100</span>
+                <span className="text-[12px] uppercase tracking-widest text-[#64748b]">/ 100</span>
               </div>
             </div>
             
@@ -61,7 +61,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
                   Data Not Available. You must run a full AI SEO Audit to populate this score.
                 </p>
               )}
-              <button className="px-4 py-2 mt-3 bg-[#3b82f6]/10 border border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6] hover:text-black text-[9px] font-bold uppercase tracking-widest transition-colors rounded-xl">
+              <button className="px-4 py-2 mt-3 bg-[#3b82f6]/10 border border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6] hover:text-black text-[12px] font-bold uppercase tracking-widest transition-colors rounded-xl">
                 Run Full Audit
               </button>
             </div>
@@ -69,33 +69,33 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl space-y-3">
-              <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Response Rate</span>
+              <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Response Rate</span>
               <div className="flex justify-between items-end">
                 <span className="text-2xl font-semibold text-[#10b981]">{seoStats?.response_rate || 0}%</span>
                 <div className="text-right">
                   <span className="text-[10px] text-[#10b981] flex items-center justify-end gap-1 font-bold">
                     <ArrowUp className="w-3 h-3" />
                   </span>
-                  <span className="text-[9px] text-[#64748b]">Industry avg: 25%</span>
+                  <span className="text-[12px] text-[#64748b]">Industry avg: 25%</span>
                 </div>
               </div>
             </div>
 
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl space-y-3">
-              <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Review Velocity</span>
+              <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Review Velocity</span>
               <div className="flex justify-between items-end">
                 <span className="text-2xl font-semibold text-[#f43f5e]">{seoStats?.review_velocity || 0} <span className="text-sm text-[#64748b] font-normal">/ 30d</span></span>
                 <div className="text-right">
                   <span className="text-[10px] text-[#f43f5e] flex items-center justify-end gap-1 font-bold">
                     <Activity className="w-3 h-3" />
                   </span>
-                  <span className="text-[9px] text-[#64748b]">Past 30 days</span>
+                  <span className="text-[12px] text-[#64748b]">Past 30 days</span>
                 </div>
               </div>
             </div>
 
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl space-y-3">
-              <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Average Rating</span>
+              <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Average Rating</span>
               <div className="flex justify-between items-end">
                 <span className="text-2xl font-semibold text-white">{seoStats?.average_rating || "0.0"} <span className="text-sm text-[#f59e0b] font-normal">★</span></span>
                 <div className="text-right">
@@ -107,7 +107,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
             </div>
 
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl space-y-3">
-              <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Profile Completeness</span>
+              <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block border-b border-[#1e293b] pb-2">Profile Completeness</span>
               <div className="flex justify-between items-end">
                 <span className="text-2xl font-semibold text-[#f59e0b]">{seoStats?.profile_completeness || 0}%</span>
                 <div className="text-right">
@@ -126,7 +126,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
             <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold flex items-center gap-1.5 border-b border-[#1e293b] pb-3 mb-4">
               <Search className="w-3.5 h-3.5 text-[#3b82f6]" /> Keyword Appearances
             </span>
-            <p className="text-[9px] text-[#94a3b8] mb-4 leading-snug">
+            <p className="text-[12px] text-[#94a3b8] mb-4 leading-snug">
               Google boosts your ranking for these terms when users search for them locally because they frequently appear in your reviews.
             </p>
             
@@ -145,7 +145,7 @@ export default function SEOHealth({ auditStatus = {}, seoStats = {}, insights = 
                 </div>
               )) : (
                 <div className="p-4 text-center border border-[#1e293b] bg-[#1e293b]/10">
-                  <span className="text-[9px] text-[#64748b] font-bold uppercase tracking-widest">No keyword data yet</span>
+                  <span className="text-[12px] text-[#64748b] font-bold uppercase tracking-widest">No keyword data yet</span>
                 </div>
               )}
             </div>

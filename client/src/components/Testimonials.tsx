@@ -217,10 +217,10 @@ export default function Testimonials() {
                   <div className="w-10 h-10 rounded-full bg-[var(--foreground)] text-[var(--background)] flex items-center justify-center font-bold text-sm mb-1.5 relative z-20 transition-colors duration-300">
                     {item.id}
                   </div>
-                  <h5 className="text-[9px] font-bold text-[var(--foreground)] relative z-20 leading-tight truncate w-full transition-colors duration-300">
+                  <h5 className="text-[12px] font-bold text-[var(--foreground)] relative z-20 leading-tight truncate w-full transition-colors duration-300">
                     {item.name}
                   </h5>
-                  <span className="text-[7.5px] text-[var(--text-muted)] relative z-20 block truncate w-full transition-colors duration-300">
+                  <span className="text-[12px] text-[var(--text-muted)] relative z-20 block truncate w-full transition-colors duration-300">
                     {item.location}
                   </span>
                 </div>
@@ -241,7 +241,7 @@ export default function Testimonials() {
                         <span className="text-xs font-bold text-[var(--foreground)] block leading-none transition-colors duration-300">
                           {metric.value}
                         </span>
-                        <span className="text-[8px] text-[var(--text-dim)] uppercase block mt-1 leading-none transition-colors duration-300">
+                        <span className="text-[12px] text-[var(--text-dim)] uppercase block mt-1 leading-none transition-colors duration-300">
                           {metric.label}
                         </span>
                       </div>

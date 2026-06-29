@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Sparkles, ArrowUpRight, Star, LayoutDashboard, ShieldAlert } from "lucide-react";
+import OrbitalBackground from "@/components/ui/OrbitalBackground";
 
 export default function HeroSection() {
   return (
@@ -71,9 +72,7 @@ export default function HeroSection() {
         <div className="relative w-full max-w-[600px] aspect-square flex items-center justify-center mx-auto lg:ml-auto lg:mr-0">
           
           {/* Orbital Rings Background */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[750px] aspect-square border border-white/[0.04] rounded-full pointer-events-none" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[550px] aspect-square border border-white/[0.08] rounded-full border-dashed animate-spin-slow pointer-events-none" style={{ animationDuration: '50s' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[350px] aspect-square border border-[var(--brand-purple-text)]/10 rounded-full animate-spin-slow pointer-events-none" style={{ animationDirection: 'reverse', animationDuration: '40s' }} />
+          <OrbitalBackground />
 
           {/* Central Skewed Dashboard Image */}
           <div 
@@ -101,10 +100,10 @@ export default function HeroSection() {
               <div className="liquid-glass-card dot-grid p-4 w-[165px] hover:scale-[1.08] transition-all duration-300 cursor-pointer shadow-2xl flex flex-col justify-between backdrop-blur-md bg-[#05010a]/60">
                 <div className="liquid-glass-glow" />
                 <div className="relative z-10 space-y-2.5 text-left">
-                  <span className="text-[8.5px] uppercase tracking-wider text-[var(--text-dim)] font-semibold block">Audit Score</span>
+                  <span className="text-[12px] uppercase tracking-wider text-[var(--text-dim)] font-semibold block">Audit Score</span>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-2xl font-extrabold text-[var(--foreground)] leading-none font-display">B+</span>
-                    <span className="text-[9.5px] text-[var(--brand-purple-text)] font-mono font-bold">78/100</span>
+                    <span className="text-[12px] text-[var(--brand-purple-text)] font-mono font-bold">78/100</span>
                   </div>
                   <div className="w-full bg-[var(--brand-border)] h-1.5 rounded-full overflow-hidden">
                     <div className="bg-gradient-to-r from-[#9d4edd] to-[#c77dff] h-full w-[78%] rounded-full shadow-[0_0_8px_rgba(157,78,221,0.5)] animate-pulse" />
@@ -123,12 +122,12 @@ export default function HeroSection() {
               <div className="liquid-glass-card dot-grid p-4 w-[175px] hover:scale-[1.08] transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md bg-[#05010a]/60">
                 <div className="liquid-glass-glow" />
                 <div className="relative z-10 text-left space-y-2 text-xs flex flex-col justify-between h-full">
-                  <div className="flex items-center gap-1.5 text-[8.5px] text-[var(--brand-purple-text)] font-bold uppercase tracking-wider">
+                  <div className="flex items-center gap-1.5 text-[12px] text-[var(--brand-purple-text)] font-bold uppercase tracking-wider">
                     <Sparkles className="w-3 h-3 text-[var(--brand-purple-text)] animate-pulse" />
                     Campaign Active
                   </div>
                   <p className="text-[10px] text-[var(--foreground)] leading-snug font-bold">SORRY20 • 20% off Next Visit</p>
-                  <div className="text-[8.5px] bg-[var(--brand-purple-text)]/10 border border-[var(--brand-purple-text)]/20 py-1 rounded text-[var(--brand-purple-text)] font-mono text-center uppercase tracking-wider font-bold shadow-sm">
+                  <div className="text-[12px] bg-[var(--brand-purple-text)]/10 border border-[var(--brand-purple-text)]/20 py-1 rounded text-[var(--brand-purple-text)] font-mono text-center uppercase tracking-wider font-bold shadow-sm">
                     Auto-Recovery
                   </div>
                 </div>
@@ -145,14 +144,14 @@ export default function HeroSection() {
               <div className="liquid-glass-card dot-grid p-4 w-[165px] hover:scale-[1.08] transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md bg-[#05010a]/60">
                 <div className="liquid-glass-glow" />
                 <div className="relative z-10 text-left space-y-1 text-xs">
-                  <span className="text-[8.5px] uppercase tracking-wider text-[var(--text-dim)] block font-semibold">Customer Rating</span>
+                  <span className="text-[12px] uppercase tracking-wider text-[var(--text-dim)] block font-semibold">Customer Rating</span>
                   <div className="text-2xl font-extrabold text-[var(--foreground)] font-display leading-none">4.8</div>
                   <div className="flex text-amber-400 gap-0.5 pt-1">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star key={s} className="w-3 h-3 fill-current" />
                     ))}
                   </div>
-                  <span className="text-[8.5px] text-[var(--text-muted)] block font-light pt-1">342 reviews imported</span>
+                  <span className="text-[12px] text-[var(--text-muted)] block font-light pt-1">342 reviews imported</span>
                 </div>
               </div>
             </div>
@@ -169,10 +168,10 @@ export default function HeroSection() {
                 <div className="relative z-10 text-left space-y-2 text-xs">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_#ef4444]" />
-                    <span className="text-[8.5px] text-red-500 font-bold uppercase tracking-wider">CRITICAL ALARM</span>
+                    <span className="text-[12px] text-red-500 font-bold uppercase tracking-wider">CRITICAL ALARM</span>
                   </div>
-                  <p className="text-[9.5px] text-[var(--text-muted)] font-light leading-snug italic">"Staff was unattentive, waited 20m."</p>
-                  <span className="text-[8.5px] text-[var(--text-dim)] block font-mono">Service Area A • Floor Alert</span>
+                  <p className="text-[12px] text-[var(--text-muted)] font-light leading-snug italic">"Staff was unattentive, waited 20m."</p>
+                  <span className="text-[12px] text-[var(--text-dim)] block font-mono">Service Area A • Floor Alert</span>
                 </div>
               </div>
             </div>

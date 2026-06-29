@@ -112,6 +112,7 @@ class ReviewTriageAgent:
 
         # CRM Update & Milestone Logic
         give_reward = False
+        customer_id = None
         if phone:
             existing_cust = await db.find_one("customers", {"phone": phone, "business_id": business_id})
             
@@ -119,11 +120,12 @@ class ReviewTriageAgent:
             inc_bad = 1 if rating <= 3 else 0
             
             if existing_cust:
+                customer_id = existing_cust.get("id")
                 new_good = existing_cust.get("good_reviews_count", 0) + inc_good
                 new_bad = existing_cust.get("bad_reviews_count", 0) + inc_bad
                 new_total = existing_cust.get("total_reviews_count", 0) + 1
                 
-                set_fields = {"segment": structured_triage.segment, "last_visit": datetime.now(timezone.utc).isoformat()}
+                set_fields = {"segment": structured_triage.segment, "last_visit": datetime.now(timezone.utc)}
                 if birthdate:
                     set_fields["birthdate"] = birthdate
                     
@@ -152,7 +154,7 @@ class ReviewTriageAgent:
                     "phone": phone,
                     "business_id": business_id,
                     "visit_count": 1,
-                    "last_visit": datetime.now(timezone.utc).isoformat(),
+                    "last_visit": datetime.now(timezone.utc),
                     "segment": structured_triage.segment,
                     "good_reviews_count": inc_good,
                     "bad_reviews_count": inc_bad,
@@ -161,7 +163,8 @@ class ReviewTriageAgent:
                 if birthdate:
                     new_cust["birthdate"] = birthdate
                     
-                await db.insert_one("customers", new_cust)
+                created_cust = await db.insert_one("customers", new_cust)
+                customer_id = created_cust.get("id")
                 give_reward = True  # First review gets a reward!
         else:
             # Without phone number to track, default to giving reward for first time only visually
@@ -192,6 +195,8 @@ class ReviewTriageAgent:
         }
         if structured_triage.apology_draft:
             update_fields["ai_apology_draft"] = structured_triage.apology_draft
+        if customer_id:
+            update_fields["customer_id"] = customer_id
 
         await db.update_one("reviews", {"id": review_id}, {"$set": update_fields})
 

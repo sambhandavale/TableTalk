@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReviewCard from "./ReviewCard";
 import { AlertTriangle, MessageSquare, Search, Filter } from "lucide-react";
 import CustomSelect from "@/components/ui/CustomSelect";
+import { api } from "@/lib/api";
 
 interface ReviewPanelProps {
-  reviews: any[];
+  businessSlug: string;
   sourceFilter: string;
   title: string;
   subtitle: string;
@@ -14,7 +15,7 @@ interface ReviewPanelProps {
 }
 
 export default function ReviewPanel({ 
-  reviews, 
+  businessSlug, 
   sourceFilter, 
   title, 
   subtitle, 
@@ -23,11 +24,47 @@ export default function ReviewPanel({
   children 
 }: ReviewPanelProps) {
 
+  const [reviewsList, setReviewsList] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [starFilter, setStarFilter] = useState("All");
 
-  let filteredReviews = reviews.filter(r => r.source === sourceFilter || sourceFilter === "all");
+  useEffect(() => {
+    setReviewsList([]);
+    setPage(1);
+    fetchReviews(1, true);
+  }, [sourceFilter, businessSlug]);
+
+  const fetchReviews = async (pageNum: number, reset = false) => {
+    setIsLoading(true);
+    try {
+      const data = await api.getReviews(businessSlug, pageNum, 20, sourceFilter);
+      if (reset) {
+        setReviewsList(data.items || []);
+      } else {
+        setReviewsList(prev => [...prev, ...(data.items || [])]);
+      }
+      setTotal(data.total || 0);
+      setHasMore(data.items && data.items.length === 20);
+    } catch (err) {
+      console.error("Failed to load reviews:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchReviews(nextPage);
+  };
+
+  let filteredReviews = reviewsList;
 
   const unansweredCount = filteredReviews.filter(r => !r.owner_approved_reply && !r.final_reply_content).length;
 
@@ -73,7 +110,7 @@ export default function ReviewPanel({
 
           <div className="px-2 py-1 border border-[#1e293b] text-[10px] font-semibold text-[#94a3b8] flex items-center gap-1 rounded-xl bg-[#0c0516]">
             <MessageSquare className="w-3 h-3" />
-            {filteredReviews.length - unansweredCount} / {filteredReviews.length} Replied
+            {total - unansweredCount} / {total} Replied
           </div>
         </div>
 
@@ -124,7 +161,7 @@ export default function ReviewPanel({
         </div>
 
         {/* Review List */}
-        {filteredReviews.length === 0 ? (
+        {filteredReviews.length === 0 && !isLoading ? (
           <div className="p-8 border border-[#1e293b] border-dashed rounded-xl text-center space-y-2 mt-2 bg-[#1e293b]/10">
             <AlertTriangle className="mx-auto w-6 h-6 text-[#64748b]" />
             <h4 className="text-xs font-semibold text-[var(--foreground)]">No reviews match filters</h4>
@@ -141,6 +178,21 @@ export default function ReviewPanel({
                 onApprove={onApprove} 
               />
             ))}
+            
+            {isLoading && (
+              <div className="text-center py-4 text-xs text-[#64748b] animate-pulse">
+                Loading reviews...
+              </div>
+            )}
+            
+            {hasMore && !isLoading && (
+              <button 
+                onClick={handleLoadMore}
+                className="w-full py-2.5 mt-2 bg-[#1e293b]/50 hover:bg-[#1e293b] text-xs font-bold text-white border border-[#1e293b] rounded-xl transition-colors cursor-pointer"
+              >
+                Load More
+              </button>
+            )}
           </div>
         )}
       </div>

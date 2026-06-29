@@ -1,12 +1,12 @@
-from pydantic import BaseModel
-from typing import List, Optional
+from pydantic import BaseModel, Field
+from typing import List, Optional, Literal
 
 class QRReviewSubmitRequest(BaseModel):
     restaurant_slug: str
-    rating: int
+    rating: int = Field(ge=1, le=5)
     text: str
     ordered_items: List[str]
-    visitor_type: str  # "first-time" | "returning"
+    visitor_type: Literal["first-time", "returning"]
     diner_name: Optional[str] = "Anonymous"
     diner_phone: Optional[str] = None
     diner_email: Optional[str] = None

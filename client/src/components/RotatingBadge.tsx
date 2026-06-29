@@ -13,7 +13,7 @@ export default function RotatingBadge() {
         </p>
 
         <div className="relative flex items-center justify-center w-28 h-28 mx-auto">
-          <div className="absolute w-full h-full animate-[spin_12s_linear_infinite] select-none text-[7px] font-mono tracking-widest text-[var(--color-brand-purple)]">
+          <div className="absolute w-full h-full animate-[spin_12s_linear_infinite] select-none text-[12px] font-mono tracking-widest text-[var(--color-brand-purple)]">
             <svg className="w-full h-full" viewBox="0 0 100 100">
               <path
                 id="badgePath"

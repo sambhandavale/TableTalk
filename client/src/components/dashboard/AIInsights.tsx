@@ -25,14 +25,8 @@ import {
 } from "recharts";
 
 export default function AIInsights({ insights, onRefresh, isRefreshing, mode }: any) {
-  const titleMap: Record<string, string> = {
-    daily: "Daily Intelligence Report",
-    weekly: "Weekly Intelligence Report",
-    monthly: "Monthly Intelligence Report",
-    all: "All-Time Intelligence Report"
-  };
-  const reportTitle = titleMap[mode] || titleMap.all;
-  const trendLabel = mode === "daily" ? "7 Days" : mode === "weekly" ? "8 Weeks" : mode === "monthly" ? "6 Months" : "All Time";
+  const reportTitle = "Live Intelligence Report";
+  const trendLabel = "Historical Trend";
   
   if (!insights) {
     return (
@@ -141,7 +135,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing, mode }: 
         <div className="lg:col-span-8 bg-[#0c0516] border border-[#1e293b] p-4 flex flex-col space-y-4 rounded-xl">
           <div className="flex justify-between items-center pb-2 border-b border-[#1e293b]">
             <span className="text-xs font-semibold text-[var(--foreground)]">Health Score Trend</span>
-            <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">{trendLabel}</span>
+            <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold">{trendLabel}</span>
           </div>
           <div className="flex-1 min-h-[220px] w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
@@ -179,7 +173,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing, mode }: 
             </div>
             <div className="w-full flex justify-center gap-4 mt-2">
               {sentimentData.map((s, idx) => (
-                <div key={idx} className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-[#64748b]">
+                <div key={idx} className="flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-widest text-[#64748b]">
                   <div className="w-1.5 h-1.5" style={{backgroundColor: s.color}} />
                   {s.name}
                 </div>
@@ -221,14 +215,14 @@ export default function AIInsights({ insights, onRefresh, isRefreshing, mode }: 
             <span className="text-[10px] uppercase tracking-widest text-[#64748b] font-bold border-b border-[#1e293b] pb-2 mb-3 block">Menu Performance</span>
             
             <div className="mb-4">
-              <div className="flex items-center gap-1.5 mb-1 text-[9px] text-[#10b981] uppercase tracking-widest font-bold">
+              <div className="flex items-center gap-1.5 mb-1 text-[12px] text-[#10b981] uppercase tracking-widest font-bold">
                 <ThumbsUp className="w-3 h-3" /> Best Reviewed
               </div>
               <span className="text-xs font-semibold text-white break-words leading-snug block">{bestDish}</span>
             </div>
             
             <div>
-              <div className="flex items-center gap-1.5 mb-1 text-[9px] text-[#f43f5e] uppercase tracking-widest font-bold">
+              <div className="flex items-center gap-1.5 mb-1 text-[12px] text-[#f43f5e] uppercase tracking-widest font-bold">
                 <ThumbsDown className="w-3 h-3" /> Worst Reviewed
               </div>
               <span className="text-xs font-semibold text-white break-words leading-snug block">{worstDishName}</span>
@@ -242,7 +236,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing, mode }: 
           <div>
             <div className="flex items-center justify-between border-b border-[#1e293b] pb-2 mb-4">
               <span className="text-[11px] uppercase tracking-widest text-[#a855f7] font-bold">Actionable AI Suggestions</span>
-              <span className="text-[9px] uppercase tracking-widest text-[#64748b]">Prioritized</span>
+              <span className="text-[12px] uppercase tracking-widest text-[#64748b]">Prioritized</span>
             </div>
             
             <div className="space-y-4">
@@ -259,7 +253,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing, mode }: 
                         <AlertTriangle className="w-4 h-4 text-[#f59e0b]" /> {action.title || "Recommendation"}
                       </div>
                       {action.priority && (
-                        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm border ${priorityColor} w-max`}>
+                        <span className={`text-[12px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm border ${priorityColor} w-max`}>
                           {action.priority} Priority
                         </span>
                       )}
@@ -275,7 +269,7 @@ export default function AIInsights({ insights, onRefresh, isRefreshing, mode }: 
                           <div key={cidx} className="bg-[#0f172a] p-3 rounded-sm border border-[#1e293b] relative overflow-hidden group">
                             <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#a855f7]/60 group-hover:bg-[#a855f7] transition-colors"></div>
                             <p className="text-[12px] text-[#94a3b8] italic">"{cite.quote}"</p>
-                            <div className="mt-2 text-[9px] text-[#475569] uppercase tracking-widest font-semibold flex items-center justify-between">
+                            <div className="mt-2 text-[12px] text-[#475569] uppercase tracking-widest font-semibold flex items-center justify-between">
                               <span>Source Review Citation</span>
                               <span className="font-mono bg-[#1e293b] px-1.5 py-0.5 rounded">ID: {cite.review_id.slice(0, 8)}...</span>
                             </div>

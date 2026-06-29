@@ -13,6 +13,7 @@ import {
   TrendingUp,
   LayoutDashboard,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -21,6 +22,7 @@ export default function SignInPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState("");
   const [success, setSuccess] = useState(false);
+  const { login } = useAuth();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -57,15 +59,8 @@ export default function SignInPage() {
 
       // Write session details to storage
       if (typeof window !== "undefined") {
-        localStorage.setItem(
-          "tabletalk_restaurant_id",
-          data.business?.id || "",
-        );
-        localStorage.setItem(
-          "tabletalk_restaurant_slug",
-          data.business?.slug || "",
-        );
-        localStorage.setItem("tabletalk_user_email", data.user?.email || email);
+        document.cookie = `tabletalk_session=true; path=/; max-age=86400; SameSite=Lax`;
+        login(data.user?.email || email, data.business?.id || "", data.business?.slug || "");
       }
 
       setSuccess(true);
@@ -133,7 +128,7 @@ export default function SignInPage() {
               <span className="text-[18px] font-extrabold text-[var(--foreground)] block">
                 98%
               </span>
-              <span className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider block mt-1 font-semibold">
+              <span className="text-[12px] text-[var(--text-dim)] uppercase tracking-wider block mt-1 font-semibold">
                 Diners Retained
               </span>
             </div>
@@ -141,7 +136,7 @@ export default function SignInPage() {
               <span className="text-[18px] font-extrabold text-[var(--foreground)] block">
                 +45%
               </span>
-              <span className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider block mt-1 font-semibold">
+              <span className="text-[12px] text-[var(--text-dim)] uppercase tracking-wider block mt-1 font-semibold">
                 Maps SEO growth
               </span>
             </div>

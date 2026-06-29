@@ -61,7 +61,7 @@ async def scrape_real_google_reviews(maps_url: str) -> List[Dict[str, Any]]:
                         diner_name = r.get("name", f"Google Diner #{idx+1}")
                         text_content = r.get("text", "")
                         rating = int(r.get("stars", r.get("rating", 5)))
-                        timestamp = r.get("publishedAtDate", datetime.now(timezone.utc).isoformat())
+                        timestamp = r.get("publishedAtDate", datetime.now(timezone.utc))
                         owner_reply = r.get("responseFromOwnerText")
                         
                         review_obj = {

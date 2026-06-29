@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 from app.database import db
 import json
 from ai_workflow.services.llm_service import llm_service
-from ai_workflow.services.cache_service import cache_service
 from ai_workflow.services.embedding_service import embedding_service
 from ai_workflow.schemas.analysis import AIInsightsOutput
 from ai_workflow.prompts.analysis_prompts import ANALYSIS_SYSTEM_PROMPT
@@ -16,52 +15,37 @@ class PatternAnalysisAgent:
         """Runs Agent 3 (Pattern Finder) and Agent 4 (Action Recommendations) in unison using RAG."""
         logger.info(f"Firing Analysis Agents for Business {business_id} in Mode: {mode}")
         
-        # 1. Fetch all reviews for this business
-        all_reviews = await db.get_collection("reviews")
-        restaurant_reviews = [r for r in all_reviews if r.get("business_id") == business_id]
-        
-        if not restaurant_reviews:
-            logger.warning(f"No reviews found to analyze for {business_id}")
-            return {
-                "business_id": business_id,
-                "mode": mode,
-                "generated_date": datetime.now(timezone.utc).isoformat(),
-                "health_trend": [],
-                "sentiment": {"positive": 0, "neutral": 0, "negative": 0},
-                "themes": {"praised": [], "complaints": [], "temporal_trends": ""},
-                "health_score": 0,
-                "action_items": []
-            }
-
-        # Filter reviews based on mode
         now = datetime.now(timezone.utc)
         from datetime import timedelta
         if mode == "daily":
             window_start = now - timedelta(hours=24)
         elif mode == "weekly":
             window_start = now - timedelta(days=7)
-        elif mode == "monthly":
+        elif mode in ["monthly", "unified"]:
             window_start = now - timedelta(days=30)
         else:
             window_start = None
 
-        new_reviews = []
-        for r in restaurant_reviews:
-            r_time_str = r.get("timestamp", r.get("created_at", ""))
-            try:
-                t = datetime.fromisoformat(r_time_str.replace("Z", "+00:00"))
-                if t.tzinfo is None:
-                    t = t.replace(tzinfo=timezone.utc)
-                if window_start is None or t >= window_start:
-                    new_reviews.append(r)
-            except (ValueError, TypeError, AttributeError):
-                if window_start is None:
-                    new_reviews.append(r)
-                    
-        if not new_reviews:
-            logger.info(f"No reviews in {mode} window for {business_id}")
-            return None
+        query = {"business_id": business_id}
+        if window_start:
+            query["timestamp"] = {"$gte": window_start}
 
+        # 1. Fetch reviews for this business in the window
+        new_reviews = await db.find_many("reviews", query, limit=1000)
+        
+        if not new_reviews:
+            logger.warning(f"No reviews found to analyze for {business_id} in mode {mode}")
+            return {
+                "business_id": business_id,
+                "mode": mode,
+                "generated_date": datetime.now(timezone.utc),
+                "health_trend": [],
+                "sentiment": {"positive": 0, "neutral": 0, "negative": 0},
+                "themes": {"praised": [], "complaints": [], "temporal_trends": ""},
+                "health_score": 0,
+                "action_items": []
+            }
+                    
         # RAG Clustering to extract exemplars for the specific time window
         if len(new_reviews) > 10:
             logger.info(f"Clustering {len(new_reviews)} reviews to extract 10 diverse exemplars for {mode} mode...")
@@ -102,9 +86,17 @@ class PatternAnalysisAgent:
 
         logger.info(f"Processing {len(new_reviews)} exemplar reviews to generate {mode} insights for {business_id}...")
 
+        # Fetch Historical Baseline (the 'all' mode report)
+        baseline_report = None
+        if mode != "all":
+            all_insights = await db.get_collection("insights")
+            baseline_insights = [i for i in all_insights if i.get("business_id") == business_id and i.get("mode") == "all"]
+            if baseline_insights:
+                baseline_report = sorted(baseline_insights, key=lambda x: x.get("generated_date", ""), reverse=True)[0]
+
         # Base fallback logic in case LLM fails
-        total = len(restaurant_reviews)
-        ratings = [r["rating"] for r in restaurant_reviews]
+        total = len(new_reviews)
+        ratings = [r["rating"] for r in new_reviews]
         avg_rating = sum(ratings) / total if total > 0 else 0
         health_score = int(avg_rating * 20)
         
@@ -124,9 +116,19 @@ class PatternAnalysisAgent:
             seo_insights={"descriptive_text": "Unable to generate dynamic SEO analysis due to low review volume or API error.", "trending_keywords": []}
         )
 
-        current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        current_time = datetime.now(timezone.utc)
 
-        prompt = f"Analyze for Business ID: {business_id} over the time window: {mode}\n\n"
+        prompt = f"Analyze for Business ID: {business_id}\n"
+        prompt += f"Time Window: {mode.upper()}\n\n"
+        
+        if baseline_report:
+            prompt += f"--- HISTORICAL BASELINE ---\n"
+            prompt += json.dumps({
+                "health_score": baseline_report.get("health_score"),
+                "sentiment": baseline_report.get("sentiment"),
+                "themes": baseline_report.get("themes")
+            }, indent=2) + "\n\n"
+            
         prompt += f"--- {mode.upper()} REVIEWS ({len(new_reviews)} exemplars) ---\n"
         for r in new_reviews:
             prompt += f"- ID: {r.get('id', str(r.get('_id', '')))}, Timestamp: {r.get('timestamp')}, Rating: {r.get('rating')}, Text: {r.get('text', 'No text')}, Items: {r.get('ordered_items', [])}\n"

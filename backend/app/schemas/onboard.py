@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 
 class BusinessOnboardRequest(BaseModel):
-    email: str
+    email: EmailStr
     password: str
     name: str
     cuisine: str
@@ -23,9 +23,37 @@ class BusinessProfileUpdateRequest(BaseModel):
     valet_parking: Optional[bool] = False
     seating_capacity: Optional[int] = 60
     has_incentives: Optional[bool] = False
-    coupons: Optional[list] = []
+    coupons: list = Field(default_factory=list)
 
 class UserLoginRequest(BaseModel):
-    email: str
+    email: EmailStr
     password: str
+
+class AccountResponse(BaseModel):
+    email: str
+    role: str
+    owner_contact: str
+
+class BusinessResponse(BaseModel):
+    id: Optional[str] = None
+    name: str
+    slug: str
+    cuisine: str
+    location: str
+    maps_url: str
+
+class OnboardResponse(BaseModel):
+    message: str
+    business: dict
+    account: AccountResponse
+    access_token: str
+    token_type: str
+    wow_moment_ready: bool
+
+class LoginResponse(BaseModel):
+    message: str
+    user: AccountResponse
+    business: BusinessResponse
+    access_token: str
+    token_type: str
 

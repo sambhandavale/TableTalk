@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Sora, League_Gothic } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -29,7 +30,7 @@ export default function RootLayout({
       className={`${sora.variable} ${leagueGothic.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-[#0b0c10] text-gray-100 font-sans">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

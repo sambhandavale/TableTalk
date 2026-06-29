@@ -1,7 +1,7 @@
-import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.middleware import RateLimitingMiddleware
 
 from app.database import db
 from app.core.config import settings
@@ -24,14 +24,22 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+from app.core.logging import CorrelationIdMiddleware, setup_logging
+
+setup_logging()
+
 # Configure CORS for Next.js frontend communication
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For hackathon simplicity; adjust in production
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(RateLimitingMiddleware)
+app.add_middleware(CorrelationIdMiddleware)
+
 
 # Root API router
 api_router = APIRouter(prefix="/api")
@@ -55,5 +63,3 @@ async def health_check():
         "database_type": "MongoDB" if db.is_mongodb_connected else "Local File JSON (Resilient Fallback)"
     }
 
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

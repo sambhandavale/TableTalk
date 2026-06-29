@@ -97,7 +97,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-5">
               <div className="space-y-1.5">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Target AI Segment</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block">Target AI Segment</label>
                 <CustomSelect 
                   value={targetSegment}
                   onChange={setTargetSegment}
@@ -108,11 +108,11 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
                   ]}
                   className="w-full px-3 py-2 bg-[#1e293b]/20 border border-[#1e293b] text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-xl"
                 />
-                <span className="text-[9px] text-[#10b981] font-semibold mt-1 block">142 Diners match this segment</span>
+                <span className="text-[12px] text-[#10b981] font-semibold mt-1 block">142 Diners match this segment</span>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Campaign Channel</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block">Campaign Channel</label>
                 <div className="flex bg-[#1e293b]/20 border border-[#1e293b] p-1">
                   <button
                     onClick={() => setCampaignType("sms")}
@@ -131,7 +131,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
 
               {campaignType === 'sms' ? (
                 <div className="space-y-1.5">
-                  <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Message Template (SMS)</label>
+                  <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block">Message Template (SMS)</label>
                   <textarea 
                     value={messageTemplate}
                     onChange={(e) => setMessageTemplate(e.target.value)}
@@ -140,7 +140,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
                 </div>
               ) : (
                 <div className="space-y-1.5">
-                  <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Email Template</label>
+                  <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block">Email Template</label>
                   <CustomSelect 
                     value={emailTemplateId}
                     onChange={setEmailTemplateId}
@@ -151,7 +151,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
               )}
 
               <div className="space-y-1.5">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Scheduling</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block">Scheduling</label>
                 <CustomSelect 
                   value={scheduleType}
                   onChange={setScheduleType}
@@ -173,7 +173,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">Attach Incentive (Optional)</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block">Attach Incentive (Optional)</label>
                 <CustomSelect 
                   value={selectedCouponCode}
                   onChange={setSelectedCouponCode}
@@ -238,7 +238,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
             </div>
 
             <div className="flex flex-col items-center justify-center bg-[#1e293b]/10 border border-[#1e293b] p-6 relative">
-              <span className="absolute top-2 left-3 text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Live Preview</span>
+              <span className="absolute top-2 left-3 text-[12px] uppercase tracking-widest text-[#64748b] font-bold">Live Preview</span>
               <div className="w-full flex justify-center mt-6">
                 {campaignType === 'sms' ? (
                   <div className="w-[200px] h-[340px] border-4 border-[#1e293b] rounded-3xl bg-[#0c0516] flex flex-col overflow-hidden shadow-2xl">
@@ -258,7 +258,7 @@ export default function RetentionCampaigns({ campaigns: initialCampaigns = [], b
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
                         <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
                       </div>
-                      <div className="text-[9px] text-[#64748b] font-medium flex-1 text-center bg-white px-2 py-0.5 rounded border border-[#e2e8f0]">
+                      <div className="text-[12px] text-[#64748b] font-medium flex-1 text-center bg-white px-2 py-0.5 rounded border border-[#e2e8f0]">
                         {emailTemplates.find(t => t.id === emailTemplateId)?.subject.replace(/{Name}/g, "Ananya") || "Subject"}
                       </div>
                     </div>

@@ -89,7 +89,7 @@ export default function Recommendations({ insights, reviews = [] }: any) {
                 >
                   {rec.action} <ArrowRight className="w-3 h-3" />
                 </button>
-                <p className="text-[9px] text-[#64748b] mt-3 uppercase tracking-widest font-semibold text-center hidden sm:block">
+                <p className="text-[12px] text-[#64748b] mt-3 uppercase tracking-widest font-semibold text-center hidden sm:block">
                   {rec.source_review_ids.length} Source{rec.source_review_ids.length !== 1 ? 's' : ''}
                 </p>
               </div>

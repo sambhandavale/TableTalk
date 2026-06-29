@@ -390,7 +390,7 @@ export default function ProfilePage() {
                     >
                       <div>
                         <span className="text-xs font-bold text-[var(--foreground)] block">Pure Vegetarian</span>
-                        <span className="text-[9px] text-[var(--text-dim)] block mt-0.5">Outlet serves no meat concepts</span>
+                        <span className="text-[12px] text-[var(--text-dim)] block mt-0.5">Outlet serves no meat concepts</span>
                       </div>
                       <div className={`w-4 h-4 rounded-full border transition-all ${
                         formData.is_pure_veg ? "bg-[var(--brand-purple-text)] border-[var(--brand-purple-text)]" : "bg-transparent border-[var(--orb-border)]"
@@ -408,7 +408,7 @@ export default function ProfilePage() {
                     >
                       <div>
                         <span className="text-xs font-bold text-[var(--foreground)] block">Valet Parking Served</span>
-                        <span className="text-[9px] text-[var(--text-dim)] block mt-0.5">Complimentary parking for VIPs</span>
+                        <span className="text-[12px] text-[var(--text-dim)] block mt-0.5">Complimentary parking for VIPs</span>
                       </div>
                       <div className={`w-4 h-4 rounded-full border transition-all ${
                         formData.valet_parking ? "bg-[var(--brand-purple-text)] border-[var(--brand-purple-text)]" : "bg-transparent border-[var(--orb-border)]"
@@ -466,7 +466,7 @@ export default function ProfilePage() {
                         disabled
                       />
                     </div>
-                    <span className="text-[9px] text-[var(--text-dim)] block">
+                    <span className="text-[12px] text-[var(--text-dim)] block">
                       Google maps node scraping links are set during onboarding and cannot be altered once initial audit indexes are compiled.
                     </span>
                   </div>

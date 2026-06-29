@@ -26,4 +26,4 @@ class BusinessDB(BaseModel):
 
     # Incentive Programs (Rewards & Coupons)
     has_incentives: Optional[bool] = False
-    coupons: Optional[list] = []
+    coupons: Optional[list] = Field(default_factory=list)

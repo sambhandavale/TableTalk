@@ -6,6 +6,6 @@ class CouponDB(BaseModel):
     business_id: str
     discount_amount: str
     coupon_code: str
-    quantity: Optional[str] = ""
+    quantity: Optional[int] = None
     target_sentiment: Optional[str] = "all"
     is_active: Optional[bool] = True

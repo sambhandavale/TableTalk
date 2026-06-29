@@ -16,7 +16,7 @@ const modes = [
 export default function ModeSelector({ activeMode, onModeChange }: ModeSelectorProps) {
   return (
     <div className="flex items-center gap-3 mb-4">
-      <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold">
+      <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold">
         VIEW MODE
       </span>
       <div className="inline-flex items-center gap-1 p-1 bg-[#0c0516] border border-[#1e293b] rounded-xl">

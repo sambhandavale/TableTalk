@@ -37,7 +37,7 @@ async def process_campaign(campaign):
         print(f"[{datetime.now().strftime('%H:%M:%S')}] ✅ CAMPAIGN {campaign['id']} COMPLETED!\n")
 
     # Mark as completed
-    await db.update_one("campaigns", {"id": campaign["id"]}, {"status": "completed"})
+    await db.update_one("campaigns", {"id": campaign["id"]}, {"$set": {"status": "completed"}})
 
 
 async def campaign_cron_loop():
@@ -45,7 +45,7 @@ async def campaign_cron_loop():
     while True:
         try:
             campaigns = await db.get_collection("campaigns")
-            now = datetime.now(timezone.utc).isoformat()
+            now = datetime.now(timezone.utc)
             
             for c in campaigns:
                 if c.get("status") == "pending" and c.get("execute_at", "") <= now:

@@ -1,4 +1,5 @@
 import React from "react";
+import { Business, Review, Insight } from "@/types";
 import { 
   MapPin, 
   ShieldAlert, 
@@ -27,7 +28,17 @@ import {
   Cell
 } from "recharts";
 
-export default function OverviewPanel({ business, reviews = [], insights, auditStatus, chartData = [], healthSparkline = [], mode }: any) {
+interface OverviewPanelProps {
+  business: Business;
+  reviews?: Review[];
+  insights?: Insight | any;
+  auditStatus?: any;
+  chartData?: any[];
+  healthSparkline?: any[];
+  mode: string;
+}
+
+export default function OverviewPanel({ business, reviews = [], insights, auditStatus, chartData = [], healthSparkline = [], mode }: OverviewPanelProps) {
   const modeConfig: Record<string, any> = {
     daily: { velocityUnit: "/today", chartLabel: "Last 7 Days", dishLabel: "Today", worstLabel: "Today", deltaLabel: "vs Yesterday" },
     weekly: { velocityUnit: "/this week", chartLabel: "Last 30 Days", dishLabel: "This Week", worstLabel: "This Week", deltaLabel: "vs Last Week" },
@@ -115,6 +126,11 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
     }
   }
 
+  const avgRating = windowedReviews.length > 0 
+    ? windowedReviews.reduce((acc: number, r: any) => acc + (r.rating || 0), 0) / windowedReviews.length 
+    : 0;
+  const localHealthScore = windowedReviews.length > 0 ? Math.round(avgRating * 20) : (business.health_score || 88);
+
   return (
     <div className="space-y-4 w-full max-w-[1400px]">
       {/* HEADER & QUICK ACTIONS */}
@@ -147,13 +163,13 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
         {/* Health Score */}
         <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-xl relative flex justify-between">
           <div>
-            <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Health Score</span>
+            <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Health Score</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-xl font-semibold text-[var(--foreground)] leading-none">
-                {business.health_score || 88}%
+                {localHealthScore}%
               </span>
               {mode !== "all" && (
-                <span className="text-[9px] text-[#10b981] font-semibold flex items-center">
+                <span className="text-[12px] text-[#10b981] font-semibold flex items-center">
                   <ArrowUpRight className="w-2.5 h-2.5" /> 4% {mc.deltaLabel}
                 </span>
               )}
@@ -170,13 +186,13 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
 
         {/* Total Reviews */}
         <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-xl relative">
-          <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Review Velocity</span>
+          <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Review Velocity</span>
           <div className="flex items-baseline gap-2 mt-1">
             <span className="text-xl font-semibold text-[var(--foreground)] leading-none">
               {windowedReviews.length} <span className="text-[10px] text-[#64748b] font-normal">{mc.velocityUnit}</span>
             </span>
             {mode !== "all" && (
-              <span className="text-[9px] text-[#10b981] font-semibold flex items-center">
+              <span className="text-[12px] text-[#10b981] font-semibold flex items-center">
                 <ArrowUpRight className="w-2.5 h-2.5" /> 12% {mc.deltaLabel}
               </span>
             )}
@@ -185,12 +201,12 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
 
         {/* Unanswered */}
         <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-xl relative">
-          <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Unanswered Queue</span>
+          <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Unanswered Queue</span>
           <div className="flex items-baseline gap-2 mt-1">
             <span className={`text-xl font-semibold leading-none ${unansweredCount > 0 ? "text-[#f43f5e]" : "text-[#10b981]"}`}>
               {unansweredCount}
             </span>
-            <span className="text-[9px] text-[#f43f5e] font-semibold flex items-center">
+            <span className="text-[12px] text-[#f43f5e] font-semibold flex items-center">
               <ArrowDownRight className="w-2.5 h-2.5" /> Needs action
             </span>
           </div>
@@ -198,7 +214,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
 
         {/* Top Dish */}
         <div className="bg-[#0c0516] border border-[#1e293b] p-3 rounded-xl relative">
-          <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Top Dish ({mc.dishLabel})</span>
+          <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Top Dish ({mc.dishLabel})</span>
           {insights || windowedReviews.length > 0 ? (
             <>
               <div className="flex items-start gap-2 mt-2">
@@ -207,7 +223,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
                   {topDish}
                 </span>
               </div>
-              <span className="text-[8px] text-[#64748b] uppercase tracking-wider block mt-1">
+              <span className="text-[12px] text-[#64748b] uppercase tracking-wider block mt-1">
                 {topIsTheme ? "Identified by AI" : "Based on recent reviews"}
               </span>
             </>
@@ -225,7 +241,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
           <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl flex-1 flex flex-col space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-[#1e293b]">
               <span className="text-xs font-semibold text-[var(--foreground)]">Review Volume Trends</span>
-              <span className="text-[9px] uppercase tracking-widest text-[#94a3b8] font-bold">{mc.chartLabel}</span>
+              <span className="text-[12px] uppercase tracking-widest text-[#94a3b8] font-bold">{mc.chartLabel}</span>
             </div>
             <div className="flex-1 min-h-[160px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -269,7 +285,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
               <div className="w-2/3 pl-2 flex flex-col justify-center gap-1.5">
                 <span className="text-[10px] font-semibold text-[var(--foreground)] flex items-center gap-1.5 mb-1"><PieChartIcon className="w-3 h-3 text-[#a855f7]" /> Source Distribution</span>
                 {sourceData.map((s, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-[9px] uppercase tracking-widest font-bold">
+                  <div key={idx} className="flex justify-between items-center text-[12px] uppercase tracking-widest font-bold">
                     <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 rounded-xl" style={{backgroundColor: s.color}} />
                       <span className="text-[#64748b]">{s.name}</span>
@@ -282,15 +298,15 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
 
             {/* Worst Dish */}
             <div className="bg-[#0c0516] border border-[#1e293b] p-4 rounded-xl h-[140px] flex flex-col justify-center gap-1">
-              <span className="text-[9px] uppercase tracking-widest text-[#f43f5e] font-semibold block">Worst Component ({mc.worstLabel})</span>
+              <span className="text-[12px] uppercase tracking-widest text-[#f43f5e] font-semibold block">Worst Component ({mc.worstLabel})</span>
               {insights || windowedReviews.length > 0 ? (
                 <>
                   <span className="text-sm font-semibold text-[var(--foreground)] mt-1 truncate">{worstDish}</span>
-                  <span className="text-[9px] text-[#64748b] leading-snug block mt-1 line-clamp-2">
+                  <span className="text-[12px] text-[#64748b] leading-snug block mt-1 line-clamp-2">
                     {worstIsTheme ? "Identified by AI Analysis as a primary negative driver." : "Identified from recent low-rated reviews."}
                   </span>
                   {worstIsTheme && (
-                    <button className="text-[#a855f7] hover:text-white text-[9px] font-bold tracking-widest uppercase text-left mt-2 transition-colors flex items-center gap-1">
+                    <button className="text-[#a855f7] hover:text-white text-[12px] font-bold tracking-widest uppercase text-left mt-2 transition-colors flex items-center gap-1">
                       View Reports <ArrowUpRight className="w-3 h-3" />
                     </button>
                   )}
@@ -317,14 +333,14 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
                 <div className="flex-1 pb-2">
                   <div className="flex justify-between items-baseline">
                     <span className="text-[10px] font-bold text-white">{item.user}</span>
-                    <span className="text-[8px] text-[#64748b]">{item.time}</span>
+                    <span className="text-[12px] text-[#64748b]">{item.time}</span>
                   </div>
                   <div className="flex gap-0.5 mt-0.5 mb-1">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className={`text-[8px] ${i < item.rating ? "text-[#f59e0b]" : "text-[#334155]"}`}>★</span>
+                      <span key={i} className={`text-[12px] ${i < item.rating ? "text-[#f59e0b]" : "text-[#334155]"}`}>★</span>
                     ))}
                   </div>
-                  <p className="text-[9px] text-[#94a3b8] leading-snug line-clamp-2 italic border-l border-[#334155] pl-1.5">"{item.text}"</p>
+                  <p className="text-[12px] text-[#94a3b8] leading-snug line-clamp-2 italic border-l border-[#334155] pl-1.5">"{item.text}"</p>
                 </div>
               </div>
             )) : (
@@ -335,7 +351,7 @@ export default function OverviewPanel({ business, reviews = [], insights, auditS
             )}
           </div>
           <div className="p-2 border-t border-[#1e293b]">
-            <button className="w-full text-center text-[#64748b] hover:text-white text-[9px] font-bold uppercase tracking-widest transition-colors">
+            <button className="w-full text-center text-[#64748b] hover:text-white text-[12px] font-bold uppercase tracking-widest transition-colors">
               View All History
             </button>
           </div>

@@ -55,7 +55,7 @@ async def _run_campaign_sweep_async():
     await db.connect()
     try:
         campaigns = await db.get_collection("campaigns")
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(timezone.utc)
         
         for c in campaigns:
             if c.get("status") == "pending" and c.get("execute_at", "") <= now:

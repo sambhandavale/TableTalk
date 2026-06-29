@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import uuid
 from typing import Dict, List, Any, Optional
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
@@ -80,7 +81,7 @@ class ResilientDB:
     async def get_collection(self, collection_name: str) -> List[Dict[str, Any]]:
         if self.is_mongodb_connected and self.db is not None:
             cursor = self.db[collection_name].find({})
-            docs = await cursor.to_list(length=1000)
+            docs = await cursor.to_list(length=None)
             for doc in docs:
                 if "_id" in doc:
                     doc["_id"] = str(doc["_id"])
@@ -89,7 +90,7 @@ class ResilientDB:
 
     async def insert_one(self, collection_name: str, document: Dict[str, Any]) -> Dict[str, Any]:
         if "id" not in document and "_id" not in document:
-            document["id"] = f"{collection_name[:4]}-{int(os.urandom(4).hex(), 16) % 100000}"
+            document["id"] = str(uuid.uuid4())
             
         if self.is_mongodb_connected and self.db is not None:
             await self.db[collection_name].insert_one(document)
@@ -111,7 +112,7 @@ class ResilientDB:
             
         for doc in documents:
             if "id" not in doc and "_id" not in doc:
-                doc["id"] = f"{collection_name[:4]}-{int(os.urandom(4).hex(), 16) % 100000}"
+                doc["id"] = str(uuid.uuid4())
                 
         if self.is_mongodb_connected and self.db is not None:
             await self.db[collection_name].insert_many(documents)
@@ -146,6 +147,43 @@ class ResilientDB:
                 return item
         return None
 
+    async def find_many(self, collection_name: str, query: Dict[str, Any], skip: int = 0, limit: int = 100) -> List[Dict[str, Any]]:
+        if self.is_mongodb_connected and self.db is not None:
+            cursor = self.db[collection_name].find(query).skip(skip).limit(limit)
+            docs = await cursor.to_list(length=None)
+            for doc in docs:
+                if "_id" in doc:
+                    doc["_id"] = str(doc["_id"])
+            return docs
+            
+        items = self.fallback_data.get(collection_name, [])
+        results = []
+        for item in items:
+            match = True
+            for k, v in query.items():
+                if item.get(k) != v:
+                    match = False
+                    break
+            if match:
+                results.append(item)
+        return results[skip:skip+limit]
+
+    async def count(self, collection_name: str, query: Dict[str, Any]) -> int:
+        if self.is_mongodb_connected and self.db is not None:
+            return await self.db[collection_name].count_documents(query)
+            
+        items = self.fallback_data.get(collection_name, [])
+        count = 0
+        for item in items:
+            match = True
+            for k, v in query.items():
+                if item.get(k) != v:
+                    match = False
+                    break
+            if match:
+                count += 1
+        return count
+
     async def update_one(self, collection_name: str, query: Dict[str, Any], update: Dict[str, Any]) -> bool:
         if self.is_mongodb_connected and self.db is not None:
             result = await self.db[collection_name].update_one(query, update)
@@ -161,8 +199,20 @@ class ResilientDB:
                     break
             if match:
                 # Apply simple update fields (handles $set operators)
-                set_fields = update.get("$set", update)
-                items[idx].update(set_fields)
+                if "$set" in update:
+                    items[idx].update(update["$set"])
+                else:
+                    # If it's just a direct dict without operators
+                    # Check if it has any $ operators to avoid overriding incorrectly
+                    has_ops = any(k.startswith('$') for k in update.keys())
+                    if not has_ops:
+                        items[idx].update(update)
+                
+                # Apply $inc support
+                if "$inc" in update:
+                    for k, v in update["$inc"].items():
+                        items[idx][k] = items[idx].get(k, 0) + v
+                        
                 self._save_fallback_data()
                 return True
         return False
@@ -194,7 +244,7 @@ class ResilientDB:
     async def aggregate(self, collection_name: str, pipeline: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         if self.is_mongodb_connected and self.db is not None:
             cursor = self.db[collection_name].aggregate(pipeline)
-            docs = await cursor.to_list(length=1000)
+            docs = await cursor.to_list(length=None)
             for doc in docs:
                 if "_id" in doc:
                     doc["_id"] = str(doc["_id"])

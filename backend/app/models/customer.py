@@ -1,12 +1,13 @@
 from pydantic import BaseModel, Field
 from typing import Optional
+from datetime import datetime
 
 class CustomerDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
     phone: str
     business_id: str
     visit_count: int = 1
-    last_visit: str
+    last_visit: datetime
     segment: str  # "Happy Regular" | "At-Risk" | "Lost/Unhappy" | "New Customer"
     
     # Review milestones tracking

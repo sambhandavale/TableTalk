@@ -20,7 +20,7 @@ export default function CompetitorWatch({ competitors = [] }: any) {
 
       <div className="grid grid-cols-1 gap-4 pt-2">
         {/* Table Header */}
-        <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 border-b border-[#1e293b] text-[9px] uppercase tracking-widest text-[#64748b] font-bold">
+        <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 border-b border-[#1e293b] text-[12px] uppercase tracking-widest text-[#64748b] font-bold">
           <div className="col-span-3">Competitor</div>
           <div className="col-span-2">Avg Rating vs You</div>
           <div className="col-span-2">Review Volume Trend</div>
@@ -44,7 +44,7 @@ export default function CompetitorWatch({ competitors = [] }: any) {
 
             {/* Rating Comparison */}
             <div className="col-span-2 w-full flex flex-col">
-              <span className="md:hidden text-[9px] uppercase tracking-widest text-[#64748b] font-bold mb-1">Rating</span>
+              <span className="md:hidden text-[12px] uppercase tracking-widest text-[#64748b] font-bold mb-1">Rating</span>
               <div className="flex items-end gap-2">
                 <span className="text-lg font-semibold text-white leading-none">{comp.rating?.toFixed(1) || "N/A"}</span>
                 <span className={`text-[10px] font-bold ${(comp.ratingDiff || "").startsWith('+') ? 'text-[#f43f5e]' : 'text-[#10b981]'}`}>
@@ -55,7 +55,7 @@ export default function CompetitorWatch({ competitors = [] }: any) {
 
             {/* Volume Trend */}
             <div className="col-span-2 w-full flex flex-col">
-              <span className="md:hidden text-[9px] uppercase tracking-widest text-[#64748b] font-bold mb-1">Volume Trend</span>
+              <span className="md:hidden text-[12px] uppercase tracking-widest text-[#64748b] font-bold mb-1">Volume Trend</span>
               <div className="flex items-center gap-1.5">
                 <span className={`text-sm font-semibold ${comp.volumeDir === 'up' ? 'text-[#f43f5e]' : 'text-[#10b981]'}`}>
                   {comp.volumeTrend || "N/A"}

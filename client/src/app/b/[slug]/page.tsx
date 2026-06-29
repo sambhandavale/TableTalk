@@ -17,6 +17,9 @@ import {
   Loader2
 } from "lucide-react";
 import confetti from "canvas-confetti";
+import RatingStep from "@/components/review/RatingStep";
+import ReviewFormStep from "@/components/review/ReviewFormStep";
+import SuccessStep from "@/components/review/SuccessStep";
 
 export default function CustomerReviewPage() {
   const params = useParams();
@@ -284,361 +287,56 @@ export default function CustomerReviewPage() {
 
         {/* STEP 1: RATING SELECTION */}
         {step === 1 && (
-          <div className="py-6 flex flex-col items-center space-y-6 animate-fadeIn">
-            <h2 className="text-sm font-semibold text-center text-[#cbd5e1]">
-              How was your experience with us today?
-            </h2>
-            
-            {/* Interactive Glowing Stars */}
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => {
-                    setRating(star);
-                    setStep(2);
-                  }}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                  className="transition-transform active:scale-95 duration-100 focus:outline-none"
-                >
-                  <Star 
-                    className={`w-10 h-10 transition-colors ${
-                      star <= (hoverRating || rating)
-                        ? "text-[#f59e0b] fill-[#f59e0b] filter drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]"
-                        : "text-[#334155]"
-                    }`}
-                    strokeWidth={1.5}
-                  />
-                </button>
-              ))}
-            </div>
-
-            <p className="text-[10px] text-[#64748b] uppercase tracking-wider text-center">
-              Tap a star to begin your review
-            </p>
-          </div>
+          <RatingStep
+            rating={rating}
+            setRating={setRating}
+            hoverRating={hoverRating}
+            setHoverRating={setHoverRating}
+            setStep={setStep}
+          />
         )}
 
         {/* STEP 2: REVIEW DETAILS FORM */}
         {step === 2 && (
-          <div className="py-5 space-y-5 animate-fadeIn">
-            
-            {/* Selected Star Display */}
-            <div className="flex items-center justify-between bg-[#1e293b]/20 border border-[#1e293b] px-3 py-2">
-              <span className="text-xs text-[#cbd5e1] font-semibold">Selected Rating</span>
-              <div className="flex items-center gap-1.5">
-                <div className="flex gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
-                      className={`w-3.5 h-3.5 ${i < rating ? "text-[#f59e0b] fill-[#f59e0b]" : "text-[#334155]"}`} 
-                    />
-                  ))}
-                </div>
-                <button 
-                  onClick={() => setStep(1)} 
-                  className="text-[9px] text-[#a855f7] hover:underline font-bold uppercase tracking-wider ml-2"
-                >
-                  Change
-                </button>
-              </div>
-            </div>
-
-            {/* Private Intercept Header Alert */}
-            {rating <= 3 ? (
-              <div className="bg-[#ef4444]/10 border border-[#ef4444]/30 p-3 flex gap-2">
-                <AlertTriangle className="w-5 h-5 text-[#ef4444] flex-shrink-0 mt-0.5" />
-                <div className="space-y-0.5">
-                  <h4 className="text-xs font-bold text-[#ef4444]">Private Intercept Active</h4>
-                  <p className="text-[9.5px] text-[#f87171] leading-relaxed">
-                    We sincerely apologize that we fell short. Your feedback is sent directly to the owner privately so we can correct this immediately.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-[#10b981]/10 border border-[#10b981]/30 p-3 flex gap-2">
-                <Smile className="w-5 h-5 text-[#10b981] flex-shrink-0 mt-0.5" />
-                <div className="space-y-0.5">
-                  <h4 className="text-xs font-bold text-[#10b981]">Unlock Milestone Rewards!</h4>
-                  <p className="text-[9.5px] text-[#34d399] leading-relaxed">
-                    We are thrilled! Share your feedback below. If you reach a review milestone, you'll instantly unlock an exclusive reward coupon!
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Form Inputs */}
-            <div className="space-y-3.5 relative">
-              
-              {/* Voice Recording Button */}
-              <div className="flex justify-center mb-4">
-                <button
-                  type="button"
-                  onClick={startVoiceRecording}
-                  disabled={isRecording || isExtracting}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-full border transition-all ${
-                    isRecording 
-                      ? "bg-red-500/20 border-red-500 text-red-500 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.4)]"
-                      : isExtracting
-                        ? "bg-[#a855f7]/20 border-[#a855f7] text-[#a855f7]"
-                        : "bg-[#1e293b]/50 border-[#1e293b] text-[#cbd5e1] hover:bg-[#a855f7]/10 hover:border-[#a855f7] hover:text-[#a855f7]"
-                  }`}
-                >
-                  {isExtracting ? (
-                    <Loader2 className="w-8 h-8 animate-spin" />
-                  ) : (
-                    <Mic className={`w-8 h-8 ${isRecording ? "animate-bounce" : ""}`} />
-                  )}
-                </button>
-                <div className="text-center absolute w-full top-20 pointer-events-none">
-                  {isRecording && <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest bg-[#05020a] px-2 py-0.5">Listening... Speak now</span>}
-                  {isExtracting && <span className="text-[10px] text-[#a855f7] font-bold uppercase tracking-widest bg-[#05020a] px-2 py-0.5">Extracting AI details...</span>}
-                </div>
-              </div>
-              <div className="text-center pb-2">
-                <span className="text-[10px] text-[#64748b] uppercase tracking-wider font-semibold">Tap to auto-fill form with voice, tell us what you ate and how was it.</span>
-              </div>
-              
-              {/* Diner Name & Visitor Segment */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Your Name</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Rahul Sharma"
-                    value={dinerName}
-                    onChange={(e) => setDinerName(e.target.value)}
-                    className="w-full bg-[#0c0516] border border-[#1e293b] p-2 text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none transition-colors"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Visitor Status</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setVisitorType("first-time")}
-                      className={`py-2 text-[10px] font-bold uppercase tracking-wider border rounded-none transition-colors ${
-                        visitorType === "first-time"
-                          ? "bg-[#a855f7]/10 border-[#a855f7] text-[#a855f7]"
-                          : "border-[#1e293b] text-[#64748b] hover:bg-[#1e293b]/20"
-                      }`}
-                    >
-                      First-Time
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setVisitorType("returning")}
-                      className={`py-2 text-[10px] font-bold uppercase tracking-wider border rounded-none transition-colors ${
-                        visitorType === "returning"
-                          ? "bg-[#a855f7]/10 border-[#a855f7] text-[#a855f7]"
-                          : "border-[#1e293b] text-[#64748b] hover:bg-[#1e293b]/20"
-                      }`}
-                    >
-                      Returning
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Email, Phone & Birthday Contact */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="space-y-1">
-                  <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Phone Number (For rewards)</label>
-                  <input
-                    type="tel"
-                    placeholder="+91 XXXXX XXXXX"
-                    value={dinerPhone}
-                    onChange={(e) => setDinerPhone(e.target.value)}
-                    className="w-full bg-[#0c0516] border border-[#1e293b] p-2 text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none transition-colors"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Email Address</label>
-                  <input
-                    type="email"
-                    placeholder="name@example.com"
-                    value={dinerEmail}
-                    onChange={(e) => setDinerEmail(e.target.value)}
-                    className="w-full bg-[#0c0516] border border-[#1e293b] p-2 text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none transition-colors"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Date of Birth (Optional)</label>
-                  <input
-                    type="date"
-                    value={dinerBirthdate}
-                    onChange={(e) => setDinerBirthdate(e.target.value)}
-                    className="w-full bg-[#0c0516] border border-[#1e293b] p-2 text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none transition-colors custom-date-input"
-                  />
-                </div>
-              </div>
-
-              {/* Multi-Select Tags for Dishes Ordered */}
-              <div className="space-y-1">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">What dishes did you order?</label>
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  {orderedItems.map((dish, idx) => (
-                    <span 
-                      key={idx} 
-                      className="text-[10px] bg-[#a855f7]/10 border border-[#a855f7]/30 text-[#c084fc] pl-2 pr-1.5 py-0.5 flex items-center gap-1"
-                    >
-                      {dish}
-                      <button 
-                        type="button" 
-                        onClick={() => handleRemoveDish(idx)}
-                        className="hover:text-white"
-                      >
-                        <X className="w-2.5 h-2.5" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-                <div className="flex">
-                  <input
-                    type="text"
-                    placeholder="Type dish & hit Enter (e.g. Filter Coffee)"
-                    value={dishInput}
-                    onChange={(e) => setDishInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    className="flex-1 bg-[#0c0516] border border-[#1e293b] p-2 text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleAddDish()}
-                    className="p-2 border-y border-r border-[#1e293b] bg-[#1e293b]/50 hover:bg-[#a855f7] hover:text-black transition-colors rounded-none"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Review Text Area */}
-              <div className="space-y-1">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block">
-                  {rating <= 3 ? "What could we have improved?" : "Tell us what you loved!"}
-                </label>
-                <textarea
-                  placeholder={rating <= 3 ? "Starters were cold, service was delayed, etc." : "Biryani was exceptionally aromatic, polite hospitality, amazing atmosphere!"}
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  className="w-full bg-[#0c0516] border border-[#1e293b] p-3 text-xs text-white focus:outline-none focus:border-[#a855f7] rounded-none min-h-[80px] leading-snug resize-none transition-colors"
-                />
-              </div>
-
-            </div>
-
-            {/* Submission Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className={`w-full py-2.5 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 border transition-all ${
-                isSubmitting
-                  ? "bg-[#1e293b]/50 border-[#1e293b] text-[#64748b] cursor-not-allowed"
-                  : "bg-white text-black border-white hover:bg-transparent hover:text-white"
-              }`}
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-none animate-spin" />
-                  Submitting Feedback...
-                </>
-              ) : (
-                <>
-                  Submit Review
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </>
-              )}
-            </button>
-          </div>
+          <ReviewFormStep
+            rating={rating}
+            setStep={setStep}
+            text={text}
+            setText={setText}
+            dinerName={dinerName}
+            setDinerName={setDinerName}
+            visitorType={visitorType}
+            setVisitorType={setVisitorType}
+            dinerPhone={dinerPhone}
+            setDinerPhone={setDinerPhone}
+            dinerEmail={dinerEmail}
+            setDinerEmail={setDinerEmail}
+            dinerBirthdate={dinerBirthdate}
+            setDinerBirthdate={setDinerBirthdate}
+            dishInput={dishInput}
+            setDishInput={setDishInput}
+            orderedItems={orderedItems}
+            handleAddDish={handleAddDish}
+            handleRemoveDish={handleRemoveDish}
+            handleKeyDown={handleKeyDown}
+            startVoiceRecording={startVoiceRecording}
+            isRecording={isRecording}
+            isExtracting={isExtracting}
+            handleSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+          />
         )}
 
         {/* STEP 3: SUCCESS & VOUCHER REDIRECTION */}
         {step === 3 && (
-          <div className="py-6 flex flex-col items-center text-center space-y-6 animate-fadeIn">
-            
-            {/* Header Success Icon */}
-            <div className="w-12 h-12 bg-[#10b981]/10 border border-[#10b981]/30 flex items-center justify-center filter drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-              <CheckCircle className="w-6 h-6 text-[#10b981]" />
-            </div>
-
-            <div className="space-y-1">
-              <h2 className="text-md font-bold text-white">Review Submitted Successfully!</h2>
-              <p className="text-[10px] text-[#64748b] uppercase tracking-wider font-semibold">
-                Thank you for your valuable feedback
-              </p>
-            </div>
-
-            {/* DYNAMIC FUNNEL REDIRECTION MODAL CARD FOR 4-5 STAR REVIEWS */}
-            {rating >= 4 ? (
-              <div className="w-full bg-[#1e293b]/20 border border-[#1e293b] p-4 flex flex-col items-center space-y-4">
-                <div className="flex gap-2 items-start text-left">
-                  <Smile className="w-5 h-5 text-[#a855f7] mt-0.5 flex-shrink-0" />
-                  <div className="space-y-0.5">
-                    <h4 className="text-xs font-bold text-white">Share on Google!</h4>
-                    <p className="text-[9.5px] text-[#94a3b8] leading-relaxed">
-                      As a thank you, copy your review text to your clipboard and paste it on Google Maps to support our business!
-                    </p>
-                  </div>
-                </div>
-
-                <div className="w-full p-2 bg-[#0c0516] border border-[#1e293b] text-left">
-                  <p className="text-[10px] text-[#cbd5e1] leading-snug italic line-clamp-3">
-                    "{text}"
-                  </p>
-                </div>
-
-                <button
-                  onClick={handleCopyAndRedirect}
-                  className={`w-full py-2.5 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 border transition-all ${
-                    copied 
-                      ? "bg-[#10b981]/20 border-[#10b981] text-[#10b981]"
-                      : "bg-[#a855f7] border-[#a855f7] text-black hover:bg-transparent hover:text-white"
-                  }`}
-                >
-                  {copied ? (
-                    <>
-                      <CheckCircle className="w-3.5 h-3.5" />
-                      Text Copied! Opening Google Maps...
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      Copy & Paste on Google Maps
-                      <ExternalLink className="w-3 h-3" />
-                    </>
-                  )}
-                </button>
-              </div>
-            ) : (
-              // 1-3 Star Private Intercept Apology Message
-              <p className="text-xs text-[#94a3b8] leading-relaxed max-w-xs">
-                Your comments have been compiled and sent straight to the business owner. Our team has already been notified to rectify this immediately. We appreciate your helpful feedback.
-              </p>
-            )}
-
-            {/* Voucher Card Code Box */}
-            {voucherCode && (
-              <div className="w-full bg-gradient-to-r from-[#a855f7]/10 to-[#10b981]/5 border border-[#1e293b] p-4 flex flex-col items-center space-y-2 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-8 h-8 bg-[var(--brand-purple-text)]/10 flex items-center justify-center rounded-none font-mono text-[9px] uppercase tracking-widest text-[var(--brand-purple-text)]">
-                  Gift
-                </div>
-                <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold">Your Milestone Reward Voucher</span>
-                <div className="text-lg font-mono font-bold tracking-widest text-white border-2 border-dashed border-[#1e293b] px-4 py-1.5 bg-[#05020a]">
-                  {voucherCode}
-                </div>
-                <span className="text-[8px] text-[#64748b] uppercase tracking-widest mt-1">Show this screen on your next visit to redeem!</span>
-              </div>
-            )}
-
-            <button
-              onClick={() => window.location.reload()}
-              className="text-[#64748b] hover:text-white text-[9px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1"
-            >
-              Submit another review <ArrowRight className="w-3 h-3" />
-            </button>
-
-          </div>
+          <SuccessStep
+            rating={rating}
+            text={text}
+            business={business}
+            voucherCode={voucherCode}
+            copied={copied}
+            handleCopyAndRedirect={handleCopyAndRedirect}
+          />
         )}
 
       </div>

@@ -194,7 +194,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
           <div className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-1">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Business Hours</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Business Hours</label>
                 <div className="relative flex items-center">
                   <Clock className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                   <input 
@@ -206,7 +206,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Cost for Two (INR)</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Cost for Two (INR)</label>
                 <div className="relative flex items-center">
                   <DollarSign className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                   <input 
@@ -219,7 +219,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-1">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Seating Capacity</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Seating Capacity</label>
                 <div className="relative flex items-center">
                   <Users className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                   <input 
@@ -230,7 +230,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Dining Duration (mins)</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Dining Duration (mins)</label>
                 <div className="relative flex items-center">
                   <Clock className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                   <input 
@@ -243,7 +243,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-1">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Alerts WhatsApp</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Alerts WhatsApp</label>
                 <div className="relative flex items-center">
                   <Phone className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                   <input 
@@ -254,7 +254,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">POS System</label>
+                <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">POS System</label>
                 <CustomSelect 
                   value={formData.pos_system}
                   onChange={(val) => setFormData(prev => ({ ...prev, pos_system: val }))}
@@ -278,7 +278,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
               >
                 <div>
                   <span className="text-[10px] font-semibold text-white block">Pure Vegetarian</span>
-                  <span className="text-[8px] uppercase tracking-wider text-[#64748b] block mt-0.5">No meat</span>
+                  <span className="text-[12px] uppercase tracking-wider text-[#64748b] block mt-0.5">No meat</span>
                 </div>
                 <div className={`w-3 h-3 border rounded-xl transition-colors ${
                   formData.is_pure_veg ? "bg-[#a855f7] border-[#a855f7]" : "bg-transparent border-[#64748b]"
@@ -292,7 +292,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
               >
                 <div>
                   <span className="text-[10px] font-semibold text-white block">Valet Parking</span>
-                  <span className="text-[8px] uppercase tracking-wider text-[#64748b] block mt-0.5">Complimentary</span>
+                  <span className="text-[12px] uppercase tracking-wider text-[#64748b] block mt-0.5">Complimentary</span>
                 </div>
                 <div className={`w-3 h-3 border rounded-xl transition-colors ${
                   formData.valet_parking ? "bg-[#a855f7] border-[#a855f7]" : "bg-transparent border-[#64748b]"
@@ -305,7 +305,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
         {activeTab === "web" && (
           <div className="space-y-5">
             <div className="space-y-1">
-              <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Instagram Handle</label>
+              <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Instagram Handle</label>
               <div className="relative flex items-center">
                 <Globe className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                 <input 
@@ -316,7 +316,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Website URL</label>
+              <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Website URL</label>
               <div className="relative flex items-center">
                 <Globe className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                 <input 
@@ -327,7 +327,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Google Maps Node</label>
+              <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Google Maps Node</label>
               <div className="relative flex items-center">
                 <Compass className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                 <input 
@@ -356,7 +356,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
               >
                 <div>
                   <span className="text-[10px] font-semibold text-white block">Enable CRM Incentives</span>
-                  <span className="text-[8px] uppercase tracking-wider text-[#64748b] block mt-0.5">Automated Rewards</span>
+                  <span className="text-[12px] uppercase tracking-wider text-[#64748b] block mt-0.5">Automated Rewards</span>
                 </div>
                 <div className={`w-3 h-3 border rounded-xl transition-colors ${
                   formData.has_incentives ? "bg-[#a855f7] border-[#a855f7]" : "bg-transparent border-[#64748b]"
@@ -382,7 +382,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pr-6">
                     <div className="space-y-1">
-                      <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Discount Amount Description</label>
+                      <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Discount Amount Description</label>
                       <div className="relative flex items-center">
                         <DollarSign className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                         <input 
@@ -401,7 +401,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Coupon Code</label>
+                      <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Coupon Code</label>
                       <div className="relative flex items-center">
                         <span className="absolute left-3 w-3.5 h-3.5 text-[#64748b] font-mono font-bold text-xs">#</span>
                         <input 
@@ -420,7 +420,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                     </div>
                     
                     <div className="space-y-1">
-                      <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Stock Quantity</label>
+                      <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Stock Quantity</label>
                       <div className="relative flex items-center">
                         <Hash className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                         <input 
@@ -439,7 +439,7 @@ export default function SettingsPanel({ businessId }: { businessId: string }) {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[9px] uppercase tracking-widest text-[#64748b] font-semibold block">Target Rule</label>
+                      <label className="text-[12px] uppercase tracking-widest text-[#64748b] font-semibold block">Target Rule</label>
                       <div className="relative flex items-center">
                         <Target className="absolute left-3 w-3.5 h-3.5 text-[#64748b]" />
                         <CustomSelect 

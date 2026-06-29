@@ -2,6 +2,7 @@
 
 import React from "react";
 import { TrendingUp, Sparkles, ShieldCheck, ArrowRight } from "lucide-react";
+import OrbitalBackground from "@/components/ui/OrbitalBackground";
 
 export default function FeatureInsights() {
   return (
@@ -24,18 +25,7 @@ export default function FeatureInsights() {
           <div className="lg:col-span-6 relative flex items-center justify-center min-h-[600px] order-last lg:order-last w-full">
             <div className="relative w-full max-w-[600px] aspect-square flex items-center justify-center mx-auto lg:mr-auto lg:ml-0">
               {/* Orbital Rings Background */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[750px] aspect-square border border-white/[0.04] rounded-full pointer-events-none" />
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[550px] aspect-square border border-white/[0.08] rounded-full border-dashed animate-spin-slow pointer-events-none"
-                style={{ animationDuration: "50s" }}
-              />
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[350px] aspect-square border border-[var(--brand-purple-text)]/10 rounded-full animate-spin-slow pointer-events-none"
-                style={{
-                  animationDirection: "reverse",
-                  animationDuration: "40s",
-                }}
-              />
+              <OrbitalBackground />
 
               {/* Central Skewed Dashboard Image */}
               <div
@@ -72,13 +62,13 @@ export default function FeatureInsights() {
                   style={{ animationDelay: "2s", animationDuration: "6s" }}
                 >
                   <div className="bg-[var(--brand-card)] border border-[var(--brand-border)] rounded-2xl p-4 w-[210px] shadow-2xl text-left space-y-2 hover:scale-[1.05] transition-all duration-300 backdrop-blur-xl">
-                    <span className="text-[8px] uppercase tracking-wider text-[var(--text-dim)] block">
+                    <span className="text-[12px] uppercase tracking-wider text-[var(--text-dim)] block">
                       Google response rates
                     </span>
                     <div className="text-xl font-bold text-[var(--foreground)]">
                       98% Responded
                     </div>
-                    <p className="text-[9px] text-[var(--text-muted)] leading-relaxed font-light">
+                    <p className="text-[12px] text-[var(--text-muted)] leading-relaxed font-light">
                       Replies auto-drafted by Agent #5 and approved with one
                       tap.
                     </p>

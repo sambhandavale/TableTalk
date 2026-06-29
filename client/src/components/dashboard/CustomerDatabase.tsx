@@ -95,7 +95,7 @@ export default function CustomerDatabase({ customers = [], reviews = [] }: any) 
       <div className="bg-[#0c0516] border border-[#1e293b] rounded-xl overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-[#1e293b] bg-[#1e293b]/20 text-[9px] uppercase tracking-widest text-[#64748b]">
+            <tr className="border-b border-[#1e293b] bg-[#1e293b]/20 text-[12px] uppercase tracking-widest text-[#64748b]">
               <th className="p-3 font-bold">Diner Name</th>
               <th className="p-3 font-bold">Contact</th>
               <th className="p-3 font-bold">Visits</th>
@@ -134,7 +134,7 @@ export default function CustomerDatabase({ customers = [], reviews = [] }: any) 
                   {avgRating.toFixed(1)}
                 </td>
                 <td className="p-3">
-                  <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest border rounded-xl ${
+                  <span className={`px-2 py-0.5 text-[12px] font-bold uppercase tracking-widest border rounded-xl ${
                     c.segment === "Happy Regular" ? "bg-[#10b981]/10 border-[#10b981]/30 text-[#10b981]" :
                     c.segment === "At Risk" ? "bg-[#f59e0b]/10 border-[#f59e0b]/30 text-[#f59e0b]" :
                     c.segment === "Lost" ? "bg-[#f43f5e]/10 border-[#f43f5e]/30 text-[#f43f5e]" :
@@ -154,7 +154,7 @@ export default function CustomerDatabase({ customers = [], reviews = [] }: any) 
                         setCurrentPage(1);
                       }
                     }}
-                    className="text-[#a855f7] hover:text-white text-[9px] font-bold uppercase tracking-widest transition-colors flex items-center justify-end gap-1 ml-auto"
+                    className="text-[#a855f7] hover:text-white text-[12px] font-bold uppercase tracking-widest transition-colors flex items-center justify-end gap-1 ml-auto"
                   >
                     View Reviews
                     {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -182,13 +182,13 @@ export default function CustomerDatabase({ customers = [], reviews = [] }: any) 
                                     <Star key={i} className={`w-3 h-3 ${i < r.rating ? 'text-[#f59e0b] fill-[#f59e0b]' : 'text-[#334155]'}`} />
                                   ))}
                                 </div>
-                                <span className="text-[9px] text-[#64748b] font-mono">{new Date(r.timestamp).toLocaleDateString()}</span>
+                                <span className="text-[12px] text-[#64748b] font-mono">{new Date(r.timestamp).toLocaleDateString()}</span>
                               </div>
                               <p className="text-xs text-[#cbd5e1] leading-relaxed">"{r.text}"</p>
                               {r.ordered_items && r.ordered_items.length > 0 && (
                                 <div className="mt-2 flex flex-wrap gap-1.5">
                                   {r.ordered_items.map((item: string, iIdx: number) => (
-                                    <span key={iIdx} className="text-[9px] bg-[#a855f7]/10 text-[#c084fc] px-1.5 py-0.5 border border-[#a855f7]/20 uppercase tracking-wider">{item}</span>
+                                    <span key={iIdx} className="text-[12px] bg-[#a855f7]/10 text-[#c084fc] px-1.5 py-0.5 border border-[#a855f7]/20 uppercase tracking-wider">{item}</span>
                                   ))}
                                 </div>
                               )}
@@ -199,7 +199,7 @@ export default function CustomerDatabase({ customers = [], reviews = [] }: any) 
 
                       {totalPages > 1 && (
                         <div className="flex items-center justify-between pt-2">
-                          <span className="text-[9px] text-[#64748b] uppercase tracking-widest font-semibold">
+                          <span className="text-[12px] text-[#64748b] uppercase tracking-widest font-semibold">
                             Page {currentPage} of {totalPages}
                           </span>
                           <div className="flex gap-1">

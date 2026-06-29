@@ -1,9 +1,11 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
+from datetime import datetime
 
 class ReviewDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
     business_id: str
+    customer_id: Optional[str] = None
     source: str  # "qr" | "google"
     rating: int
     text: str
@@ -12,7 +14,7 @@ class ReviewDB(BaseModel):
     diner_name: str = "Anonymous"
     diner_phone: Optional[str] = None
     diner_email: Optional[str] = None
-    timestamp: str
+    timestamp: datetime
     owner_alerted: bool = False
     ai_apology_draft: Optional[str] = None
     ai_response_draft: Optional[str] = None

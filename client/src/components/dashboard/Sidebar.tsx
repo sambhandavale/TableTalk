@@ -109,7 +109,7 @@ export default function Sidebar({
         onClick={() => toggleSection(sectionKey)}
         className="w-full flex items-center justify-between px-2 mb-1.5 mt-4 group"
       >
-        <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold flex items-center gap-2 group-hover:text-white transition-colors">
+        <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold flex items-center gap-2 group-hover:text-white transition-colors">
           {label}
         </span>
         {isOpen ? (
@@ -172,7 +172,7 @@ export default function Sidebar({
         </div>
 
         {!isEffectivelyCollapsed && (
-          <div className="text-[9px] text-[var(--text-dim)] uppercase tracking-wider font-semibold truncate mt-0.5">
+          <div className="text-[12px] text-[var(--text-dim)] uppercase tracking-wider font-semibold truncate mt-0.5">
             {restaurantName} • Control Center
           </div>
         )}
@@ -182,7 +182,7 @@ export default function Sidebar({
       <div className="flex-1 py-4 flex flex-col px-3 overflow-y-auto no-scrollbar space-y-1 custom-scrollbar">
         {/* Main Menu */}
         {!isEffectivelyCollapsed && (
-          <span className="text-[9px] uppercase tracking-widest text-[#64748b] font-bold block px-2 mb-1.5">
+          <span className="text-[12px] uppercase tracking-widest text-[#64748b] font-bold block px-2 mb-1.5">
             Main Menu
           </span>
         )}

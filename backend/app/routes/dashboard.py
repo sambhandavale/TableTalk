@@ -1,10 +1,29 @@
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from datetime import datetime, timezone, timedelta
+from dateutil.relativedelta import relativedelta
 import asyncio
 from app.database import db
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
+
+def parse_review_time(r):
+    r_time_str = r.get("timestamp", r.get("created_at"))
+    
+    if isinstance(r_time_str, datetime):
+        if r_time_str.tzinfo is None:
+            r_time_str = r_time_str.replace(tzinfo=timezone.utc)
+        return r_time_str
+        
+    try:
+        if r_time_str:
+            t = datetime.fromisoformat(str(r_time_str).replace("Z", "+00:00"))
+            if t.tzinfo is None:
+                t = t.replace(tzinfo=timezone.utc)
+            return t
+    except (ValueError, TypeError, AttributeError):
+        pass
+    return None
 
 @router.post("/track-scan/{business_id}")
 async def track_qr_scan(business_id: str):
@@ -48,18 +67,7 @@ async def stream_dashboard_status(business_id: str):
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @router.get("/{business_id}")
-async def get_dashboard_data(business_id: str, mode: str = "all"):
-    def is_in_window(timestamp_str, window_start):
-        if window_start is None:
-            return True
-        try:
-            t = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
-            if t.tzinfo is None:
-                t = t.replace(tzinfo=timezone.utc)
-            return t >= window_start
-        except (ValueError, TypeError, AttributeError):
-            return False
-
+async def get_dashboard_data(business_id: str, mode: str = "all", page: int = 1, size: int = 20):
     # 1. Fetch Business
     business = await db.find_one("businesses", {"id": business_id})
     if not business:
@@ -69,65 +77,72 @@ async def get_dashboard_data(business_id: str, mode: str = "all"):
     
     actual_id = business.get("id")
 
-    # Aggregate coupons
-    coupons = []
-    all_coupons = await db.get_collection("coupons")
-    for c in all_coupons:
-        if c.get("business_id") == actual_id:
-            coupons.append(c)
-    business["coupons"] = coupons
-
-    # 2. Fetch all related collections
-    reviews = []
-    all_reviews = await db.get_collection("reviews")
-    for r in all_reviews:
-        if r.get("business_id") == actual_id:
-            reviews.append(r)
-            
-    insights = []
-    all_insights = await db.get_collection("insights")
-    for i in all_insights:
-        if i.get("business_id") == actual_id:
-            insights.append(i)
-            
-    # Sort insights by date descending to get the latest
-    insights.sort(key=lambda x: x.get("generated_date", ""), reverse=True)
-    latest_insight = insights[0] if insights else None
-
-    campaigns = []
-    all_campaigns = await db.get_collection("campaigns")
-    for c in all_campaigns:
-        if c.get("business_id") == actual_id:
-            campaigns.append(c)
-
-    customers = []
-    all_customers = await db.get_collection("customers")
-    for cust in all_customers:
-        if cust.get("business_id") == actual_id:
-            customers.append(cust)
-            
-    competitors = []
-    all_competitors = await db.get_collection("competitors")
-    for comp in all_competitors:
-        if comp.get("business_id") == actual_id:
-            competitors.append(comp)
-
     # ------------------
     # Compute time window based on mode
     # ------------------
     now = datetime.now(timezone.utc)
 
+    # stats filter window
     if mode == "daily":
         window_start = now - timedelta(hours=24)
+        query_start = now - timedelta(days=7)  # daily chart needs 7 days
     elif mode == "weekly":
         window_start = now - timedelta(days=7)
+        query_start = now - timedelta(days=28)  # weekly chart needs 28 days (4 weeks)
     elif mode == "monthly":
         window_start = now - timedelta(days=30)
+        query_start = now - relativedelta(months=6)  # monthly chart needs 6 months
     else:  # all
         window_start = None
+        query_start = None
+
+    # Use query filters based on query_start to avoid truncating chart data
+    review_query = {"business_id": actual_id}
+    if query_start:
+        review_query["timestamp"] = {"$gte": query_start}
+
+    # Aggregate coupons
+    coupons = await db.find_many("coupons", {"business_id": actual_id})
+    business["coupons"] = coupons
+
+    # 2. Fetch related collections
+    reviews = await db.find_many("reviews", review_query)
+    insights = await db.find_many("insights", {"business_id": actual_id})
+            
+    # For the AI Insights, we now use a Unified Live Report, irrespective of the chart mode
+    unified_insights = [i for i in insights if i.get("mode") == "unified"]
+    all_mode_insights = [i for i in insights if i.get("mode") == "all"]
+    
+    if unified_insights:
+        unified_insights.sort(key=lambda x: x.get("generated_date", ""), reverse=True)
+        latest_insight = unified_insights[0]
+    elif all_mode_insights:
+        all_mode_insights.sort(key=lambda x: x.get("generated_date", ""), reverse=True)
+        latest_insight = all_mode_insights[0]
+    else:
+        latest_insight = None
+
+    campaigns = await db.find_many("campaigns", {"business_id": actual_id})
+    customers = await db.find_many("customers", {"business_id": actual_id})
+    competitors = await db.find_many("competitors", {"business_id": actual_id})
+
+    # For pagination of recent reviews
+    skip = (page - 1) * size
+    paginated_reviews = await db.find_many("reviews", {"business_id": actual_id}, skip=skip, limit=size)
+    total_reviews_count = await db.count("reviews", {"business_id": actual_id})
+    
+    paginated_reviews_wrapper = {
+        "items": paginated_reviews,
+        "total": total_reviews_count,
+        "page": page,
+        "size": size
+    }
 
     # Filter reviews within the time window for stats
-    windowed_reviews = [r for r in reviews if is_in_window(r.get('timestamp', r.get('created_at', '')), window_start)]
+    if window_start:
+        windowed_reviews = [r for r in reviews if parse_review_time(r) and parse_review_time(r) >= window_start]
+    else:
+        windowed_reviews = reviews
 
     # ------------------
     # QR Stats (scoped to window)
@@ -157,15 +172,22 @@ async def get_dashboard_data(business_id: str, mode: str = "all"):
     
     for r in google_reviews:
         r_time_str = r.get("timestamp", r.get("created_at"))
-        try:
-            if r_time_str:
-                r_time = datetime.fromisoformat(r_time_str.replace("Z", "+00:00"))
-                if r_time.tzinfo is None:
-                    r_time = r_time.replace(tzinfo=timezone.utc)
-                if r_time >= velocity_start:
-                    recent_reviews.append(r)
-        except (ValueError, TypeError, AttributeError):
-            pass
+        r_time = None
+        if isinstance(r_time_str, datetime):
+            r_time = r_time_str
+            if r_time.tzinfo is None:
+                r_time = r_time.replace(tzinfo=timezone.utc)
+        else:
+            try:
+                if r_time_str:
+                    r_time = datetime.fromisoformat(str(r_time_str).replace("Z", "+00:00"))
+                    if r_time.tzinfo is None:
+                        r_time = r_time.replace(tzinfo=timezone.utc)
+            except (ValueError, TypeError, AttributeError):
+                pass
+                
+        if r_time and r_time >= velocity_start:
+            recent_reviews.append(r)
             
         if r.get("owner_approved_reply"):
             google_responses += 1
@@ -196,18 +218,6 @@ async def get_dashboard_data(business_id: str, mode: str = "all"):
     # ------------------
     # Calculate Real Chart Data (dynamic bucketing based on mode)
     # ------------------
-    def parse_review_time(r):
-        r_time_str = r.get("timestamp", r.get("created_at"))
-        try:
-            if r_time_str:
-                t = datetime.fromisoformat(r_time_str.replace("Z", "+00:00"))
-                if t.tzinfo is None:
-                    t = t.replace(tzinfo=timezone.utc)
-                return t
-        except (ValueError, TypeError, AttributeError):
-            pass
-        return None
-
     chart_data = []
 
     if mode == "daily":
@@ -249,11 +259,11 @@ async def get_dashboard_data(business_id: str, mode: str = "all"):
     elif mode == "monthly":
         # 6 bars, one per month for the last 6 months
         for i in range(5, -1, -1):
-            month_start = (now.replace(day=1) - timedelta(days=30 * i)).replace(day=1)
+            month_start = (now.replace(day=1, hour=0, minute=0, second=0, microsecond=0) - relativedelta(months=i))
             if i > 0:
-                month_end = (now.replace(day=1) - timedelta(days=30 * (i - 1))).replace(day=1)
+                month_end = (now.replace(day=1, hour=0, minute=0, second=0, microsecond=0) - relativedelta(months=i-1))
             else:
-                month_end = now
+                month_end = now + relativedelta(months=1)
             label = month_start.strftime("%b")
             count = 0
             for r in reviews:
@@ -272,15 +282,15 @@ async def get_dashboard_data(business_id: str, mode: str = "all"):
         
         if review_times:
             earliest = min(review_times)
-            # Walk from earliest month to current month
             cursor = earliest.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
             current_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            
+            months_diff = (current_month.year - cursor.year) * 12 + current_month.month - cursor.month
+            if months_diff < 5:
+                cursor = current_month - relativedelta(months=5)
+
             while cursor <= current_month:
-                # Next month boundary
-                if cursor.month == 12:
-                    next_cursor = cursor.replace(year=cursor.year + 1, month=1)
-                else:
-                    next_cursor = cursor.replace(month=cursor.month + 1)
+                next_cursor = cursor + relativedelta(months=1)
                 label = cursor.strftime("%b %Y")
                 count = sum(1 for rt in review_times if cursor <= rt < next_cursor)
                 chart_data.append({"name": label, "volume": count})
@@ -298,8 +308,22 @@ async def get_dashboard_data(business_id: str, mode: str = "all"):
     # Health Sparkline from historical insights (filtered by window)
     # ------------------
     sorted_insights = sorted(insights, key=lambda x: x.get("generated_date", ""))
+    windowed_insights = []
+    
     if window_start is not None:
-        windowed_insights = [i for i in sorted_insights if is_in_window(i.get("generated_date", ""), window_start)]
+        for i in sorted_insights:
+            g_date = i.get("generated_date")
+            if not g_date:
+                continue
+                
+            if isinstance(g_date, str):
+                g_date = parse_review_time({"timestamp": g_date})
+                
+            if isinstance(g_date, datetime):
+                if g_date.tzinfo is None:
+                    g_date = g_date.replace(tzinfo=timezone.utc)
+                if g_date >= window_start:
+                    windowed_insights.append(i)
     else:
         windowed_insights = sorted_insights
     sparkline = [{"score": i.get("health_score", 0)} for i in windowed_insights[-8:]]
@@ -319,7 +343,7 @@ async def get_dashboard_data(business_id: str, mode: str = "all"):
 
     return {
         "business": business,
-        "reviews": reviews,
+        "reviews": paginated_reviews_wrapper,
         "insights": latest_insight,
         "all_insights": insights,
         "campaigns": campaigns,

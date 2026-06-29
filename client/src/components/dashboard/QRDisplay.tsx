@@ -82,7 +82,7 @@ export default function QRDisplay({ url, restaurantName, qrStats }: QRDisplayPro
           </div>
           <button 
             onClick={handleDownload}
-            className="px-2 py-1 border border-[#a855f7] bg-[#a855f7]/10 text-[#a855f7] hover:bg-[#a855f7] hover:text-black text-[9px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center gap-1.5"
+            className="px-2 py-1 border border-[#a855f7] bg-[#a855f7]/10 text-[#a855f7] hover:bg-[#a855f7] hover:text-black text-[12px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center gap-1.5"
           >
             <Download className="w-3 h-3" />
             Print Kit
@@ -120,7 +120,7 @@ export default function QRDisplay({ url, restaurantName, qrStats }: QRDisplayPro
             <span className="text-[#94a3b8] flex items-center gap-1"><div className="w-1 h-1 bg-[#a855f7]" /> Feedback Submitted</span>
             <div className="text-right">
               <span className="font-semibold text-white">{stats.feedback_submitted}</span>
-              <span className="text-[8px] text-[#a855f7] ml-2">({feedbackConv}% Conv.)</span>
+              <span className="text-[12px] text-[#a855f7] ml-2">({feedbackConv}% Conv.)</span>
             </div>
           </div>
           
@@ -135,7 +135,7 @@ export default function QRDisplay({ url, restaurantName, qrStats }: QRDisplayPro
             <span className="text-[#94a3b8] flex items-center gap-1"><div className="w-1 h-1 bg-[#f59e0b]" /> Confirmed Google Review</span>
             <div className="text-right">
               <span className="font-semibold text-white">{stats.confirmed_google}</span>
-              <span className="text-[8px] text-[#f59e0b] ml-2">({googleConv}% Conv.)</span>
+              <span className="text-[12px] text-[#f59e0b] ml-2">({googleConv}% Conv.)</span>
             </div>
           </div>
  

@@ -62,10 +62,10 @@ export default function TriageSimulator() {
             <div className="liquid-glass-glow" />
             <div className="relative z-10 space-y-6">
               <div className="flex justify-between items-center pb-3 border-b border-[var(--brand-border)] transition-colors duration-300">
-                <span className="text-[9px] uppercase tracking-wider text-[var(--text-dim)] font-mono font-bold transition-colors duration-300">
+                <span className="text-[12px] uppercase tracking-wider text-[var(--text-dim)] font-mono font-bold transition-colors duration-300">
                   Customer Device Screen
                 </span>
-                <span className="text-[8px] bg-[var(--brand-border-subtle)] px-2 py-0.5 rounded text-[var(--text-muted)] font-mono transition-colors duration-300">
+                <span className="text-[12px] bg-[var(--brand-border-subtle)] px-2 py-0.5 rounded text-[var(--text-muted)] font-mono transition-colors duration-300">
                   QR Scan (Zone A)
                 </span>
               </div>
@@ -102,7 +102,7 @@ export default function TriageSimulator() {
               <div className="space-y-4 text-xs font-sans">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <span className="text-[var(--text-dim)] block text-[9px] uppercase tracking-wide transition-colors duration-300">
+                    <span className="text-[var(--text-dim)] block text-[12px] uppercase tracking-wide transition-colors duration-300">
                       Customer Name
                     </span>
                     <input
@@ -113,7 +113,7 @@ export default function TriageSimulator() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[var(--text-dim)] block text-[9px] uppercase tracking-wide transition-colors duration-300">
+                    <span className="text-[var(--text-dim)] block text-[12px] uppercase tracking-wide transition-colors duration-300">
                       Product / Service
                     </span>
                     <CustomSelect
@@ -130,7 +130,7 @@ export default function TriageSimulator() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[var(--text-dim)] block text-[9px] uppercase tracking-wide transition-colors duration-300">
+                  <span className="text-[var(--text-dim)] block text-[12px] uppercase tracking-wide transition-colors duration-300">
                     Customer Comment (Optional)
                   </span>
                   <textarea
@@ -177,7 +177,7 @@ export default function TriageSimulator() {
                   <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center">
                     <Share2 className="w-5 h-5" />
                   </div>
-                  <span className="text-[8px] bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded text-green-400 font-mono font-bold uppercase tracking-wider">
+                  <span className="text-[12px] bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded text-green-400 font-mono font-bold uppercase tracking-wider">
                     Public SEO Boost Route
                   </span>
                 </div>
@@ -196,24 +196,24 @@ export default function TriageSimulator() {
                 {/* Reward Coupon Display */}
                 <div className="bg-[var(--background)] border border-[var(--brand-border)] p-4 rounded-xl flex items-center justify-between gap-4 transition-colors duration-300">
                   <div className="text-left font-sans text-xs">
-                    <span className="text-[8px] text-[var(--text-dim)] uppercase block transition-colors duration-300">
+                    <span className="text-[12px] text-[var(--text-dim)] uppercase block transition-colors duration-300">
                       Customer Coupon Reward
                     </span>
                     <span className="text-sm font-bold text-[var(--foreground)] font-mono uppercase block tracking-wider mt-0.5 transition-colors duration-300">
                       DELICIOUS15
                     </span>
-                    <span className="text-[8.5px] text-green-400 block mt-0.5">
+                    <span className="text-[12px] text-green-400 block mt-0.5">
                       Show at desk for 15% OFF next bill
                     </span>
                   </div>
-                  <span className="px-3 py-1.5 bg-green-500 text-black text-[9px] font-bold rounded-lg uppercase tracking-wider font-mono">
+                  <span className="px-3 py-1.5 bg-green-500 text-black text-[12px] font-bold rounded-lg uppercase tracking-wider font-mono">
                     Google Shared
                   </span>
                 </div>
 
                 {/* Operational impact */}
-                <div className="pt-2 border-t border-[var(--brand-border)] text-[9.5px] text-[var(--text-muted)] space-y-1.5 transition-colors duration-300">
-                  <span className="font-semibold text-[var(--foreground)]/70 block uppercase tracking-wider text-[8px] transition-colors duration-300">
+                <div className="pt-2 border-t border-[var(--brand-border)] text-[12px] text-[var(--text-muted)] space-y-1.5 transition-colors duration-300">
+                  <span className="font-semibold text-[var(--foreground)]/70 block uppercase tracking-wider text-[12px] transition-colors duration-300">
                     Business Result:
                   </span>
                   <p className="leading-relaxed">
@@ -224,7 +224,7 @@ export default function TriageSimulator() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[var(--brand-border)] text-[9px] text-[var(--text-dim)] font-mono transition-colors duration-300">
+              <div className="pt-4 border-t border-[var(--brand-border)] text-[12px] text-[var(--text-dim)] font-mono transition-colors duration-300">
                 Redirect Route: google.com/maps/review/mm-bandra
               </div>
             </div>
@@ -244,7 +244,7 @@ export default function TriageSimulator() {
                   <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center">
                     <ShieldAlert className="w-5 h-5" />
                   </div>
-                  <span className="text-[8px] bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded text-red-400 font-mono font-bold uppercase tracking-wider">
+                  <span className="text-[12px] bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded text-red-400 font-mono font-bold uppercase tracking-wider">
                     Private Intercept Route
                   </span>
                 </div>
@@ -262,7 +262,7 @@ export default function TriageSimulator() {
 
                 {/* Apology Text Display */}
                 <div className="bg-[var(--background)] border border-[var(--brand-border)] p-3.5 rounded-xl space-y-2 transition-colors duration-300">
-                  <div className="flex justify-between items-center text-[8.5px]">
+                  <div className="flex justify-between items-center text-[12px]">
                     <span className="text-brand-purple-text font-bold uppercase tracking-wider">
                       Agent #2 apology SMS template
                     </span>
@@ -281,35 +281,35 @@ export default function TriageSimulator() {
                     {!smsSent ? (
                       <button
                         onClick={() => setSmsSent(true)}
-                        className="px-3 py-1 bg-red-500 text-black text-[9px] font-bold rounded hover:bg-red-400 transition-all cursor-pointer uppercase tracking-wider"
+                        className="px-3 py-1 bg-red-500 text-black text-[12px] font-bold rounded hover:bg-red-400 transition-all cursor-pointer uppercase tracking-wider"
                       >
                         Dispatch Apology SMS
                       </button>
                     ) : (
-                      <span className="text-[9px] text-green-400 font-bold animate-pulse">
+                      <span className="text-[12px] text-green-400 font-bold animate-pulse">
                         ✓ Voucher Sent via Twilio Gateway
                       </span>
                     )}
-                    <span className="text-[8.5px] text-[var(--text-dim)] uppercase font-mono transition-colors duration-300">
+                    <span className="text-[12px] text-[var(--text-dim)] uppercase font-mono transition-colors duration-300">
                       Apology Voucher: SORRY20
                     </span>
                   </div>
                 </div>
 
                 {/* Operational impact */}
-                <div className="pt-2 border-t border-[var(--brand-border)] text-[9.5px] text-[var(--text-muted)] space-y-1.5 transition-colors duration-300">
-                  <span className="font-semibold text-[var(--foreground)]/70 block uppercase tracking-wider text-[8px] transition-colors duration-300">
+                <div className="pt-2 border-t border-[var(--brand-border)] text-[12px] text-[var(--text-muted)] space-y-1.5 transition-colors duration-300">
+                  <span className="font-semibold text-[var(--foreground)]/70 block uppercase tracking-wider text-[12px] transition-colors duration-300">
                     Business Result:
                   </span>
                   <p className="leading-relaxed">
-                    🛡 Intercepts complaints **privately** before they leak onto
+                    🛡 Intercepts complaints <strong>privately</strong> before they leak onto
                     public Google listings. Converts disgruntled visitors into
                     loyal repeat customers.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[var(--brand-border)] text-[9px] text-[var(--text-dim)] font-mono transition-colors duration-300">
+              <div className="pt-4 border-t border-[var(--brand-border)] text-[12px] text-[var(--text-dim)] font-mono transition-colors duration-300">
                 Alert Dispatched: manager-alarm@tabletalk.in
               </div>
               </div>

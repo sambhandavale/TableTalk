@@ -6,15 +6,24 @@ from app.core.utils import resolve_maps_url
 # Import Agent 1
 from ai_workflow import audit_agent
 
-import hashlib
+from passlib.context import CryptContext
+from app.core.auth import create_access_token
 
 router = APIRouter(prefix="/onboard", tags=["Onboarding"])
 
 def hash_password(password: str) -> str:
-    """Zero-dependency SHA-256 password hashing with a secure salt."""
-    salt = "tabletalk_secure_salt_2026_"
-    hash_obj = hashlib.sha256((salt + password).encode('utf-8'))
-    return hash_obj.hexdigest()
+    import bcrypt
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    import bcrypt
+    import hashlib
+    try:
+        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    except ValueError:
+        salt = "tabletalk_secure_salt_2026_"
+        old_hash = hashlib.sha256((salt + plain_password).encode('utf-8')).hexdigest()
+        return old_hash == hashed_password
 
 from datetime import datetime, timezone
 
@@ -72,12 +81,26 @@ async def _do_background_audit(business_id: str, maps_url: str):
                     r_text = r.get("text") or ""
                     
                     if real_r.get("diner_name") == r.get("diner_name") or (r_text and r_text[:20] in real_text):
-                        r["timestamp"] = real_r.get("timestamp", r.get("timestamp", datetime.now(timezone.utc).isoformat()))
+                        r["timestamp"] = real_r.get("timestamp", r.get("timestamp", datetime.now(timezone.utc)))
                         if "owner_approved_reply" in real_r:
                             r["owner_approved_reply"] = real_r["owner_approved_reply"]
                         if "final_reply_content" in real_r:
                             r["final_reply_content"] = real_r["final_reply_content"]
                         break
+            
+            # Parse timestamp to native datetime if it is a string
+            ts_val = r.get("timestamp")
+            if not ts_val:
+                ts_val = datetime.now(timezone.utc)
+            elif isinstance(ts_val, str):
+                try:
+                    parsed_ts = datetime.fromisoformat(ts_val.replace("Z", "+00:00"))
+                    if parsed_ts.tzinfo is None:
+                        parsed_ts = parsed_ts.replace(tzinfo=timezone.utc)
+                    ts_val = parsed_ts
+                except Exception:
+                    ts_val = datetime.now(timezone.utc)
+            r["timestamp"] = ts_val
             
             # Generate and attach embedding
             r_text = r.get("text", "")
@@ -115,7 +138,9 @@ async def _do_background_audit(business_id: str, maps_url: str):
         # Ensure UI unblocks
         await db.update_one("businesses", {"id": business_id}, {"$set": {"audit_completed": True, "audit_failed": True}})
 
-@router.post("")
+from app.schemas.onboard import BusinessOnboardRequest, BusinessProfileUpdateRequest, UserLoginRequest, OnboardResponse, LoginResponse
+
+@router.post("", response_model=OnboardResponse)
 async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: BackgroundTasks):
     # 1. Check if the business account email already exists
     clean_email = request.email.strip().lower()
@@ -166,6 +191,8 @@ async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: 
     # Trigger AI Audit Agent 1 asynchronously in background via FastAPI BackgroundTasks instead of Celery
     background_tasks.add_task(_do_background_audit, business_id, request.maps_url)
     
+    access_token = create_access_token(data={"sub": clean_email, "business_id": business_id})
+
     return {
         "message": "Business account and business onboarding successfully initiated. AI Audit dispatched.",
         "business": saved_restaurant,
@@ -174,10 +201,12 @@ async def onboard_restaurant(request: BusinessOnboardRequest, background_tasks: 
             "role": "General Manager",
             "owner_contact": request.owner_contact
         },
+        "access_token": access_token,
+        "token_type": "bearer",
         "wow_moment_ready": False
     }
 
-@router.post("/login")
+@router.post("/login", response_model=LoginResponse)
 async def login_user(request: UserLoginRequest):
     # 1. Clean email and look up user
     email = request.email.strip().lower()
@@ -189,8 +218,7 @@ async def login_user(request: UserLoginRequest):
         )
     
     # 2. Verify hashed password matches
-    input_hash = hash_password(request.password)
-    if user.get("password_hash") != input_hash:
+    if not verify_password(request.password, user.get("password_hash")):
         raise HTTPException(
             status_code=401,
             detail="Incorrect security password."
@@ -208,6 +236,8 @@ async def login_user(request: UserLoginRequest):
                 detail="Associated business profile not found."
             )
             
+    access_token = create_access_token(data={"sub": user.get("email"), "business_id": business.get("id")})
+
     return {
         "message": "Security authentication successful.",
         "user": {
@@ -222,7 +252,9 @@ async def login_user(request: UserLoginRequest):
             "cuisine": business.get("cuisine"),
             "location": business.get("location"),
             "maps_url": business.get("maps_url")
-        }
+        },
+        "access_token": access_token,
+        "token_type": "bearer"
     }
 
 @router.get("/{slug}/status")

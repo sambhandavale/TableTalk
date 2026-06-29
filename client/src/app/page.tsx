@@ -1,16 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  ArrowUpRight,
-  Sun,
-  Moon,
-  ChevronDown,
-  LayoutDashboard,
-  ShieldAlert,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Import modular sub-components
 import HeroSection from "../components/HeroSection";
@@ -25,6 +16,7 @@ import Testimonials from "../components/Testimonials";
 import Footer from "../components/Footer";
 
 export default function TableTalkLandingPage() {
+  const router = useRouter();
   const [theme, setTheme] = useState("dark");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userSlug, setUserSlug] = useState("");
@@ -52,7 +44,7 @@ export default function TableTalkLandingPage() {
         setUserSlug(storedSlug);
         setUserEmail(storedEmail);
         // Seamlessly auto-redirect GM to their active control center
-        window.location.href = `/dashboard/${storedSlug}`;
+        router.push(`/dashboard/${storedSlug}`);
       }
     }
   }, []);

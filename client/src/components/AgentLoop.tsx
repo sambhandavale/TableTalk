@@ -129,7 +129,7 @@ export default function InfiniteAgentLoop() {
                   </span>
                   
                   {/* Status Ring */}
-                  <div className="flex items-center gap-1.5 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] px-2 py-0.5 rounded text-[8px] text-[var(--text-muted)] uppercase font-mono font-bold transition-colors duration-300">
+                  <div className="flex items-center gap-1.5 bg-[var(--brand-border-subtle)] border border-[var(--brand-border)] px-2 py-0.5 rounded text-[12px] text-[var(--text-muted)] uppercase font-mono font-bold transition-colors duration-300">
                     <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-400 animate-pulse" : "bg-[var(--text-dim)]"}`} />
                     {isActive ? "ACTIVE" : "STANDBY"}
                   </div>
@@ -154,7 +154,7 @@ export default function InfiniteAgentLoop() {
       <div className="w-full max-w-3xl mx-auto bg-black/60 border border-slate-800 rounded-xl p-5 font-mono text-[10px] text-[#c77dff] shadow-2xl relative overflow-hidden mt-12 backdrop-blur-md">
         
         {/* Terminal Header */}
-        <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4 text-[9px] text-slate-400">
+        <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4 text-[12px] text-slate-400">
           <div className="flex items-center gap-2">
             <Terminal className="w-3.5 h-3.5 text-[#c77dff]" />
             <span>TABLETALK BACKGROUND AGENT PIPELINE FEED</span>
@@ -170,7 +170,7 @@ export default function InfiniteAgentLoop() {
           {agents[activeIndex].logs.map((line, idx) => (
             <div key={idx} className="flex items-start gap-2.5 leading-snug animate-fadeIn">
               <span className="text-slate-600 select-none">{idx === 0 ? ">" : "•"}</span>
-              <span className={`font-mono text-[9.5px] ${
+              <span className={`font-mono text-[12px] ${
                 idx === 0 
                   ? "text-slate-100 font-medium" 
                   : line.includes("⚠") 

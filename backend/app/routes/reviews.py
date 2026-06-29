@@ -36,7 +36,7 @@ async def submit_qr_review(request: QRReviewSubmitRequest, background_tasks: Bac
         "diner_phone": request.diner_phone,
         "diner_email": request.diner_email,
         "diner_birthdate": request.diner_birthdate,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(timezone.utc),
         "owner_alerted": False,
         "ai_apology_draft": None,
         "status": "pending_triage"
@@ -56,21 +56,25 @@ async def submit_qr_review(request: QRReviewSubmitRequest, background_tasks: Bac
     }
 
 @router.get("/{slug}")
-async def get_restaurant_reviews(slug: str, source: Optional[str] = None):
+async def get_restaurant_reviews(slug: str, source: Optional[str] = None, page: int = 1, size: int = 20):
     business = await db.find_one("businesses", {"slug": slug})
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
         
-    all_reviews = await db.get_collection("reviews")
-    filtered = [r for r in all_reviews if r.get("business_id") == business["id"]]
-    
+    query = {"business_id": business["id"]}
     if source:
-        filtered = [r for r in filtered if r.get("source") == source]
+        query["source"] = source
         
+    skip = (page - 1) * size
+    filtered = await db.find_many("reviews", query, skip=skip, limit=size)
+    total = await db.count("reviews", query)
+    
     return {
-        "restaurant_name": business["name"],
-        "count": len(filtered),
-        "reviews": filtered
+        "items": filtered,
+        "total": total,
+        "page": page,
+        "size": size,
+        "restaurant_name": business["name"]
     }
 
 @router.post("/{review_id}/approve")
